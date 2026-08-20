@@ -1,0 +1,76 @@
+Package: mengR
+Type: Package
+Title: Personal Bioinformatics Analysis and Visualization Utilities
+Version: 0.0.1
+Authors@R: person(
+    given = "Jin-Xin",
+    family = "Meng",
+    email = "jinxmeng@zju.edu.cn",
+    role = c("aut", "cre"),
+    comment = c("Alternative email" = "mengjx855@163.com")
+  )
+Description: A personal collection of reusable functions for bioinformatics,
+    omics data processing, statistical analysis, machine learning, and
+    publication-oriented visualization.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+Depends:
+    R (>= 4.1.0)
+Suggests:
+    BiodiversityR,
+    Biostrings,
+    caret,
+    CellChat,
+    cluster,
+    clusterProfiler,
+    ComplexHeatmap,
+    cowplot,
+    dplyr,
+    e1071,
+    ggalt,
+    ggClusterNet,
+    ggnewscale,
+    ggplot2,
+    ggpubr,
+    ggradar,
+    ggrepel,
+    ggsignif,
+    glmnet,
+    glue,
+    Hmisc,
+    igraph,
+    limma,
+    linkET,
+    metafor,
+    Matrix,
+    minpack.lm,
+    multcompView,
+    openxlsx,
+    patchwork,
+    phyloseq,
+    picante,
+    pROC,
+    psych,
+    purrr,
+    randomForest,
+    RColorBrewer,
+    rlang,
+    ropls,
+    roxygen2,
+    rstatix,
+    Rtsne,
+    scales,
+    Seurat,
+    stringr,
+    sva,
+    testthat (>= 3.0.0),
+    tibble,
+    tidyr,
+    umap,
+    vegan,
+    xcms,
+    xml2
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.0
