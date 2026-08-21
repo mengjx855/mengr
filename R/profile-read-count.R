@@ -1,19 +1,20 @@
 #### Jin-Xin Meng, 20220529, 20260820, v0.2.0 ####
 
 .align_gene_length <- function(
-    profile, gene_length, feature_col = 'name', length_col = 'length') {
+  profile, gene_length, feature_col = "name", length_col = "length"
+) {
   ## 按 profile 行名对齐 gene length，不能依赖输入顺序
   profile_df <- .as_profile_df(profile, numeric = TRUE)
   length_df <- .as_df(gene_length)
-  .check_columns(length_df, c(feature_col, length_col), object = 'gene_length')
+  .check_columns(length_df, c(feature_col, length_col), object = "gene_length")
   if (anyDuplicated(length_df[[feature_col]])) {
-    stop('Duplicated feature identifiers found in gene_length.')
+    stop("Duplicated feature identifiers found in gene_length.")
   }
   length_vec <- as.numeric(length_df[[length_col]][
     match(rownames(profile_df), length_df[[feature_col]])
   ])
   if (any(!is.finite(length_vec)) || any(length_vec <= 0)) {
-    stop('Every profile feature should have a finite positive gene length.')
+    stop("Every profile feature should have a finite positive gene length.")
   }
   list(profile_mat = as.matrix(profile_df), length_vec = length_vec)
 }
@@ -29,7 +30,8 @@
 #' @return A result object described in the Details section.
 #' @export
 rc2tpm <- function(
-    profile, gene_length, feature_col = 'name', length_col = 'length') {
+  profile, gene_length, feature_col = "name", length_col = "length"
+) {
   ## 1. 先计算 reads per kilobase
   aligned <- .align_gene_length(
     profile, gene_length, feature_col, length_col
@@ -38,8 +40,8 @@ rc2tpm <- function(
 
   ## 2. 每个样本标准化到一百万
   scale_vec <- colSums(rpk_mat, na.rm = TRUE) / 1e6
-  if (any(scale_vec <= 0)) stop('Every sample should have a positive RPK sum.')
-  data.frame(sweep(rpk_mat, 2, scale_vec, '/'), check.names = FALSE)
+  if (any(scale_vec <= 0)) stop("Every sample should have a positive RPK sum.")
+  data.frame(sweep(rpk_mat, 2, scale_vec, "/"), check.names = FALSE)
 }
 
 #' Convert fragment or read counts to FPKM/RPKM
@@ -53,15 +55,16 @@ rc2tpm <- function(
 #' @return A result object described in the Details section.
 #' @export
 rc2fpkm <- function(
-    profile, gene_length, feature_col = 'name', length_col = 'length') {
+  profile, gene_length, feature_col = "name", length_col = "length"
+) {
   ## FPKM 与 RPKM 公式相同，区别在输入是 fragment counts 还是 read counts
   aligned <- .align_gene_length(
     profile, gene_length, feature_col, length_col
   )
   library_size <- colSums(aligned$profile_mat, na.rm = TRUE)
-  if (any(library_size <= 0)) stop('Every sample should have a positive count sum.')
+  if (any(library_size <= 0)) stop("Every sample should have a positive count sum.")
   result_mat <- aligned$profile_mat * 1e9 / aligned$length_vec
-  result_mat <- sweep(result_mat, 2, library_size, '/')
+  result_mat <- sweep(result_mat, 2, library_size, "/")
   data.frame(result_mat, check.names = FALSE)
 }
 
@@ -94,8 +97,9 @@ rc2fpkm <- function(
 #'   与 `profile` 维度及 dimnames 相同的数值矩阵。
 #' @export
 rc2rpm <- function(
-    profile, library_size = NULL, sample_col = 'sample',
-    library_size_col = 'library_size', library_size_sep = NULL) {
+  profile, library_size = NULL, sample_col = "sample",
+  library_size_col = "library_size", library_size_sep = NULL
+) {
   ## 1. 整理 profile；默认用各列之和作为 library size
   profile_mat <- as.matrix(.as_profile_df(profile, numeric = TRUE))
   if (is.null(library_size)) {
@@ -109,17 +113,18 @@ rc2rpm <- function(
     ## 2b. 文件路径先读取为两列表；否则直接整理输入的数据框
     if (is.character(library_size) && length(library_size) == 1) {
       if (!file.exists(library_size)) {
-        stop('library_size file was not found: ', library_size)
+        stop("library_size file was not found: ", library_size)
       }
       if (is.null(library_size_sep)) {
-        library_size_sep <- if (grepl('[.]csv$', library_size, ignore.case = TRUE)) {
-          ','
+        library_size_sep <- if (grepl("[.]csv$", library_size, ignore.case = TRUE)) {
+          ","
         } else {
-          '\t'
+          "\t"
         }
       }
       library_size_df <- utils::read.delim(
-        library_size, sep = library_size_sep, check.names = FALSE
+        library_size,
+        sep = library_size_sep, check.names = FALSE
       )
     } else {
       library_size_df <- .as_df(library_size)
@@ -128,10 +133,10 @@ rc2rpm <- function(
     ## 2c. 两列表通过显式列名按 sample name 对齐
     .check_columns(
       library_size_df, c(sample_col, library_size_col),
-      object = 'library_size'
+      object = "library_size"
     )
     if (anyDuplicated(library_size_df[[sample_col]])) {
-      stop('Duplicated sample identifiers found in library_size.')
+      stop("Duplicated sample identifiers found in library_size.")
     }
     library_size_vec <- as.numeric(library_size_df[[library_size_col]][
       match(colnames(profile_mat), library_size_df[[sample_col]])
@@ -140,8 +145,8 @@ rc2rpm <- function(
 
   ## 3. 检查对齐结果并转换为 RPM
   if (any(!is.finite(library_size_vec)) || any(library_size_vec <= 0)) {
-    stop('Every profile sample should have a finite positive library size.')
+    stop("Every profile sample should have a finite positive library size.")
   }
   names(library_size_vec) <- colnames(profile_mat)
-  sweep(profile_mat, 2, library_size_vec / 1e6, '/')
+  sweep(profile_mat, 2, library_size_vec / 1e6, "/")
 }

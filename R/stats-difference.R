@@ -26,7 +26,6 @@
 #   6: round(pvalue, 3)
 
 .add_plab <- function(pvalue, format = 2) {
-  
   if (missing(pvalue)) {
     cat("  format-1: '***', '**', '*', 'ns'\n")
     cat("  format-2: '***', '**', '*',   ''\n")
@@ -36,21 +35,20 @@
     cat("  format-6: round(pvalue, digits = 3)\n")
     return(invisible(NULL))
   }
-  
+
   if (format == 6) {
     return(round(pvalue, 3))
   }
-  
-  labs <- switch(
-    as.character(format),
-    '1' = c('***', '**', '*', 'ns'),
-    '2' = c('***', '**', '*', ''),
-    '3' = c('#', '+', '*', ''),
-    '4' = c('+', '**', '*', ''),
-    '5' = c('p<0.001', 'p<0.01', 'p<0.05', 'p>0.05'),
-    c('***', '**', '*', '')
+
+  labs <- switch(as.character(format),
+    "1" = c("***", "**", "*", "ns"),
+    "2" = c("***", "**", "*", ""),
+    "3" = c("#", "+", "*", ""),
+    "4" = c("+", "**", "*", ""),
+    "5" = c("p<0.001", "p<0.01", "p<0.05", "p>0.05"),
+    c("***", "**", "*", "")
   )
-  
+
   label <- cut(
     pvalue,
     include.lowest = TRUE,
@@ -58,9 +56,9 @@
     labels = labs
   ) |>
     as.character()
-  
-  label[is.na(label)] <- ''
-  
+
+  label[is.na(label)] <- ""
+
   return(label)
 }
 
@@ -68,7 +66,7 @@
 ## 将非正值和非有限值替换为按 feature 计算的伪计数
 .replace_nonpositive <- function(x, pseudo_factor = 0.5) {
   x <- as.matrix(x)
-  storage.mode(x) <- 'numeric'
+  storage.mode(x) <- "numeric"
   out <- x
 
   global_min <- suppressWarnings(
@@ -118,15 +116,14 @@
 #' @return A result object described in the Details section.
 #' @export
 calcu_empirical_p <- function(
-    obs, random, alternative = c('auto', 'greater', 'less', 'two.sided'), 
-    simplify = FALSE
-  ) {
-  
+  obs, random, alternative = c("auto", "greater", "less", "two.sided"),
+  simplify = FALSE
+) {
   alternative <- match.arg(alternative)
-  
+
   random <- random[is.finite(random)]
   n <- length(random)
-  
+
   if (n == 0 || !is.finite(obs)) {
     out <- list(
       observed = obs,
@@ -135,40 +132,40 @@ calcu_empirical_p <- function(
       pval = NA_real_,
       side = NA_character_
     )
-    
+
     if (isTRUE(simplify)) {
       out <- data.frame(out, check.names = FALSE)
     }
-    
+
     return(out)
   }
-  
+
   random_mean <- mean(random, na.rm = TRUE)
-  
-  if (alternative == 'auto') {
-    alternative <- ifelse(obs >= random_mean, 'greater', 'less')
+
+  if (alternative == "auto") {
+    alternative <- ifelse(obs >= random_mean, "greater", "less")
   }
-  
-  if (alternative == 'greater') {
+
+  if (alternative == "greater") {
     p <- (1 + sum(random >= obs, na.rm = TRUE)) / (1 + n)
-    side <- 'greater'
+    side <- "greater"
   }
-  
-  if (alternative == 'less') {
+
+  if (alternative == "less") {
     p <- (1 + sum(random <= obs, na.rm = TRUE)) / (1 + n)
-    side <- 'less'
+    side <- "less"
   }
-  
-  if (alternative == 'two.sided') {
+
+  if (alternative == "two.sided") {
     p1 <- (1 + sum(random >= obs, na.rm = TRUE)) / (1 + n)
     p2 <- (1 + sum(random <= obs, na.rm = TRUE)) / (1 + n)
     p <- min(1, 2 * min(p1, p2))
-    side <- 'two.sided'
+    side <- "two.sided"
   }
-  
+
   sd_random <- stats::sd(random, na.rm = TRUE)
   ses <- ifelse(sd_random > 0, (obs - random_mean) / sd_random, NA_real_)
-  
+
   out <- list(
     observed = obs,
     random_mean = random_mean,
@@ -176,11 +173,11 @@ calcu_empirical_p <- function(
     pval = p,
     side = side
   )
-  
+
   if (isTRUE(simplify)) {
     out <- data.frame(out, check.names = FALSE)
   }
-  
+
   return(out)
 }
 
@@ -208,89 +205,89 @@ calcu_empirical_p <- function(
 #' @param ... Additional arguments passed to the underlying function.
 #' @return A result object described in the Details section.
 #' @export
-calcu_diff <- function(data, formula, method = c('wilcox', 'anova', 't'), 
-                       var_equal = FALSE, add_plab = FALSE, 
+calcu_diff <- function(data, formula, method = c("wilcox", "anova", "t"),
+                       var_equal = FALSE, add_plab = FALSE,
                        plab_fmt = 2, ...) {
-  
   method <- match.arg(method)
-  
+
   terms <- stats::terms(formula)
   response <- all.vars(terms)[1]
   group <- all.vars(terms)[2]
-  
-  if (!response %in% names(data)) 
-    stop('variable ', response, ' not in data')
-  
-  if (!group %in% names(data))
-    stop('variable ', group, ' not in data')
-  
+
+  if (!response %in% names(data)) {
+    stop("variable ", response, " not in data")
+  }
+
+  if (!group %in% names(data)) {
+    stop("variable ", group, " not in data")
+  }
+
   data <- data |>
     dplyr::filter(!is.na(.data[[response]]), !is.na(.data[[group]]))
-  
+
   if (is.factor(data[[group]])) {
     group_level <- levels(droplevels(data[[group]]))
   } else {
     group_level <- unique(as.character(data[[group]]))
   }
-  
+
   if (length(group_level) < 2) {
-    stop('at least two groups are required.')
+    stop("at least two groups are required.")
   }
-  
+
   comparison <- utils::combn(group_level, m = 2, simplify = FALSE)
-  
+
   difference <- purrr::map_dfr(
     comparison, \(x) {
-      
       pair_df <- dplyr::filter(data, .data[[group]] %in% x)
-      
-      test <- tryCatch({
-        
-        if (method == 'wilcox') {
-          stats::wilcox.test(formula, pair_df, ...) |> suppressWarnings()
-          
-        } else if (method == 'anova') {
-          stats::oneway.test(formula, pair_df, ...)
-          
-        } else if (method == 't') {
-          stats::t.test(
-            formula, pair_df, var.equal = var_equal, ...
-          ) |>
-            suppressWarnings()
-        }
-        
-      }, error = function(e) NULL)
-      
-      method_name <- dplyr::case_when(
-        method == 'wilcox' ~ 'Wilcoxon rank-sum test',
-        method == 'anova'  ~ 'One-way ANOVA test',
-        method == 't' & isTRUE(var_equal) ~ "Student's t-test",
-        method == 't' & isFALSE(var_equal) ~ 'Welch t-test'
+
+      test <- tryCatch(
+        {
+          if (method == "wilcox") {
+            stats::wilcox.test(formula, pair_df, ...) |> suppressWarnings()
+          } else if (method == "anova") {
+            stats::oneway.test(formula, pair_df, ...)
+          } else if (method == "t") {
+            stats::t.test(
+              formula, pair_df,
+              var.equal = var_equal, ...
+            ) |>
+              suppressWarnings()
+          }
+        },
+        error = function(e) NULL
       )
-      
+
+      method_name <- dplyr::case_when(
+        method == "wilcox" ~ "Wilcoxon rank-sum test",
+        method == "anova" ~ "One-way ANOVA test",
+        method == "t" & isTRUE(var_equal) ~ "Student's t-test",
+        method == "t" & isFALSE(var_equal) ~ "Welch t-test"
+      )
+
       data.frame(
-        comparison = paste0(x, collapse = '_vs_'),
+        comparison = paste0(x, collapse = "_vs_"),
         pval = ifelse(is.null(test), NA_real_, test$p.value),
         method = method_name
       )
     }
   )
-  
+
   if (nrow(difference) >= 3) {
     difference <- difference |>
-      dplyr::mutate(padj = stats::p.adjust(pval, method = 'BH'), .after = 'pval')
+      dplyr::mutate(padj = stats::p.adjust(pval, method = "BH"), .after = "pval")
   }
-  
+
   if (isTRUE(add_plab)) {
-    if ('padj' %in% colnames(difference)) {
+    if ("padj" %in% colnames(difference)) {
       difference <- difference |>
-        dplyr::mutate(plab = .add_plab(padj, plab_fmt), .after = 'padj')
+        dplyr::mutate(plab = .add_plab(padj, plab_fmt), .after = "padj")
     } else {
       difference <- difference |>
-        dplyr::mutate(plab = .add_plab(pval, plab_fmt), .after = 'pval')
+        dplyr::mutate(plab = .add_plab(pval, plab_fmt), .after = "pval")
     }
   }
-  
+
   return(difference)
 }
 
@@ -322,13 +319,13 @@ calcu_diff <- function(data, formula, method = c('wilcox', 'anova', 't'),
 #' @return A result object described in the Details section.
 #' @export
 calcu_diff_profile <- function(
-    profile, group, group_by = NULL, comparison = NULL,
-    method = c('wilcox', 'anova', 't'), add_plab = FALSE,
-    plab_fmt = 2, var_equal = FALSE, progress = TRUE,
-    sample_col = 'sample', group_col = 'group', ...) {
-  
+  profile, group, group_by = NULL, comparison = NULL,
+  method = c("wilcox", "anova", "t"), add_plab = FALSE,
+  plab_fmt = 2, var_equal = FALSE, progress = TRUE,
+  sample_col = "sample", group_col = "group", ...
+) {
   method <- match.arg(method)
-  
+
   ## Backward compatibility for the former group_by argument.
   if (!is.null(group_by)) group_col <- group_by
 
@@ -342,25 +339,23 @@ calcu_diff_profile <- function(
   profile_df <- aligned$profile_df
   group_df <- aligned$group_df
   group_vec <- as.character(group_df[[group_col]])
-  
+
   if (is.null(comparison)) {
     comparison <- utils::combn(unique(group_vec), m = 2, simplify = FALSE)
   } else if (is.vector(comparison) && !is.list(comparison)) {
     comparison <- list(comparison)
   }
-  
+
   test_df <- data.frame(t(profile_df), check.names = FALSE) |>
-    tibble::rownames_to_column('sample') |>
+    tibble::rownames_to_column("sample") |>
     dplyr::mutate(group = group_vec)
 
   feature_vec <- rownames(profile_df)
-  
+
   result_df <- purrr::map_dfr(
     comparison, \(x) {
-      
       purrr::map_dfr(
         feature_vec, \(feature) {
-          
           test_df |>
             dplyr::select(
               group,
@@ -368,8 +363,8 @@ calcu_diff_profile <- function(
             ) |>
             dplyr::filter(group %in% x) |>
             calcu_diff(
-              value ~ group, 
-              method = method, 
+              value ~ group,
+              method = method,
               var_equal = var_equal,
               ...
             ) |>
@@ -379,21 +374,21 @@ calcu_diff_profile <- function(
       )
     }
   )
-  
-  
+
+
   result_df <- result_df |>
-    dplyr::mutate(padj = stats::p.adjust(pval, method = 'BH'), .after = 'pval')
-  
+    dplyr::mutate(padj = stats::p.adjust(pval, method = "BH"), .after = "pval")
+
   if (isTRUE(add_plab)) {
     result_df <- result_df |>
-      dplyr::mutate(plab = .add_plab(padj, plab_fmt), .after = 'padj')
+      dplyr::mutate(plab = .add_plab(padj, plab_fmt), .after = "padj")
   }
-  
+
   return(result_df)
 }
 
 
-#### difference_analysis #### 
+#### difference_analysis ####
 # 对 profile 做两组差异分析，同时输出均值、FC、log2FC、prevalence 和 p/q 值
 #
 # profile:
@@ -592,32 +587,31 @@ calcu_diff_profile <- function(
 #' @return A result object described in the Details section.
 #' @export
 difference_analysis <- function(
-    profile, group, sample_col = 'sample', group_col = 'group', comparison = NULL,
-    input_scale = c("raw", "log10", "log2"),
-    test_trans = c("none", "log10", "log2", "sqrt", "ra", "clr"),
-    fc_method = c("arithmetic", "geometric"),
-    method = c("wilcox", "t"), exact = NULL, var_equal = FALSE,
-    min_abundance = 0, fc_pseudo = 1e-6, log_pseudo_factor = 0.5,
-    progress = TRUE, digits = 6, ...
+  profile, group, sample_col = "sample", group_col = "group", comparison = NULL,
+  input_scale = c("raw", "log10", "log2"),
+  test_trans = c("none", "log10", "log2", "sqrt", "ra", "clr"),
+  fc_method = c("arithmetic", "geometric"),
+  method = c("wilcox", "t"), exact = NULL, var_equal = FALSE,
+  min_abundance = 0, fc_pseudo = 1e-6, log_pseudo_factor = 0.5,
+  progress = TRUE, digits = 6, ...
 ) {
-  
   input_scale <- match.arg(input_scale)
   test_trans <- match.arg(test_trans)
   fc_method <- match.arg(fc_method)
   method <- match.arg(method)
-  
+
   profile <- data.frame(profile, check.names = FALSE)
   group <- data.frame(group, check.names = FALSE)
-  
+
   ## 1. group 检查和内部统一
   if (!all(c(sample_col, group_col) %in% colnames(group))) {
-    stop('group should contain columns: ', sample_col, ' | ', group_col)
+    stop("group should contain columns: ", sample_col, " | ", group_col)
   }
-  
+
   if (is.null(comparison) || length(comparison) != 2) {
     stop("comparison should be c(group1, group2).")
   }
-  
+
   group_use <- group |>
     dplyr::select(
       sample = dplyr::all_of(sample_col),
@@ -631,124 +625,124 @@ difference_analysis <- function(
       .data$group %in% comparison,
       .data$sample %in% colnames(profile)
     )
-  
+
   if (nrow(group_use) == 0) {
     stop("No matched samples between group and profile.")
   }
-  
+
   group_use$group <- factor(group_use$group, levels = comparison)
   group_use <- group_use |> dplyr::arrange(.data$group)
-  
+
   sample_n <- table(factor(group_use$group, levels = comparison))
-  
+
   if (any(sample_n == 0)) {
     stop(
       "Each comparison group should contain samples. Current sample size: ",
       paste0(names(sample_n), "=", sample_n, collapse = ", ")
     )
   }
-  
+
   message(
     "[", format(Sys.time()), "] Sample: ",
     paste0(paste0(names(sample_n), " (n=", sample_n, ")"), collapse = ", ")
   )
-  
+
   ## 2. 提取并整理矩阵
   profile <- profile[, group_use$sample, drop = FALSE]
-  
+
   mat_input <- as.matrix(profile)
   storage.mode(mat_input) <- "numeric"
-  
+
   if (is.null(rownames(mat_input))) {
     rownames(mat_input) <- paste0("feature_", seq_len(nrow(mat_input)))
   }
-  
+
   ## 根据输入尺度过滤 feature
   if (input_scale == "raw") {
     keep <- rowSums(is.finite(mat_input) & mat_input != 0) > 0
   } else {
     keep <- rowSums(is.finite(mat_input)) > 0
   }
-  
+
   mat_input <- mat_input[keep, , drop = FALSE]
-  
+
   if (nrow(mat_input) == 0) {
     stop("No features left after filtering.")
   }
-  
+
   feature_names <- rownames(mat_input)
-  
+
   ## 3. 根据 input_scale 反推 raw 尺度矩阵
-  mat_raw <- switch(
-    input_scale,
+  mat_raw <- switch(input_scale,
     raw = mat_input,
     log10 = 10^mat_input,
     log2 = 2^mat_input
   )
-  
+
   ## 4. 为差异检验准备转换矩阵
   mat_test <- mat_input
-  if (test_trans != 'none') {
+  if (test_trans != "none") {
     mat_test <- mat_raw
 
-    if (test_trans == 'ra') {
+    if (test_trans == "ra") {
       mat_test[!is.finite(mat_test)] <- 0
       library_size <- colSums(mat_test, na.rm = TRUE)
       library_size[library_size == 0] <- 1
-      mat_test <- sweep(mat_test, 2, library_size, '/')
+      mat_test <- sweep(mat_test, 2, library_size, "/")
     }
 
-    if (test_trans == 'sqrt') {
+    if (test_trans == "sqrt") {
       mat_test[!is.finite(mat_test)] <- 0
       mat_test[mat_test < 0] <- 0
       mat_test <- sqrt(mat_test)
     }
 
-    if (test_trans %in% c('log10', 'log2', 'clr')) {
+    if (test_trans %in% c("log10", "log2", "clr")) {
       mat_test <- .replace_nonpositive(
-        mat_test, pseudo_factor = log_pseudo_factor
+        mat_test,
+        pseudo_factor = log_pseudo_factor
       )
-      mat_test <- switch(
-        test_trans,
+      mat_test <- switch(test_trans,
         log10 = log10(mat_test),
         log2 = log2(mat_test),
         clr = {
           log_mat <- log(mat_test)
-          sweep(log_mat, 2, colMeans(log_mat, na.rm = TRUE), '-')
+          sweep(log_mat, 2, colMeans(log_mat, na.rm = TRUE), "-")
         }
       )
     }
   }
-  
+
   ## 6. 逐 feature 差异检验
   message("[", format(Sys.time()), "] Assessing P-value.")
-  
+
   difference <- purrr::map_dfr(
     feature_names,
     function(f) {
-      
       df <- data.frame(
         value = as.numeric(mat_test[f, ]),
         group = group_use$group
       )
-      
-      test <- tryCatch({
-        
-        if (method == "wilcox") {
-          stats::wilcox.test(
-            value ~ group, data = df, exact = exact, ...
-          ) |>
-            suppressWarnings()
-          
-        } else {
-          stats::t.test(
-            value ~ group, data = df, var.equal = var_equal, ...
-          ) |>
-            suppressWarnings()
-        }
-        
-      }, error = function(e) NULL)
-      
+
+      test <- tryCatch(
+        {
+          if (method == "wilcox") {
+            stats::wilcox.test(
+              value ~ group,
+              data = df, exact = exact, ...
+            ) |>
+              suppressWarnings()
+          } else {
+            stats::t.test(
+              value ~ group,
+              data = df, var.equal = var_equal, ...
+            ) |>
+              suppressWarnings()
+          }
+        },
+        error = function(e) NULL
+      )
+
       data.frame(
         name = f,
         pval = if (is.null(test)) NA_real_ else test$p.value,
@@ -766,53 +760,51 @@ difference_analysis <- function(
       padj = stats::p.adjust(.data$pval, method = "BH"),
       .after = "pval"
     )
-  
+
   ## 7. 计算均值、FC 和 log2FC
   message("[", format(Sys.time()), "] Mean abundance / intensity and FC.")
-  
+
   idx1 <- group_use$group == comparison[1]
   idx2 <- group_use$group == comparison[2]
-  
+
   if (fc_method == "arithmetic") {
-    
     avg_ab1 <- rowMeans(mat_raw[, idx1, drop = FALSE], na.rm = TRUE)
     avg_ab2 <- rowMeans(mat_raw[, idx2, drop = FALSE], na.rm = TRUE)
-    
+
     FC <- (avg_ab1 + fc_pseudo) / (avg_ab2 + fc_pseudo)
     log2FC <- log2(FC)
   }
-  
+
   if (fc_method == "geometric") {
-    
     mat_log2_for_fc <- log2(
       .replace_nonpositive(mat_raw, pseudo_factor = log_pseudo_factor)
     )
-    
+
     mean_log2_1 <- rowMeans(mat_log2_for_fc[, idx1, drop = FALSE], na.rm = TRUE)
     mean_log2_2 <- rowMeans(mat_log2_for_fc[, idx2, drop = FALSE], na.rm = TRUE)
-    
+
     avg_ab1 <- 2^mean_log2_1
     avg_ab2 <- 2^mean_log2_2
-    
+
     log2FC <- mean_log2_1 - mean_log2_2
     FC <- 2^log2FC
   }
-  
+
   ## 8. Prevalence
   message("[", format(Sys.time()), "] Prevalence.")
-  
+
   prev_mat <- is.finite(mat_raw) & mat_raw > min_abundance
-  
+
   prevalence <- data.frame(
     name = feature_names,
     prev1 = rowMeans(prev_mat[, idx1, drop = FALSE]),
     prev2 = rowMeans(prev_mat[, idx2, drop = FALSE]),
     check.names = FALSE
   )
-  
+
   ## 9. 合并结果
   message("[", format(Sys.time()), "] Output result.")
-  
+
   result <- data.frame(
     name = feature_names,
     comparison = paste0(comparison, collapse = "_vs_"),
@@ -834,8 +826,8 @@ difference_analysis <- function(
         \(x) round(x, digits)
       )
     )
-  
+
   message("[", format(Sys.time()), "] end ...")
-  
+
   return(result)
 }

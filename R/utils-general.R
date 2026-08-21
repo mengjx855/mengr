@@ -66,52 +66,46 @@ ceiling_n <- function(x, n = 2) {
 #' @param sort_out Whether the returned set-operation result is sorted.
 #' @return A result object described in the Details section.
 #' @export
-set_calcu <- function(..., method = c('intersect', 'union', 'setdiff'),
+set_calcu <- function(..., method = c("intersect", "union", "setdiff"),
                       unique_out = TRUE, sort_out = FALSE) {
-  
   method <- match.arg(method)
-  
+
   x <- list(...)
-  
+
   ## 支持直接输入一个 list
   if (length(x) == 1 && is.list(x[[1]])) {
     x <- x[[1]]
   }
-  
+
   ## 去掉 NULL
   x <- x[!vapply(x, is.null, logical(1))]
-  
+
   if (length(x) == 0) {
     return(character())
   }
-  
+
   x <- lapply(x, as.vector)
-  
+
   if (isTRUE(unique_out)) {
     x <- lapply(x, unique)
   }
-  
-  if (method == 'intersect') {
-    
+
+  if (method == "intersect") {
     out <- Reduce(intersect, x)
-    
-  } else if (method == 'union') {
-    
+  } else if (method == "union") {
     out <- Reduce(union, x)
-    
-  } else if (method == 'setdiff') {
-    
+  } else if (method == "setdiff") {
     if (length(x) == 1) {
       out <- x[[1]]
     } else {
       out <- setdiff(x[[1]], Reduce(union, x[-1]))
     }
   }
-  
+
   if (isTRUE(sort_out)) {
     out <- sort(out)
   }
-  
+
   return(out)
 }
 
@@ -130,7 +124,7 @@ set_calcu <- function(..., method = c('intersect', 'union', 'setdiff'),
 #' @param light Text color returned for a sufficiently dark background.
 #' @return A result object described in the Details section.
 #' @export
-get_text_color <- function(color, threshold = 0.5, dark = 'black', light = 'white') {
+get_text_color <- function(color, threshold = 0.5, dark = "black", light = "white") {
   rgb_mat <- grDevices::col2rgb(color) # 将颜色转换为 RGB 值
   luminance <- (0.299 * rgb_mat[1, ] + 0.587 * rgb_mat[2, ] + 0.114 * rgb_mat[3, ]) / 255
   out <- ifelse(luminance >= threshold, dark, light)
@@ -156,28 +150,28 @@ get_text_color <- function(color, threshold = 0.5, dark = 'black', light = 'whit
 #' @param replace_sheet Whether an existing worksheet with the same name is replaced.
 #' @return A result object described in the Details section.
 #' @export
-write_xlsx_with_comment <- function(data, filename, comment = '###', sheet = 'Sheet1',
-                                    comment_color = 'red', overwrite = TRUE,
+write_xlsx_with_comment <- function(data, filename, comment = "###", sheet = "Sheet1",
+                                    comment_color = "red", overwrite = TRUE,
                                     append = TRUE, replace_sheet = FALSE) {
-  if (!requireNamespace('openxlsx', quietly = TRUE)) {
+  if (!requireNamespace("openxlsx", quietly = TRUE)) {
     stop("Package 'openxlsx' is required.")
   }
-  
+
   if (is.null(comment)) {
     comment <- character(0)
   }
-  
+
   if (is.list(comment)) {
     comment <- unlist(comment, use.names = FALSE)
   }
-  
+
   # 1. 如果文件存在并且允许追加，则读取已有 workbook
   if (file.exists(filename) && append) {
     wb <- openxlsx::loadWorkbook(filename)
   } else {
     wb <- openxlsx::createWorkbook()
   }
-  
+
   # 2. 如果 sheet 已存在，决定是否替换
   existing_sheets <- names(wb)
   if (sheet %in% existing_sheets) {
@@ -190,31 +184,36 @@ write_xlsx_with_comment <- function(data, filename, comment = '###', sheet = 'Sh
       ))
     }
   }
-  
+
   # 3. 新增 sheet
   openxlsx::addWorksheet(wb, sheet)
-  
+
   comment_style <- openxlsx::createStyle(fontColour = comment_color)
-  
+
   # 4. 写入顶部注释
   if (length(comment) > 0) {
     for (i in seq_along(comment)) {
       openxlsx::writeData(
-        wb, sheet = sheet, x = comment[i], startRow = i, 
-        startCol = 1, colNames = FALSE)
-      openxlsx::addStyle(wb, sheet = sheet, style = comment_style,
-        rows = i, cols = 1, gridExpand = TRUE)
+        wb,
+        sheet = sheet, x = comment[i], startRow = i,
+        startCol = 1, colNames = FALSE
+      )
+      openxlsx::addStyle(wb,
+        sheet = sheet, style = comment_style,
+        rows = i, cols = 1, gridExpand = TRUE
+      )
     }
     start_row <- length(comment) + 2
   } else {
     start_row <- 1
   }
-  
+
   # 5. 写入数据
   openxlsx::writeData(
-    wb, sheet = sheet, x = data, startRow = start_row, startCol = 1
+    wb,
+    sheet = sheet, x = data, startRow = start_row, startCol = 1
   )
-  
+
   # 6. 保存
   openxlsx::saveWorkbook(wb, file = filename, overwrite = overwrite)
 }
@@ -233,21 +232,21 @@ write_xlsx_with_comment <- function(data, filename, comment = '###', sheet = 'Sh
 #' @return A result object described in the Details section.
 #' @export
 read_xlsx_multiple <- function(file, sheets = NULL, ...) {
-  if (!requireNamespace('openxlsx', quietly = TRUE)) {
+  if (!requireNamespace("openxlsx", quietly = TRUE)) {
     stop("Package 'openxlsx' is required.")
   }
-  
+
   if (is.null(sheets)) {
     sheets <- openxlsx::getSheetNames(file)
   }
-  
+
   data <- lapply(
     sheets,
     \(x) openxlsx::read.xlsx(file, sheet = x, ...)
   )
-  
+
   names(data) <- sheets
-  
+
   return(data)
 }
 
@@ -272,11 +271,11 @@ read_xlsx_multiple <- function(file, sheets = NULL, ...) {
 # 输出:
 #   simplify = TRUE : named vector，名字为 feature，值为 cluster
 #   simplify = FALSE: data.frame(name, cluster)
-# 
+#
 # 用法：
 #   1. fastANI
 #     cl <- pairwise_cluster(
-#      data = ani_df, feature1_col = "ref", feature2_col = "query", 
+#      data = ani_df, feature1_col = "ref", feature2_col = "query",
 #      value_col = "ani", one_minus = TRUE, cutoff = 1 - 0.95,
 #      linkage_method = "average", simplify = FALSE
 #    )
@@ -311,38 +310,39 @@ read_xlsx_multiple <- function(file, sheets = NULL, ...) {
 #' @param simplify Logical control for `simplify`.
 #' @return A result object described in the Details section.
 #' @export
-pairwise_cluster <- function(data, feature1_col = NULL, feature2_col = NULL, 
+pairwise_cluster <- function(data, feature1_col = NULL, feature2_col = NULL,
                              value_col = NULL, cutoff = 0.05, one_minus = FALSE,
-                             abs_value = FALSE, linkage_method = "average", 
-                             fill_missing = 1, duplicate_fun = mean, 
+                             abs_value = FALSE, linkage_method = "average",
+                             fill_missing = 1, duplicate_fun = mean,
                              simplify = TRUE) {
-  
   data <- data.frame(data, check.names = FALSE)
-  
+
   ## 默认使用前三列
   if (is.null(feature1_col)) feature1_col <- colnames(data)[1]
   if (is.null(feature2_col)) feature2_col <- colnames(data)[2]
-  if (is.null(value_col))    value_col    <- colnames(data)[3]
-  
+  if (is.null(value_col)) value_col <- colnames(data)[3]
+
   ## 支持列号指定
   if (is.numeric(feature1_col)) feature1_col <- colnames(data)[feature1_col]
   if (is.numeric(feature2_col)) feature2_col <- colnames(data)[feature2_col]
-  if (is.numeric(value_col))    value_col    <- colnames(data)[value_col]
-  
+  if (is.numeric(value_col)) value_col <- colnames(data)[value_col]
+
   if (!all(c(feature1_col, feature2_col, value_col) %in% colnames(data))) {
     stop("feature1_col / feature2_col / value_col not found in data.")
   }
-  
+
   linkage_method <- match.arg(
     linkage_method,
-    c("average", "complete", "single", "median", "centroid",
-      "ward.D", "ward.D2", "mcquitty", "weighted", "ward")
+    c(
+      "average", "complete", "single", "median", "centroid",
+      "ward.D", "ward.D2", "mcquitty", "weighted", "ward"
+    )
   )
-  
+
   ## 兼容 scipy 的命名
   if (linkage_method == "weighted") linkage_method <- "mcquitty"
   if (linkage_method == "ward") linkage_method <- "ward.D2"
-  
+
   ## 整理三列表
   data <- data.frame(
     feature1 = as.character(data[[feature1_col]]),
@@ -350,7 +350,7 @@ pairwise_cluster <- function(data, feature1_col = NULL, feature2_col = NULL,
     value = suppressWarnings(as.numeric(data[[value_col]])),
     stringsAsFactors = FALSE
   )
-  
+
   data <- data |>
     dplyr::filter(
       !is.na(feature1),
@@ -359,27 +359,27 @@ pairwise_cluster <- function(data, feature1_col = NULL, feature2_col = NULL,
       feature2 != "",
       is.finite(value)
     )
-  
+
   if (nrow(data) == 0) {
     stop("No valid pairwise records.")
   }
-  
+
   ## 如果是相关性，可以先取绝对值
   if (isTRUE(abs_value)) {
     data$value <- abs(data$value)
   }
-  
+
   ## value 转 distance
   data$distance <- if (isTRUE(one_minus)) {
     1 - data$value
   } else {
     data$value
   }
-  
+
   if (any(data$distance < 0, na.rm = TRUE)) {
     warning("Some distances are < 0. Please check value scale or one_minus setting.")
   }
-  
+
   ## A-B 和 B-A 统一成一个方向
   ## pmin(feature1, feature2)：一行一行地比对，一行中的值相比，谁小谁就去 node1
   data <- data |>
@@ -387,7 +387,7 @@ pairwise_cluster <- function(data, feature1_col = NULL, feature2_col = NULL,
       node1 = pmin(feature1, feature2),
       node2 = pmax(feature1, feature2)
     )
-  
+
   ## 重复 pair 合并，默认取平均 distance
   data2 <- data |>
     dplyr::group_by(node1, node2) |>
@@ -395,36 +395,36 @@ pairwise_cluster <- function(data, feature1_col = NULL, feature2_col = NULL,
       distance = duplicate_fun(distance, na.rm = TRUE),
       .groups = "drop"
     )
-  
+
   ## 构建距离矩阵
   features <- sort(unique(c(data2$node1, data2$node2)))
-  
+
   dist_mat <- matrix(
     fill_missing,
     nrow = length(features),
     ncol = length(features),
     dimnames = list(features, features)
   )
-  
+
   diag(dist_mat) <- 0
-  
+
   for (i in seq_len(nrow(data2))) {
     a <- data2$node1[i]
     b <- data2$node2[i]
     d <- data2$distance[i]
-    
+
     dist_mat[a, b] <- d
     dist_mat[b, a] <- d
   }
-  
+
   ## 层次聚类
   hc <- stats::hclust(
     stats::as.dist(dist_mat),
     method = linkage_method
   )
-  
+
   cluster <- stats::cutree(hc, h = cutoff)
-  
+
   if (isTRUE(simplify)) {
     out <- cluster
   } else {
@@ -435,10 +435,10 @@ pairwise_cluster <- function(data, feature1_col = NULL, feature2_col = NULL,
       check.names = FALSE
     )
   }
-  
+
   attr(out, "hclust") <- hc
   attr(out, "dist_matrix") <- dist_mat
-  
+
   return(out)
 }
 
@@ -458,20 +458,20 @@ theme_bw_clean <- function(base_size = 12) {
   ## 返回可继续用“+”叠加修改的 ggplot2 theme 对象
   ggplot2::theme(
     axis.ticks = ggplot2::element_line(linewidth = 0.5),
-    axis.ticks.length = grid::unit(2, 'mm'),
-    axis.text = ggplot2::element_text(size = base_size, color = 'black'),
-    axis.title = ggplot2::element_text(size = base_size, color = 'black'),
+    axis.ticks.length = grid::unit(2, "mm"),
+    axis.text = ggplot2::element_text(size = base_size, color = "black"),
+    axis.title = ggplot2::element_text(size = base_size, color = "black"),
     strip.background = ggplot2::element_blank(),
     plot.title = ggplot2::element_text(
-      size = base_size + 1, color = 'black', face = 'bold', hjust = 0.5
+      size = base_size + 1, color = "black", face = "bold", hjust = 0.5
     ),
     plot.background = ggplot2::element_blank(),
     panel.grid.major = ggplot2::element_line(linewidth = 0.5),
     panel.grid.minor = ggplot2::element_blank(),
     panel.border = ggplot2::element_rect(
-      fill = NA, linewidth = 0.5, color = 'black'
+      fill = NA, linewidth = 0.5, color = "black"
     ),
     panel.background = ggplot2::element_blank(),
-    panel.spacing = grid::unit(0, 'mm')
+    panel.spacing = grid::unit(0, "mm")
   )
 }

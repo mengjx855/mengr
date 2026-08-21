@@ -5,7 +5,7 @@
 
 #### plot_procrustes ####
 # Procrustes 分析并绘图
-# 
+#
 # profile_x/profile_y:
 #   profile 表，行为 feature，列为 sample。
 #   如果输入 profile，会先根据样本名取交集，再计算距离矩阵。
@@ -60,75 +60,72 @@
 #' @return A plot object; analysis data or models may also be stored as attributes.
 #' @export
 plot_procrustes <- function(profile_x = NULL, profile_y = NULL,
-                            dist_x = NULL, dist_y = NULL, 
+                            dist_x = NULL, dist_y = NULL,
                             dist_method = c(
-                              'bray', 'jaccard', 'euclidean', 'manhattan'
+                              "bray", "jaccard", "euclidean", "manhattan"
                             ), symmetric = TRUE,
                             permutations = 999, seed = 2026,
-                            colors = c(x = '#9BBB59', y = '#957DB1'),
-                            xlab = NULL, ylab = NULL,  title = NULL, 
-                            subtitle = NULL, show_grid = FALSE, 
-                            show_line = TRUE, show_rotation_axis = TRUE,  
-                            aspect_ratio = 3/4, 
-                            theme = c('default', 'pubr'),
+                            colors = c(x = "#9BBB59", y = "#957DB1"),
+                            xlab = NULL, ylab = NULL, title = NULL,
+                            subtitle = NULL, show_grid = FALSE,
+                            show_line = TRUE, show_rotation_axis = TRUE,
+                            aspect_ratio = 3 / 4,
+                            theme = c("default", "pubr"),
                             ...) {
-  
   dist_method <- .match_distance_method(dist_method)
   theme <- match.arg(theme)
-  
+
   ## 1. 准备距离矩阵
   if (!is.null(profile_x) && !is.null(profile_y)) {
-    
     profile_x <- data.frame(profile_x, check.names = FALSE)
     profile_y <- data.frame(profile_y, check.names = FALSE)
-    
+
     sample_common <- intersect(colnames(profile_x), colnames(profile_y))
-    
+
     if (length(sample_common) < 3) {
-      stop('At least 3 shared samples are required between profile_x and profile_y.')
+      stop("At least 3 shared samples are required between profile_x and profile_y.")
     }
-    
+
     profile_x <- profile_x[, sample_common, drop = FALSE]
     profile_y <- profile_y[, sample_common, drop = FALSE]
-    
+
     dist_x <- vegan::vegdist(t(profile_x), method = dist_method)
     dist_y <- vegan::vegdist(t(profile_y), method = dist_method)
-    
+
   } else if (!is.null(dist_x) && !is.null(dist_y)) {
-    
-    sample_x <- attr(dist_x, 'Labels')
-    sample_y <- attr(dist_y, 'Labels')
+    sample_x <- attr(dist_x, "Labels")
+    sample_y <- attr(dist_y, "Labels")
     sample_common <- intersect(sample_x, sample_y)
-    
+
     if (length(sample_common) < 3) {
-      stop('At least 3 shared samples are required between dist_x and dist_y.')
+      stop("At least 3 shared samples are required between dist_x and dist_y.")
     }
-    
+
     dist_x <- stats::as.dist(as.matrix(dist_x)[sample_common, sample_common])
     dist_y <- stats::as.dist(as.matrix(dist_y)[sample_common, sample_common])
-    
+
   } else {
-    stop('Please provide profile_x/profile_y or dist_x/dist_y.')
+    stop("Please provide profile_x/profile_y or dist_x/dist_y.")
   }
-  
+
   ## 2. PCoA 降维
   PCoA_x <- stats::cmdscale(dist_x, k = 2)
   PCoA_y <- stats::cmdscale(dist_y, k = 2)
-  
-  colnames(PCoA_x) <- c('Dim1', 'Dim2')
-  colnames(PCoA_y) <- c('Dim1', 'Dim2')
-  
+
+  colnames(PCoA_x) <- c("Dim1", "Dim2")
+  colnames(PCoA_y) <- c("Dim1", "Dim2")
+
   ## 3. Procrustes 分析
   ## profile_x 是目标矩阵，profile_y 会被旋转匹配到 profile_x
   proc <- vegan::procrustes(PCoA_x, PCoA_y, symmetric = symmetric)
-  
+
   set.seed(seed)
   proc_test <- vegan::protest(
     PCoA_x, PCoA_y,
     permutations = permutations,
     symmetric = symmetric
   )
-  
+
   ## 4. 提取绘图数据
   proc_point <- data.frame(
     sample = rownames(proc$X),
@@ -138,36 +135,36 @@ plot_procrustes <- function(profile_x = NULL, profile_y = NULL,
     X2_rotated = proc$Yrot[, 2],
     check.names = FALSE
   )
-  
+
   proc_coord <- data.frame(proc$rotation, check.names = FALSE)
-  
+
   # plot(proc, kind = 2)
   # residuals(proc)
-  
+
   ## 5. 标签
-  if (is.null(xlab)) xlab <- 'Dim 1'
-  if (is.null(ylab)) ylab <- 'Dim 2'
-  
+  if (is.null(xlab)) xlab <- "Dim 1"
+  if (is.null(ylab)) ylab <- "Dim 2"
+
   if (is.null(title)) {
-    title <- paste0(tools::toTitleCase(dist_method), ' distance-based Procrustes analysis')
+    title <- paste0(tools::toTitleCase(dist_method), " distance-based Procrustes analysis")
   }
-  
+
   if (is.null(subtitle)) {
     subtitle <- substitute(
-      M^2 == a ~ ', ' ~ italic(p) == b,
+      M^2 == a ~ ", " ~ italic(p) == b,
       list(
         a = round(proc_test$ss, 4),
         b = signif(proc_test$signif, 3)
       )
     )
   }
-  
-  col_x <- unname(colors['x'])
-  col_y <- unname(colors['y'])
-  
+
+  col_x <- unname(colors["x"])
+  col_y <- unname(colors["y"])
+
   if (is.na(col_x)) col_x <- colors[1]
   if (is.na(col_y)) col_y <- colors[2]
-  
+
   ## 6. 绘图
   p <- ggplot2::ggplot(proc_point) +
     ggplot2::geom_segment(
@@ -186,7 +183,7 @@ plot_procrustes <- function(profile_x = NULL, profile_y = NULL,
         xend = X1_target,
         yend = X2_target
       ),
-      arrow = grid::arrow(length = grid::unit(0.15, 'cm')),
+      arrow = grid::arrow(length = grid::unit(0.15, "cm")),
       color = col_x,
       linewidth = .4
     ) +
@@ -206,85 +203,82 @@ plot_procrustes <- function(profile_x = NULL, profile_y = NULL,
       title = title,
       subtitle = subtitle
     )
-  
+
   ## 旋转坐标轴辅助线
   if (isTRUE(show_rotation_axis)) {
     
     slope1 <- proc_coord[1, 2] / proc_coord[1, 1]
     slope2 <- proc_coord[2, 2] / proc_coord[2, 1]
-    
+
     if (is.finite(slope1)) {
       p <- p + ggplot2::geom_abline(intercept = 0, slope = slope1, linewidth = .4)
     }
-    
+
     if (is.finite(slope2)) {
       p <- p + ggplot2::geom_abline(intercept = 0, slope = slope2, linewidth = .4)
     }
   }
-  
+
   ## 中心辅助线
   if (isTRUE(show_line)) {
     p <- p +
       ggplot2::geom_vline(
         xintercept = 0,
-        color = 'gray70',
-        linetype = 'longdash',
+        color = "gray70",
+        linetype = "longdash",
         linewidth = .4
       ) +
       ggplot2::geom_hline(
         yintercept = 0,
-        color = 'gray70',
-        linetype = 'longdash',
+        color = "gray70",
+        linetype = "longdash",
         linewidth = .4
       )
   }
-  
+
   ## 主题
-  if (theme == 'pubr') {
-    
+  if (theme == "pubr") {
     p <- p +
       ggpubr::theme_pubr() +
       ggplot2::theme(
         aspect.ratio = aspect_ratio,
-        plot.margin = grid::unit(c(2, 2, 2, 2), 'mm'),
-        plot.title = ggplot2::element_text(hjust = .5, size = 12, face = 'bold'),
-        legend.position = 'right'
+        plot.margin = grid::unit(c(2, 2, 2, 2), "mm"),
+        plot.title = ggplot2::element_text(hjust = .5, size = 12, face = "bold"),
+        legend.position = "right"
       )
-    
   } else {
-    
     p <- p +
       ggplot2::theme_bw() +
       ggplot2::theme(
-        axis.ticks = ggplot2::element_line(linewidth = .5, color = 'black'),
-        axis.ticks.length = grid::unit(2, 'mm'),
-        axis.title = ggplot2::element_text(size = 12, color = 'black'),
-        axis.text = ggplot2::element_text(size = 12, color = 'black'),
+        axis.ticks = ggplot2::element_line(linewidth = .5, color = "black"),
+        axis.ticks.length = grid::unit(2, "mm"),
+        axis.title = ggplot2::element_text(size = 12, color = "black"),
+        axis.text = ggplot2::element_text(size = 12, color = "black"),
         axis.line = ggplot2::element_blank(),
-        plot.title = ggplot2::element_text(hjust = .5, size = 12, face = 'bold'),
-        plot.subtitle = ggplot2::element_text(size = 12, color = 'black'),
-        plot.margin = grid::unit(c(2, 2, 2, 2), 'mm'),
-        panel.border = ggplot2::element_rect(linewidth = .5, color = 'black', fill = NA),
+        plot.title = ggplot2::element_text(hjust = .5, size = 12, face = "bold"),
+        plot.subtitle = ggplot2::element_text(size = 12, color = "black"),
+        plot.margin = grid::unit(c(2, 2, 2, 2), "mm"),
+        panel.border = ggplot2::element_rect(linewidth = .5, color = "black", fill = NA),
         panel.background = ggplot2::element_blank(),
         panel.grid = ggplot2::element_blank(),
         legend.background = ggplot2::element_blank(),
-        legend.text = ggplot2::element_text(size = 10, color = 'black'),
-        legend.title = ggplot2::element_text(size = 10, color = 'black'),
+        legend.text = ggplot2::element_text(size = 10, color = "black"),
+        legend.title = ggplot2::element_text(size = 10, color = "black"),
         aspect.ratio = aspect_ratio
       )
   }
-  
+
   if (isTRUE(show_grid)) {
     p <- p +
       ggplot2::theme(
-        panel.grid.major = ggplot2::element_line(linewidth = .4, color = 'grey90'),
+        panel.grid.major = ggplot2::element_line(linewidth = .4, color = "grey90"),
         panel.grid.minor = ggplot2::element_blank()
       )
   }
-  
-  attr(p, 'proc') <- proc
-  attr(p, 'proc_test') <- proc_test
-  attr(p, 'plot_df') <- proc_point
-  
+
+  attr(p, "proc") <- proc
+  attr(p, "proc_test") <- proc_test
+  attr(p, "plot_df") <- proc_point
+
   return(p)
 }

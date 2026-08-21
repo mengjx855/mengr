@@ -21,26 +21,27 @@
 #' @return A result object described in the Details section.
 #' @export
 calcu_MEN <- function(
-    profile, metadata, feature_col = NULL, sample_metadata = NULL,
-    sample_col = 'sample', group_col = 'group',
-    p_threshold = 0.05, r_threshold = 0.5,
-    scale = FALSE,
-    scale_method = c('rela', 'sampling', 'log', 'TMM', 'RLE', 'upperquartile'),
-    method = c('spearman', 'pearson', 'kendall'),
-    title = '', n_hub = FALSE, seed = 2024) {
+  profile, metadata, feature_col = NULL, sample_metadata = NULL,
+  sample_col = "sample", group_col = "group",
+  p_threshold = 0.05, r_threshold = 0.5,
+  scale = FALSE,
+  scale_method = c("rela", "sampling", "log", "TMM", "RLE", "upperquartile"),
+  method = c("spearman", "pearson", "kendall"),
+  title = "", n_hub = FALSE, seed = 2024
+) {
   ## 1. 对齐 profile 与 feature taxonomy
   scale_method <- match.arg(scale_method)
   method <- match.arg(method)
   profile_df <- .as_profile_df(profile, numeric = TRUE)
   metadata_df <- .as_df(metadata)
   if (!is.null(feature_col)) {
-    .check_columns(metadata_df, feature_col, object = 'metadata')
+    .check_columns(metadata_df, feature_col, object = "metadata")
     rownames(metadata_df) <- as.character(metadata_df[[feature_col]])
     metadata_df[[feature_col]] <- NULL
   }
   feature_vec <- intersect(rownames(profile_df), rownames(metadata_df))
   if (!length(feature_vec)) {
-    stop('No matched features between profile and metadata.')
+    stop("No matched features between profile and metadata.")
   }
   profile_df <- profile_df[feature_vec, , drop = FALSE]
   metadata_df <- metadata_df[feature_vec, , drop = FALSE]
@@ -49,9 +50,9 @@ calcu_MEN <- function(
   ## 2. 构建 phyloseq 对象；edgeR 类标准化需要样本分组
   otu_obj <- phyloseq::otu_table(profile_df, taxa_are_rows = TRUE)
   tax_obj <- phyloseq::tax_table(as.matrix(metadata_df))
-  if (isTRUE(scale) && scale_method %in% c('TMM', 'RLE', 'upperquartile')) {
+  if (isTRUE(scale) && scale_method %in% c("TMM", "RLE", "upperquartile")) {
     if (is.null(sample_metadata)) {
-      stop('sample_metadata is required for TMM, RLE or upperquartile scaling.')
+      stop("sample_metadata is required for TMM, RLE or upperquartile scaling.")
     }
     aligned <- .align_profile_group(
       profile = profile_df, group = sample_metadata,
@@ -75,22 +76,24 @@ calcu_MEN <- function(
     ps = ps_obj, N = 0,
     p.threshold = p_threshold, r.threshold = r_threshold,
     scale = scale, method = method,
-    met.scale = scale_method, p.adj = 'BH'
+    met.scale = scale_method, p.adj = "BH"
   )
   correlation_mat <- cor_obj[[1]]
   edge_node_list <- ggClusterNet::nodeEdge(corr = correlation_mat)
   graph_obj <- igraph::graph_from_data_frame(
-    edge_node_list[[1]], directed = FALSE, vertices = edge_node_list[[2]]
+    edge_node_list[[1]],
+    directed = FALSE, vertices = edge_node_list[[2]]
   )
   network_stat_df <- ggClusterNet::net_properties.2(
-    graph_obj, n.hub = n_hub
+    graph_obj,
+    n.hub = n_hub
   ) |>
     data.frame(check.names = FALSE) |>
-    tibble::rownames_to_column('name')
+    tibble::rownames_to_column("name")
 
   ## 4. 计算模块布局、节点属性和边属性
   layout_list <- ggClusterNet::model_igraph2(
-    cor = correlation_mat, method = 'cluster_fast_greedy', seed = seed
+    cor = correlation_mat, method = "cluster_fast_greedy", seed = seed
   )
   abundance_df <- t(ggClusterNet::vegan_otu(ps_obj)) |>
     data.frame(check.names = FALSE)
@@ -111,16 +114,16 @@ calcu_MEN <- function(
   edge_df <- dplyr::inner_join(
     model_df |>
       dplyr::select(OTU, model, color) |>
-      dplyr::right_join(edge_df_raw, by = c('OTU' = 'OTU_1')) |>
+      dplyr::right_join(edge_df_raw, by = c("OTU" = "OTU_1")) |>
       dplyr::rename(OTU_1 = OTU, model1 = model, color1 = color),
     model_df |>
       dplyr::select(OTU, model, color) |>
-      dplyr::right_join(edge_df_raw, by = c('OTU' = 'OTU_2')) |>
+      dplyr::right_join(edge_df_raw, by = c("OTU" = "OTU_2")) |>
       dplyr::rename(OTU_2 = OTU, model2 = model, color2 = color)
   ) |>
     dplyr::mutate(
-      edge_class = ifelse(model1 == model2, model1, 'across'),
-      edge_color = ifelse(model1 == model2, color1, '#C1C1C1')
+      edge_class = ifelse(model1 == model2, model1, "across"),
+      edge_color = ifelse(model1 == model2, color1, "#C1C1C1")
     )
   edge_color <- edge_df |>
     dplyr::distinct(edge_class, .keep_all = TRUE) |>
@@ -145,7 +148,7 @@ calcu_MEN <- function(
     ggplot2::theme(
       plot.title = ggplot2::element_text(size = 10, hjust = 0.5),
       aspect.ratio = 1,
-      plot.margin = grid::unit(c(1, 1, 1, 1), 'cm')
+      plot.margin = grid::unit(c(1, 1, 1, 1), "cm")
     )
 
   list(

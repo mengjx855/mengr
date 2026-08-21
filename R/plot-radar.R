@@ -1,5 +1,3 @@
-
-
 #### ggradar pair plot ####
 # data: 需要包含 proj、cf_col、random_col 和 p_col
 # cf_col/random_col: 两组要比较的数值列
@@ -39,10 +37,9 @@ plot_ggradar_pair <- function(data, cf_col, random_col, p_col,
                               axis.label.size = 3,
                               grid.label.size = 3,
                               legend.position = "bottom") {
-  
   data <- data.frame(data, check.names = FALSE)
   data[[proj_col]] <- as.character(data[[proj_col]])
-  
+
   ## 1. 整理成 ggradar 需要的格式：
   ##    第一列是 group，后面每一列是一个雷达轴
   radar_data <- data |>
@@ -62,20 +59,20 @@ plot_ggradar_pair <- function(data, cf_col, random_col, p_col,
     ) |>
     dplyr::mutate(group = factor(group, levels = c("CF", "Random"))) |>
     data.frame(check.names = FALSE)
-  
+
   ## 2. 自动设置雷达图最大刻度
   value_mat <- as.matrix(radar_data[, -1])
-  
+
   if (is.null(grid_max)) {
     grid_max <- max(value_mat, na.rm = TRUE) * 1.15
     grid_max <- signif(grid_max, 2)
   }
-  
+
   grid_mid <- grid_max / 2
-  
+
   ## 3. p 值星号位置
   axis_names <- colnames(radar_data)[-1]
-  
+
   p_data <- data |>
     dplyr::transmute(
       proj = .data[[proj_col]],
@@ -89,7 +86,7 @@ plot_ggradar_pair <- function(data, cf_col, random_col, p_col,
       x = star_radius * cos(angle),
       y = star_radius * sin(angle)
     )
-  
+
   ## 4. ggradar 作图
   p <- ggradar::ggradar(
     radar_data,
@@ -113,7 +110,7 @@ plot_ggradar_pair <- function(data, cf_col, random_col, p_col,
       plot.title = ggplot2::element_text(face = "bold", hjust = 0.5, size = 13),
       legend.text = ggplot2::element_text(size = 10)
     )
-  
+
   ## 5. 加显著性星号
   if (nrow(p_data) > 0) {
     p <- p +
@@ -126,7 +123,7 @@ plot_ggradar_pair <- function(data, cf_col, random_col, p_col,
         color = "black"
       )
   }
-  
+
   return(p)
 }
 
@@ -165,10 +162,9 @@ plot_pair_radar <- function(data, cf_col, random_col, p_col,
                             label_size = 3.4,
                             star_size = 5,
                             grid_n = 4) {
-  
   data <- data.frame(data, check.names = FALSE)
   data$proj <- factor(data$proj, levels = data$proj)
-  
+
   plot_df <- data |>
     dplyr::select(
       proj,
@@ -183,12 +179,12 @@ plot_pair_radar <- function(data, cf_col, random_col, p_col,
     dplyr::mutate(
       type = factor(type, levels = c("CF", "Random"))
     )
-  
+
   max_y <- max(plot_df$value, na.rm = TRUE)
   min_y <- 0
   y_breaks <- pretty(c(min_y, max_y), n = grid_n)
   y_max <- max(y_breaks) * 1.18
-  
+
   p_data <- data |>
     dplyr::transmute(
       proj,
@@ -196,7 +192,7 @@ plot_pair_radar <- function(data, cf_col, random_col, p_col,
       plab = .add_plab(.data[[p_col]], format = 2),
       y = y_max * 0.96
     )
-  
+
   ggplot2::ggplot(
     plot_df,
     ggplot2::aes(x = proj, y = value, group = type, color = type, fill = type)

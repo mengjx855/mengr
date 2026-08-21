@@ -8,4 +8,4 @@
 "_PACKAGE"
 
 ## 声明 tidy evaluation 中使用的 pronoun，避免 R CMD check 误报全局变量
-utils::globalVariables('.data')
+utils::globalVariables(".data")

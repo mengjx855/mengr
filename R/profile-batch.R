@@ -1,14 +1,15 @@
 #### Jin-Xin Meng, 20221102, 20260820, v0.2.0 ####
 
 .prepare_batch_data <- function(
-    profile, metadata, sample_col, batch_col,
-    batch2_col = NULL, covariate_cols = NULL) {
+  profile, metadata, sample_col, batch_col,
+  batch2_col = NULL, covariate_cols = NULL
+) {
   metadata_df <- .as_df(metadata)
   required_cols <- unique(c(
     sample_col, batch_col, batch2_col, covariate_cols
   ))
   required_cols <- required_cols[!is.na(required_cols) & nzchar(required_cols)]
-  .check_columns(metadata_df, required_cols, object = 'metadata')
+  .check_columns(metadata_df, required_cols, object = "metadata")
 
   aligned <- .align_profile_group(
     profile = profile,
@@ -52,9 +53,9 @@
 #' @return A result object described in the Details section.
 #' @export
 remove_batch_combat <- function(
-    profile, metadata, sample_col = 'sample', batch_col = 'batch',
-    covariate_cols = NULL, par_prior = TRUE, prior_plots = FALSE,
-    mean_only = FALSE, ref_batch = NULL, ...
+  profile, metadata, sample_col = "sample", batch_col = "batch",
+  covariate_cols = NULL, par_prior = TRUE, prior_plots = FALSE,
+  mean_only = FALSE, ref_batch = NULL, ...
 ) {
   prepared <- .prepare_batch_data(
     profile = profile,
@@ -91,8 +92,8 @@ remove_batch_combat <- function(
 #' @return A result object described in the Details section.
 #' @export
 remove_batch_limma <- function(
-    profile, metadata, sample_col = 'sample', batch_col = 'batch',
-    batch2_col = NULL, covariate_cols = NULL, ...
+  profile, metadata, sample_col = "sample", batch_col = "batch",
+  batch2_col = NULL, covariate_cols = NULL, ...
 ) {
   prepared <- .prepare_batch_data(
     profile = profile,

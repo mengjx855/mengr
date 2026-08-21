@@ -33,78 +33,76 @@
 #' @return A result object described in the Details section.
 #' @export
 calcu_PCA <- function(
-    profile, dim = 2, cumulative_eig = NULL, prefix = NULL, add_eig = FALSE,
-    remove_zero_var = TRUE, na_fill = 0
-  ) {
-  
+  profile, dim = 2, cumulative_eig = NULL, prefix = NULL, add_eig = FALSE,
+  remove_zero_var = TRUE, na_fill = 0
+) {
   profile <- data.frame(profile, check.names = FALSE)
-  
+
   if (!is.null(na_fill)) {
     profile[is.na(profile)] <- na_fill
   }
-  
+
   profile <- profile[
-    rowSums(profile, na.rm = TRUE) != 0,
-    , 
+    rowSums(profile, na.rm = TRUE) != 0, ,
     drop = FALSE
   ]
-  
+
   ## scale. = TRUE 时，零方差 feature 会导致 prcomp 报错
   if (isTRUE(remove_zero_var)) {
     keep <- apply(profile, 1, stats::sd, na.rm = TRUE) > 0
     profile <- profile[keep, , drop = FALSE]
   }
-  
+
   if (nrow(profile) == 0) {
-    stop('No valid features remained for PCA.')
+    stop("No valid features remained for PCA.")
   }
 
   if (ncol(profile) < 2) {
-    stop('PCA requires at least two samples.')
+    stop("PCA requires at least two samples.")
   }
-  
+
   PCA <- stats::prcomp(t(profile), scale. = TRUE, center = TRUE)
   PCA_sum <- summary(PCA)
   PCA_eig <- round(PCA_sum$importance[2, ] * 100, 2)
-  
+
   max_dim <- min(ncol(PCA$x), length(PCA_eig))
-  
+
   if (!is.null(cumulative_eig)) {
     dim <- which(cumsum(PCA_eig) >= cumulative_eig)[1]
   }
-  
+
   dim <- min(dim, max_dim)
-  
+
   PCA_points <- data.frame(PCA$x[, seq_len(dim), drop = FALSE]) |>
-    tibble::rownames_to_column(var = 'sample')
-  
+    tibble::rownames_to_column(var = "sample")
+
   if (!is.null(prefix)) {
-    colnames(PCA_points)[2:(dim + 1)] <- paste0(prefix, '_', seq_len(dim))
+    colnames(PCA_points)[2:(dim + 1)] <- paste0(prefix, "_", seq_len(dim))
   } else {
-    colnames(PCA_points)[2:(dim + 1)] <- paste0('PCA', seq_len(dim))
+    colnames(PCA_points)[2:(dim + 1)] <- paste0("PCA", seq_len(dim))
   }
-  
+
   if (isTRUE(add_eig)) {
     colnames(PCA_points)[2:(dim + 1)] <- paste0(
       colnames(PCA_points)[2:(dim + 1)],
-      ' (',
+      " (",
       PCA_eig[seq_len(dim)],
-      '%)'
+      "%)"
     )
   }
-  
+
   out <- list(
     points = PCA_points,
     dim = dim,
     eig = PCA_eig,
     eig_ = paste0(
       colnames(PCA_points)[2:(dim + 1)],
-      ' (',
+      " (",
       PCA_eig[seq_len(dim)],
-      '%)'
+      "%)"
     )
   )
-  
+
   return(out)
 }
 
@@ -156,76 +154,74 @@ calcu_PCA <- function(
 #' @return A plot object; analysis data or models may also be stored as attributes.
 #' @export
 plot_PCA <- function(
-    profile, group, sample_col = 'sample', group_col = 'group', 
-    group_level = NULL, group_color = NULL,
-    sub_sample = NULL, sub_group = NULL,
-    display_type = 'line', conf_type = 'ellipse', 
-    ellipse_level = .75, title = NULL, subtitle = NULL, 
-    xlab = NULL, ylab = NULL, legend_title = NULL, 
-    add_group_label = FALSE, add_sample_label = FALSE, 
-    label_size = 3, point_size = 1.5,
-    show_legend = TRUE, show_grid = FALSE, show_line = TRUE, 
-    aspect_ratio = 3/4, theme = 'default',
-    remove_zero_var = TRUE, na_fill = 0, ...
-  ) {
-
+  profile, group, sample_col = "sample", group_col = "group",
+  group_level = NULL, group_color = NULL,
+  sub_sample = NULL, sub_group = NULL,
+  display_type = "line", conf_type = "ellipse",
+  ellipse_level = .75, title = NULL, subtitle = NULL,
+  xlab = NULL, ylab = NULL, legend_title = NULL,
+  add_group_label = FALSE, add_sample_label = FALSE,
+  label_size = 3, point_size = 1.5,
+  show_legend = TRUE, show_grid = FALSE, show_line = TRUE,
+  aspect_ratio = 3 / 4, theme = "default",
+  remove_zero_var = TRUE, na_fill = 0, ...
+) {
   profile <- data.frame(profile, check.names = FALSE)
   group <- data.frame(group, check.names = FALSE)
-  
+
   if (!all(c(sample_col, group_col) %in% colnames(group))) {
-    stop('group should contain columns: ', sample_col, ' | ', group_col)
+    stop("group should contain columns: ", sample_col, " | ", group_col)
   }
-  
+
   if (!is.null(sub_sample)) {
     group <- dplyr::filter(group, .data[[sample_col]] %in% sub_sample)
   }
-  
+
   if (!is.null(sub_group)) {
     group <- dplyr::filter(group, .data[[group_col]] %in% sub_group)
   }
-  
+
   sample_use <- intersect(group[[sample_col]], colnames(profile))
-  
+
   if (length(sample_use) < 2) {
-    stop('PCA requires at least two matched samples.')
+    stop("PCA requires at least two matched samples.")
   }
-  
+
   group <- group |>
     dplyr::filter(.data[[sample_col]] %in% sample_use)
-  
+
   if (!is.null(na_fill)) {
     profile[is.na(profile)] <- na_fill
   }
-  
+
   profile <- profile[
-    rowSums(profile, na.rm = TRUE) != 0,
-    ,
+    rowSums(profile, na.rm = TRUE) != 0, ,
     drop = FALSE
   ]
-  
+
   ## scale. = TRUE 时，零方差 feature 会导致 prcomp 报错
   if (isTRUE(remove_zero_var)) {
     keep <- apply(profile, 1, stats::sd, na.rm = TRUE) > 0
     profile <- profile[keep, , drop = FALSE]
   }
-  
+
   if (nrow(profile) == 0) {
-    stop('No valid features remained for PCA.')
+    stop("No valid features remained for PCA.")
   }
-  
+
   if (is.null(group_level)) {
     group_level <- as.character(unique(group[[group_col]]))
   }
-  
+
   group_color <- .resolve_group_colors(group_level, group_color)
-  
+
   PCA <- stats::prcomp(t(profile), scale. = TRUE, center = TRUE)
   PCA_sum <- summary(PCA)
-  
+
   PCA_points <- data.frame(PCA$x[, 1:2, drop = FALSE]) |>
-    dplyr::rename_with(~ c('X1', 'X2')) |>
-    tibble::rownames_to_column('sample')
-  
+    dplyr::rename_with(~ c("X1", "X2")) |>
+    tibble::rownames_to_column("sample")
+
   plot_df <- PCA_points |>
     dplyr::left_join(
       dplyr::select(
@@ -233,24 +229,24 @@ plot_PCA <- function(
         sample = dplyr::all_of(sample_col),
         group = dplyr::all_of(group_col)
       ),
-      by = 'sample'
+      by = "sample"
     ) |>
     dplyr::mutate(group = factor(group, levels = group_level))
-  
+
   if (is.null(xlab)) {
-    xlab <- paste0('PC1 (', round(PCA_sum$importance[2, 1] * 100, 2), '%)')
+    xlab <- paste0("PC1 (", round(PCA_sum$importance[2, 1] * 100, 2), "%)")
   }
-  
+
   if (is.null(ylab)) {
-    ylab <- paste0('PC2 (', round(PCA_sum$importance[2, 2] * 100, 2), '%)')
+    ylab <- paste0("PC2 (", round(PCA_sum$importance[2, 2] * 100, 2), "%)")
   }
-  
+
   if (is.null(legend_title)) {
-    legend_title <- 'Group'
+    legend_title <- "Group"
   }
-  
+
   if (is.null(title)) {
-    title <- 'Principal Components Analysis'
+    title <- "Principal Components Analysis"
   }
 
   p <- plot_dim(
@@ -264,6 +260,6 @@ plot_PCA <- function(
     aspect_ratio = aspect_ratio, theme = theme,
     ...
   )
-  
+
   return(p)
 }

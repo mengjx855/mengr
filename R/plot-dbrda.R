@@ -41,28 +41,28 @@
 #' @return A plot object; analysis data or models may also be stored as attributes.
 #' @export
 plot_dbRDA <- function(
-    profile = NULL, group, distance = NULL,
-    sample_col = 'sample', group_col = 'group',
-    constraint_cols = group_col, group_level = NULL, group_color = NULL,
-    dist_method = c(
-      'bray', 'jaccard', 'euclidean', 'manhattan', 'canberra',
-      'kulczynski', 'gower', 'altGower', 'morisita', 'horn',
-      'mountford', 'raup', 'binomial', 'chao', 'cao',
-      'mahalanobis', 'unifrac'
-    ),
-    transform = c(
-      'hellinger', 'total', 'max', 'frequency', 'normalize',
-      'range', 'rank', 'rrank', 'standardize', 'pa',
-      'chi.square', 'log', 'clr', 'rclr', 'alr'
-    ),
-    display_type = c('line', 'point'),
-    conf_type = c('ellipse', 'encircle', 'none'), ellipse_level = 0.75,
-    title = NULL, subtitle = NULL, xlab = NULL, ylab = NULL,
-    legend_title = 'Group', add_group_label = FALSE,
-    add_sample_label = FALSE, label_size = 3, point_size = 1.5,
-    show_legend = TRUE, show_grid = FALSE, show_variable = TRUE,
-    show_line = TRUE, aspect_ratio = 3 / 4,
-    theme = c('default', 'pubr'), permutations = 999, ...
+  profile = NULL, group, distance = NULL,
+  sample_col = "sample", group_col = "group",
+  constraint_cols = group_col, group_level = NULL, group_color = NULL,
+  dist_method = c(
+    "bray", "jaccard", "euclidean", "manhattan", "canberra",
+    "kulczynski", "gower", "altGower", "morisita", "horn",
+    "mountford", "raup", "binomial", "chao", "cao",
+    "mahalanobis", "unifrac"
+  ),
+  transform = c(
+    "hellinger", "total", "max", "frequency", "normalize",
+    "range", "rank", "rrank", "standardize", "pa",
+    "chi.square", "log", "clr", "rclr", "alr"
+  ),
+  display_type = c("line", "point"),
+  conf_type = c("ellipse", "encircle", "none"), ellipse_level = 0.75,
+  title = NULL, subtitle = NULL, xlab = NULL, ylab = NULL,
+  legend_title = "Group", add_group_label = FALSE,
+  add_sample_label = FALSE, label_size = 3, point_size = 1.5,
+  show_legend = TRUE, show_grid = FALSE, show_variable = TRUE,
+  show_line = TRUE, aspect_ratio = 3 / 4,
+  theme = c("default", "pubr"), permutations = 999, ...
 ) {
   dist_method <- .match_distance_method(dist_method)
   transform <- .match_transform_method(transform)
@@ -74,15 +74,15 @@ plot_dbRDA <- function(
   .check_columns(
     group_df,
     unique(c(sample_col, group_col, constraint_cols)),
-    object = 'group'
+    object = "group"
   )
   group_df[[sample_col]] <- as.character(group_df[[sample_col]])
   if (anyDuplicated(group_df[[sample_col]])) {
-    stop('Duplicated sample identifiers found in group[[sample_col]].')
+    stop("Duplicated sample identifiers found in group[[sample_col]].")
   }
 
   if (is.null(distance)) {
-    if (is.null(profile)) stop('Supply either profile or distance.')
+    if (is.null(profile)) stop("Supply either profile or distance.")
     aligned <- .align_profile_group(
       profile = profile, group = group_df,
       sample_col = sample_col, group_col = group_col,
@@ -99,11 +99,11 @@ plot_dbRDA <- function(
     dist_mat <- as.matrix(distance)
     sample_vec <- intersect(rownames(dist_mat), group_df[[sample_col]])
     if (length(sample_vec) < 3L) {
-      stop('dbRDA requires at least three matched samples.')
+      stop("dbRDA requires at least three matched samples.")
     }
     group_df <- group_df[
-      match(sample_vec, group_df[[sample_col]]),
-      , drop = FALSE
+      match(sample_vec, group_df[[sample_col]]), ,
+      drop = FALSE
     ]
     distance <- stats::as.dist(dist_mat[sample_vec, sample_vec, drop = FALSE])
   }
@@ -122,7 +122,7 @@ plot_dbRDA <- function(
   dbRDA_obj <- vegan::capscale(distance ~ ., data = model_df)
   anova_df <- stats::anova(dbRDA_obj, permutations = permutations)
 
-  site_mat <- vegan::scores(dbRDA_obj, display = 'sites', scaling = 1)
+  site_mat <- vegan::scores(dbRDA_obj, display = "sites", scaling = 1)
   if (ncol(site_mat) < 2L) {
     site_mat <- cbind(site_mat, Axis2 = 0)
   }
@@ -139,7 +139,7 @@ plot_dbRDA <- function(
         group = group_df[[group_col]],
         check.names = FALSE
       ),
-      by = 'sample'
+      by = "sample"
     ) |>
     dplyr::mutate(group = factor(group, levels = group_level))
 
@@ -151,21 +151,25 @@ plot_dbRDA <- function(
   }
   if (is.null(xlab)) {
     xlab <- if (length(eig_pct) >= 1L) {
-      sprintf('%s (%.2f%%)', axis_names[1], eig_pct[1])
-    } else axis_names[1]
+      sprintf("%s (%.2f%%)", axis_names[1], eig_pct[1])
+    } else {
+      axis_names[1]
+    }
   }
   if (is.null(ylab)) {
     ylab <- if (length(eig_pct) >= 2L) {
-      sprintf('%s (%.2f%%)', axis_names[2], eig_pct[2])
-    } else axis_names[2]
+      sprintf("%s (%.2f%%)", axis_names[2], eig_pct[2])
+    } else {
+      axis_names[2]
+    }
   }
   if (is.null(title)) {
-    title <- paste0(stringr::str_to_sentence(dist_method), '-distance dbRDA')
+    title <- paste0(stringr::str_to_sentence(dist_method), "-distance dbRDA")
   }
   if (is.null(subtitle)) {
     adj_r2 <- vegan::RsquareAdj(dbRDA_obj)$adj.r.squared
-    p_value <- anova_df[1, 'Pr(>F)']
-    subtitle <- sprintf('Adjusted R2 = %.3f, p = %.3g', adj_r2, p_value)
+    p_value <- anova_df[1, "Pr(>F)"]
+    subtitle <- sprintf("Adjusted R2 = %.3f, p = %.3g", adj_r2, p_value)
   }
 
   p <- plot_dim(
@@ -182,7 +186,7 @@ plot_dbRDA <- function(
 
   if (isTRUE(show_variable)) {
     centroid_mat <- tryCatch(
-      vegan::scores(dbRDA_obj, display = 'cn', choices = 1:2, scaling = 1),
+      vegan::scores(dbRDA_obj, display = "cn", choices = 1:2, scaling = 1),
       error = function(e) NULL
     )
     if (!is.null(centroid_mat) && nrow(centroid_mat)) {
@@ -197,18 +201,18 @@ plot_dbRDA <- function(
           data = variable_df,
           ggplot2::aes(x = 0, y = 0, xend = X1, yend = X2),
           inherit.aes = FALSE,
-          arrow = grid::arrow(length = grid::unit(0.8, 'mm')),
-          linewidth = 0.4, color = 'black'
+          arrow = grid::arrow(length = grid::unit(0.8, "mm")),
+          linewidth = 0.4, color = "black"
         ) +
         ggrepel::geom_text_repel(
           data = variable_df,
           ggplot2::aes(x = X1, y = X2, label = variable),
-          inherit.aes = FALSE, size = label_size, color = 'black'
+          inherit.aes = FALSE, size = label_size, color = "black"
         )
     }
   }
 
-  attr(p, 'dbRDA') <- dbRDA_obj
-  attr(p, 'anova') <- anova_df
+  attr(p, "dbRDA") <- dbRDA_obj
+  attr(p, "anova") <- anova_df
   p
 }

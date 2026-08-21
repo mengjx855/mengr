@@ -1,34 +1,43 @@
 .heatmap_annotation_palette <- function(n) {
-  if (n <= 8) return(pald('Set2', n = n))
-  if (n <= 12) return(pald('Set3', n = n))
-  if (n <= 20) return(pald('Paired2', n = n))
+  if (n <= 8) {
+    return(pald("Set2", n = n))
+  }
+  if (n <= 12) {
+    return(pald("Set3", n = n))
+  }
+  if (n <= 20) {
+    return(pald("Paired2", n = n))
+  }
   scales::hue_pal()(n)
 }
 
 .prepare_heatmap_annotation <- function(
-    annotation, target_names, show_cols, annotation_name
-  ) {
-  if (is.null(annotation)) return(NULL)
+  annotation, target_names, show_cols, annotation_name
+) {
+  if (is.null(annotation)) {
+    return(NULL)
+  }
 
   annotation_df <- .as_df(annotation)
-  .check_columns(annotation_df, 'name', annotation_name)
+  .check_columns(annotation_df, "name", annotation_name)
   if (anyDuplicated(annotation_df$name)) {
-    stop(annotation_name, '$name should not contain duplicated values.')
+    stop(annotation_name, "$name should not contain duplicated values.")
   }
 
   missing_names <- setdiff(target_names, annotation_df$name)
   if (length(missing_names) > 0) {
     stop(
-      annotation_name, ' is missing names: ',
-      paste(utils::head(missing_names, 10), collapse = ', ')
+      annotation_name, " is missing names: ",
+      paste(utils::head(missing_names, 10), collapse = ", ")
     )
   }
 
-  if (is.null(show_cols)) show_cols <- setdiff(colnames(annotation_df), 'name')
-  .check_columns(annotation_df, c('name', show_cols), annotation_name)
+  if (is.null(show_cols)) show_cols <- setdiff(colnames(annotation_df), "name")
+  .check_columns(annotation_df, c("name", show_cols), annotation_name)
 
   annotation_df <- annotation_df[
-    match(target_names, annotation_df$name), c('name', show_cols), drop = FALSE
+    match(target_names, annotation_df$name), c("name", show_cols),
+    drop = FALSE
   ]
   rownames(annotation_df) <- annotation_df$name
   annotation_df$name <- NULL
@@ -76,29 +85,29 @@
 #' @param show_col_anno Logical control for `show_col_anno`.
 #' @param ... Additional arguments passed to the underlying function.
 plot_heatmap <- function(
-    profile, scale = c('row', 'none', 'column'), border_color = NA,
-    title = 'Scaled value', cellwidth = 3, cellheight = 3,
-    cluster_rows = TRUE, cluster_cols = TRUE, treeheight_row = 15,
-    treeheight_col = 15, show_rownames = FALSE, show_colnames = FALSE,
-    row_annotation = NULL, col_annotation = NULL, annotation_legend = TRUE,
-    show_row_anno = NULL, show_col_anno = NULL, annotation_colors = NULL, ...
-  ) {
+  profile, scale = c("row", "none", "column"), border_color = NA,
+  title = "Scaled value", cellwidth = 3, cellheight = 3,
+  cluster_rows = TRUE, cluster_cols = TRUE, treeheight_row = 15,
+  treeheight_col = 15, show_rownames = FALSE, show_colnames = FALSE,
+  row_annotation = NULL, col_annotation = NULL, annotation_legend = TRUE,
+  show_row_anno = NULL, show_col_anno = NULL, annotation_colors = NULL, ...
+) {
   scale <- match.arg(scale)
   profile_mat <- as.matrix(profile)
-  suppressWarnings(storage.mode(profile_mat) <- 'numeric')
+  suppressWarnings(storage.mode(profile_mat) <- "numeric")
   if (anyNA(profile_mat)) {
-    warning('profile contains NA or non-numeric values; they are shown as NA.')
+    warning("profile contains NA or non-numeric values; they are shown as NA.")
   }
   if (is.null(rownames(profile_mat)) || is.null(colnames(profile_mat))) {
-    stop('profile should have both row names and column names.')
+    stop("profile should have both row names and column names.")
   }
 
   # 1. 根据 name 列对齐注释，并仅保留指定字段
   row_annotation_df <- .prepare_heatmap_annotation(
-    row_annotation, rownames(profile_mat), show_row_anno, 'row_annotation'
+    row_annotation, rownames(profile_mat), show_row_anno, "row_annotation"
   )
   col_annotation_df <- .prepare_heatmap_annotation(
-    col_annotation, colnames(profile_mat), show_col_anno, 'col_annotation'
+    col_annotation, colnames(profile_mat), show_col_anno, "col_annotation"
   )
 
   # 2. 只为 character/factor 注释自动补充缺失的分类配色
@@ -134,12 +143,12 @@ plot_heatmap <- function(
     annotation_colors = annotation_colors,
     annotation_legend = annotation_legend,
     heatmap_legend_param = list(
-      border = 'black',
+      border = "black",
       title = title,
-      title_gp = grid::gpar(fontface = 'plain', fontsize = 10),
-      title_position = 'topleft',
-      legend_direction = 'vertical',
-      legend_width = grid::unit(4, 'cm'),
+      title_gp = grid::gpar(fontface = "plain", fontsize = 10),
+      title_position = "topleft",
+      legend_direction = "vertical",
+      legend_width = grid::unit(4, "cm"),
       labels_gp = grid::gpar(fontsize = 8)
     ),
     ...

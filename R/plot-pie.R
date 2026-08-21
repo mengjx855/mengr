@@ -26,16 +26,17 @@
 #' @return A plot object; analysis data or models may also be stored as attributes.
 #' @export
 plot_pie <- function(
-    data, name_col = 'name', value_col = 'n', name_level = NULL,
-    decreasing = TRUE, top_n = NULL, other_name = 'Other',
-    other_last = TRUE, add_count = FALSE, add_percent = TRUE,
-    circular_label = FALSE, flip_label = FALSE,
-    title = NULL, border_color = 'white', fill = 'auto',
-    font_size = 2, hemisphere = FALSE, start = 0,
-    percent_digits = 1) {
+  data, name_col = "name", value_col = "n", name_level = NULL,
+  decreasing = TRUE, top_n = NULL, other_name = "Other",
+  other_last = TRUE, add_count = FALSE, add_percent = TRUE,
+  circular_label = FALSE, flip_label = FALSE,
+  title = NULL, border_color = "white", fill = "auto",
+  font_size = 2, hemisphere = FALSE, start = 0,
+  percent_digits = 1
+) {
   ## 1. 统一类别和值，并合并重复类别
   plot_df <- .as_df(data)
-  .check_columns(plot_df, c(name_col, value_col), object = 'data')
+  .check_columns(plot_df, c(name_col, value_col), object = "data")
   plot_df <- data.frame(
     name = as.character(plot_df[[name_col]]),
     value = as.numeric(plot_df[[value_col]]),
@@ -43,8 +44,8 @@ plot_pie <- function(
   ) |>
     dplyr::filter(!is.na(name), is.finite(value), value > 0) |>
     dplyr::group_by(name) |>
-    dplyr::summarise(value = sum(value), .groups = 'drop')
-  if (!nrow(plot_df)) stop('No valid rows remained after filtering.')
+    dplyr::summarise(value = sum(value), .groups = "drop")
+  if (!nrow(plot_df)) stop("No valid rows remained after filtering.")
 
   ## 2. 排序，并把 top_n 之外的类别合并为 Other
   if (!is.null(name_level)) {
@@ -56,12 +57,12 @@ plot_pie <- function(
     plot_df <- dplyr::arrange(plot_df, value)
   }
   if (!is.null(top_n) && nrow(plot_df) > top_n) {
-    if (top_n < 2L) stop('top_n should be at least 2 when Other is required.')
+    if (top_n < 2L) stop("top_n should be at least 2 when Other is required.")
     keep_name <- utils::head(plot_df$name, top_n - 1L)
     plot_df$name <- ifelse(plot_df$name %in% keep_name, plot_df$name, other_name)
     plot_df <- plot_df |>
       dplyr::group_by(name) |>
-      dplyr::summarise(value = sum(value), .groups = 'drop')
+      dplyr::summarise(value = sum(value), .groups = "drop")
   }
   if (isTRUE(other_last) && other_name %in% plot_df$name) {
     plot_df <- dplyr::arrange(plot_df, name == other_name)
@@ -80,31 +81,31 @@ plot_pie <- function(
     )
   if (isTRUE(add_count) && isTRUE(add_percent)) {
     plot_df$label <- paste0(
-      plot_df$name, ', ', prettyNum(plot_df$value, big.mark = ','), ', ',
-      round(plot_df$percent * 100, percent_digits), '%'
+      plot_df$name, ", ", prettyNum(plot_df$value, big.mark = ","), ", ",
+      round(plot_df$percent * 100, percent_digits), "%"
     )
   } else if (isTRUE(add_count)) {
     plot_df$label <- paste0(
-      plot_df$name, ', ', prettyNum(plot_df$value, big.mark = ',')
+      plot_df$name, ", ", prettyNum(plot_df$value, big.mark = ",")
     )
   } else if (isTRUE(add_percent)) {
     plot_df$label <- paste0(
-      plot_df$name, ', ',
-      round(plot_df$percent * 100, percent_digits), '%'
+      plot_df$name, ", ",
+      round(plot_df$percent * 100, percent_digits), "%"
     )
   } else {
     plot_df$label <- plot_df$name
   }
 
   ## 4. 生成与类别一一对应的填充色
-  if (length(fill) == 1L && fill == 'auto') {
+  if (length(fill) == 1L && fill == "auto") {
     palette <- c(
-      '#66c2a5', '#fc8d62', '#8da0cb', '#e78ac3',
-      '#a6d854', '#ffd92f', '#8dd3c7', '#fdb462',
-      '#80b1d3', '#fccde5', '#d9ef8b', '#fee391'
+      "#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3",
+      "#a6d854", "#ffd92f", "#8dd3c7", "#fdb462",
+      "#80b1d3", "#fccde5", "#d9ef8b", "#fee391"
     )
     fill_color <- rep(palette, length.out = nrow(plot_df))
-  } else if (length(fill) == 1L && fill == 'hue') {
+  } else if (length(fill) == 1L && fill == "hue") {
     fill_color <- scales::hue_pal()(nrow(plot_df))
   } else if (!is.null(names(fill)) && all(plot_df$name %in% names(fill))) {
     fill_color <- unname(fill[plot_df$name])
@@ -118,12 +119,12 @@ plot_pie <- function(
       width = 1, color = border_color, fill = fill_color,
       linewidth = 0.5, show.legend = FALSE
     ) +
-    ggplot2::coord_polar('y', start = start * pi / 180) +
+    ggplot2::coord_polar("y", start = start * pi / 180) +
     ggplot2::theme_void() +
     ggplot2::theme(
       aspect.ratio = 1,
       plot.title = ggplot2::element_text(
-        color = 'black', face = 'bold', size = 8 + font_size, hjust = 0.5
+        color = "black", face = "bold", size = 8 + font_size, hjust = 0.5
       )
     )
   if (!is.null(title)) p <- p + ggplot2::labs(title = as.character(title))
@@ -147,6 +148,6 @@ plot_pie <- function(
     )
   }
   if (isTRUE(hemisphere)) p <- p + ggplot2::lims(x = c(0, 3.5))
-  attr(p, 'plot_df') <- plot_df
+  attr(p, "plot_df") <- plot_df
   p
 }

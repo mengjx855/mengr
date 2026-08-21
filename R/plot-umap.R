@@ -31,15 +31,15 @@
 #' @return A plot object; analysis data or models may also be stored as attributes.
 #' @export
 plot_umap <- function(
-    profile, group, sample_col = 'sample', group_col = 'group',
-    group_level = NULL, group_color = NULL,
-    display_type = c('line', 'point'),
-    conf_type = c('ellipse', 'encircle', 'none'), ellipse_level = 0.75,
-    title = NULL, subtitle = NULL, xlab = 'UMAP_1', ylab = 'UMAP_2',
-    legend_title = 'Group', add_group_label = FALSE,
-    add_sample_label = FALSE, label_size = 1.5, point_size = 1.5,
-    show_legend = TRUE, show_grid = FALSE, show_line = TRUE,
-    aspect_ratio = 3 / 4, theme = c('default', 'pubr'), ...
+  profile, group, sample_col = "sample", group_col = "group",
+  group_level = NULL, group_color = NULL,
+  display_type = c("line", "point"),
+  conf_type = c("ellipse", "encircle", "none"), ellipse_level = 0.75,
+  title = NULL, subtitle = NULL, xlab = "UMAP_1", ylab = "UMAP_2",
+  legend_title = "Group", add_group_label = FALSE,
+  add_sample_label = FALSE, label_size = 1.5, point_size = 1.5,
+  show_legend = TRUE, show_grid = FALSE, show_line = TRUE,
+  aspect_ratio = 3 / 4, theme = c("default", "pubr"), ...
 ) {
   display_type <- match.arg(display_type)
   conf_type <- match.arg(conf_type)
@@ -68,11 +68,11 @@ plot_umap <- function(
     X2 = umap_obj$layout[, 2],
     check.names = FALSE
   ) |>
-    dplyr::left_join(group_key_df, by = 'sample') |>
+    dplyr::left_join(group_key_df, by = "sample") |>
     dplyr::mutate(group = factor(group, levels = group_level))
 
   if (is.null(title)) {
-    title <- 'Uniform manifold approximation and projection analysis'
+    title <- "Uniform manifold approximation and projection analysis"
   }
 
   plot_dim(

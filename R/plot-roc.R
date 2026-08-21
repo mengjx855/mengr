@@ -26,17 +26,17 @@
 #' @return A ggplot2 theme object.
 #' @export
 theme_roc <- function(base_size = 12, show_grid = NULL,
-                      style = c('default', 'grid', 'classic', 
-                                'minimal', 'nature', 'lancet')) {
-  
+                      style = c(
+                        "default", "grid", "classic",
+                        "minimal", "nature", "lancet"
+                      )) {
   style <- match.arg(style)
-  
+
   if (is.null(show_grid)) {
-    show_grid <- style %in% c('grid', 'minimal')
+    show_grid <- style %in% c("grid", "minimal")
   }
-  
-  p <- switch(
-    style,
+
+  p <- switch(style,
     default = ggplot2::theme_bw(),
     grid = ggplot2::theme_bw(),
     classic = ggplot2::theme_classic(),
@@ -44,81 +44,81 @@ theme_roc <- function(base_size = 12, show_grid = NULL,
     nature = ggplot2::theme_classic(),
     lancet = ggplot2::theme_bw()
   )
-  
+
   p <- p +
     ggplot2::theme(
-      axis.text = ggplot2::element_text(size = base_size - 1, color = 'black'),
-      axis.title = ggplot2::element_text(size = base_size, color = 'black'),
-      axis.ticks = ggplot2::element_line(linewidth = .4, color = 'black'),
-      axis.ticks.length = grid::unit(2, 'mm'),
+      axis.text = ggplot2::element_text(size = base_size - 1, color = "black"),
+      axis.title = ggplot2::element_text(size = base_size, color = "black"),
+      axis.ticks = ggplot2::element_line(linewidth = .4, color = "black"),
+      axis.ticks.length = grid::unit(2, "mm"),
       axis.line = ggplot2::element_blank(),
       panel.background = ggplot2::element_blank(),
       panel.grid = ggplot2::element_blank(),
       plot.title = ggplot2::element_text(
-        face = 'bold', hjust = .5, size = base_size, color = 'black'
+        face = "bold", hjust = .5, size = base_size, color = "black"
       ),
       plot.subtitle = ggplot2::element_text(
-        hjust = .5, size = base_size - 1, color = 'black'
+        hjust = .5, size = base_size - 1, color = "black"
       ),
-      legend.text = ggplot2::element_text(size = base_size - 1, color = 'black'),
-      legend.title = ggplot2::element_text(size = base_size - 1, color = 'black'),
+      legend.text = ggplot2::element_text(size = base_size - 1, color = "black"),
+      legend.title = ggplot2::element_text(size = base_size - 1, color = "black"),
       aspect.ratio = 1
     )
-  
+
   ## 不同主题的细节
-  if (style %in% c('default', 'grid')) {
+  if (style %in% c("default", "grid")) {
     p <- p +
       ggplot2::theme(
-        panel.border = ggplot2::element_rect(linewidth = .4, color = 'black', fill = NA)
+        panel.border = ggplot2::element_rect(linewidth = .4, color = "black", fill = NA)
       )
   }
-  
-  if (style == 'classic') {
+
+  if (style == "classic") {
     p <- p +
       ggplot2::theme(
-        axis.line = ggplot2::element_line(linewidth = .4, color = 'black'),
+        axis.line = ggplot2::element_line(linewidth = .4, color = "black"),
         panel.border = ggplot2::element_blank()
       )
   }
-  
-  if (style == 'minimal') {
+
+  if (style == "minimal") {
     p <- p +
       ggplot2::theme(
         panel.border = ggplot2::element_blank(),
-        axis.line = ggplot2::element_line(linewidth = .3, color = 'black')
+        axis.line = ggplot2::element_line(linewidth = .3, color = "black")
       )
   }
-  
-  if (style == 'nature') {
+
+  if (style == "nature") {
     p <- p +
       ggplot2::theme(
-        axis.line = ggplot2::element_line(linewidth = .5, color = 'black'),
-        axis.ticks = ggplot2::element_line(linewidth = .5, color = 'black'),
+        axis.line = ggplot2::element_line(linewidth = .5, color = "black"),
+        axis.ticks = ggplot2::element_line(linewidth = .5, color = "black"),
         panel.border = ggplot2::element_blank(),
         legend.key = ggplot2::element_blank()
       )
   }
-  
-  if (style == 'lancet') {
+
+  if (style == "lancet") {
     p <- p +
       ggplot2::theme(
-        panel.border = ggplot2::element_rect(linewidth = .6, color = 'black', fill = NA),
-        axis.ticks = ggplot2::element_line(linewidth = .5, color = 'black'),
+        panel.border = ggplot2::element_rect(linewidth = .6, color = "black", fill = NA),
+        axis.ticks = ggplot2::element_line(linewidth = .5, color = "black"),
         legend.key = ggplot2::element_blank()
       )
   }
-  
+
   ## 是否添加网格
   if (isTRUE(show_grid)) {
     p <- p +
       ggplot2::theme(
         panel.grid.major = ggplot2::element_line(
-          linewidth = .35, linetype = 'longdash', color = 'grey88'
+          linewidth = .35, linetype = "longdash", color = "grey88"
         ),
         panel.grid.minor = ggplot2::element_blank()
       )
   }
-  
+
   return(p)
 }
 
@@ -136,20 +136,19 @@ theme_roc <- function(base_size = 12, show_grid = NULL,
 #' @param prefix Prefix used when naming derived coordinates or labels.
 #' @return A result object described in the Details section.
 #' @export
-roc_auc_label <- function(roc, digits = 3, prefix = 'AUC') {
-  
+roc_auc_label <- function(roc, digits = 3, prefix = "AUC") {
   auc_value <- as.numeric(pROC::auc(roc))
-  
+
   auc_ci <- tryCatch(
     as.numeric(pROC::ci.auc(roc)),
     error = function(e) c(NA_real_, NA_real_, NA_real_)
   )
-  
+
   paste0(
-    prefix, ': ', round(auc_value, digits),
-    '\n(95% CI: ',
-    paste(round(auc_ci[c(1, 3)], digits), collapse = ' ~ '),
-    ')'
+    prefix, ": ", round(auc_value, digits),
+    "\n(95% CI: ",
+    paste(round(auc_ci[c(1, 3)], digits), collapse = " ~ "),
+    ")"
   )
 }
 
@@ -167,7 +166,6 @@ roc_auc_label <- function(roc, digits = 3, prefix = 'AUC') {
 #' @return A result object described in the Details section.
 #' @export
 roc_se_data <- function(roc, by = 0.01, conf.level = 0.95) {
-  
   roc_se <- tryCatch(
     pROC::ci.se(
       roc,
@@ -176,18 +174,20 @@ roc_se_data <- function(roc, by = 0.01, conf.level = 0.95) {
     ),
     error = function(e) NULL
   )
-  
-  if (is.null(roc_se)) return(NULL)
-  
+
+  if (is.null(roc_se)) {
+    return(NULL)
+  }
+
   roc_se <- data.frame(roc_se, check.names = FALSE) |>
     dplyr::rename(
-      lower = dplyr::all_of('2.5%'),
-      median = dplyr::all_of('50%'),
-      upper = dplyr::all_of('97.5%')
+      lower = dplyr::all_of("2.5%"),
+      median = dplyr::all_of("50%"),
+      upper = dplyr::all_of("97.5%")
     ) |>
-    tibble::rownames_to_column('spec') |>
+    tibble::rownames_to_column("spec") |>
     dplyr::mutate(spec = as.numeric(spec))
-  
+
   return(roc_se)
 }
 
@@ -219,18 +219,17 @@ roc_se_data <- function(roc, by = 0.01, conf.level = 0.95) {
 #' @param show_grid Logical control for `show_grid`.
 #' @return A plot object; analysis data or models may also be stored as attributes.
 #' @export
-plot_roc <- function(roc, color = '#238443', plot_se = FALSE,
-                     label_pos = c(0.75, 0.125), title = NULL, 
+plot_roc <- function(roc, color = "#238443", plot_se = FALSE,
+                     label_pos = c(0.75, 0.125), title = NULL,
                      subtitle = NULL, linewidth = .6, se_alpha = .12,
                      theme_style = c(
-                       'default', 'grid', 'classic', 'minimal',
-                       'nature', 'lancet'
+                       "default", "grid", "classic", "minimal",
+                       "nature", "lancet"
                      ), base_size = 12,
                      show_grid = FALSE) {
-  
   theme_style <- match.arg(theme_style)
   label <- roc_auc_label(roc)
-  
+
   ## 基础 ROC 曲线
   p <- pROC::ggroc(
     roc,
@@ -239,14 +238,14 @@ plot_roc <- function(roc, color = '#238443', plot_se = FALSE,
     color = color
   ) +
     ggplot2::annotate(
-      'segment',
+      "segment",
       x = 0, xend = 1, y = 0, yend = 1,
-      color = 'black',
-      linetype = 'dashed',
+      color = "black",
+      linetype = "dashed",
       linewidth = .25
     ) +
     ggplot2::annotate(
-      'text',
+      "text",
       x = label_pos[1],
       y = label_pos[2],
       label = label,
@@ -255,23 +254,22 @@ plot_roc <- function(roc, color = '#238443', plot_se = FALSE,
     ggplot2::scale_x_continuous(expand = c(.01, .01)) +
     ggplot2::scale_y_continuous(expand = c(.01, .01)) +
     ggplot2::labs(
-      x = '1 - Specificity',
-      y = 'Sensitivity',
+      x = "1 - Specificity",
+      y = "Sensitivity",
       title = title,
       subtitle = subtitle
     ) +
     theme_roc(
-      base_size = base_size, 
-      show_grid = show_grid, 
+      base_size = base_size,
+      show_grid = show_grid,
       style = theme_style
-      )
-  
+    )
+
   ## 添加 sensitivity 置信区间
   ## 注意这里用 p$layers 调整顺序，让 ribbon 位于 ROC 曲线下方。
   if (isTRUE(plot_se)) {
-    
     roc_se <- roc_se_data(roc)
-    
+
     if (!is.null(roc_se)) {
       ribbon_layer <- ggplot2::geom_ribbon(
         data = roc_se,
@@ -280,7 +278,7 @@ plot_roc <- function(roc, color = '#238443', plot_se = FALSE,
         alpha = se_alpha,
         inherit.aes = FALSE
       )
-      
+
       p <- p + ribbon_layer
       p$layers <- c(
         p$layers[length(p$layers)],
@@ -290,7 +288,6 @@ plot_roc <- function(roc, color = '#238443', plot_se = FALSE,
   }
 
   return(p)
-  
 }
 
 #### plot_roc_multiple ####
@@ -321,26 +318,25 @@ plot_roc_multiple <- function(roc_list, colors = NULL, plot_se = FALSE,
                               title = NULL, subtitle = NULL,
                               linewidth = .6, se_alpha = .10,
                               theme_style = c(
-                                'default', 'grid', 'classic', 'minimal',
-                                'nature', 'lancet'
+                                "default", "grid", "classic", "minimal",
+                                "nature", "lancet"
                               ), base_size = 12,
                               show_grid = TRUE) {
-  
   theme_style <- match.arg(theme_style)
-  if (is.null(names(roc_list)) || any(names(roc_list) == '')) {
-    names(roc_list) <- paste0('ROC_', seq_along(roc_list))
+  if (is.null(names(roc_list)) || any(names(roc_list) == "")) {
+    names(roc_list) <- paste0("ROC_", seq_along(roc_list))
   }
-  
+
   if (is.null(colors)) {
     base_colors <- c(
-      '#80b1d3', '#b3de69', '#fdb462', '#8dd3c7', '#bc80bd',
-      '#fb8072', '#ffed6f', '#fccde5', '#bebada', '#ccebc5'
+      "#80b1d3", "#b3de69", "#fdb462", "#8dd3c7", "#bc80bd",
+      "#fb8072", "#ffed6f", "#fccde5", "#bebada", "#ccebc5"
     )
     colors <- rep(base_colors, length.out = length(roc_list))
   }
-  
+
   names(colors) <- names(roc_list)
-  
+
   labels <- purrr::map_chr(
     roc_list, \(x) {
       auc_value <- as.numeric(pROC::auc(x))
@@ -348,28 +344,28 @@ plot_roc_multiple <- function(roc_list, colors = NULL, plot_se = FALSE,
         as.numeric(pROC::ci.auc(x)),
         error = function(e) c(NA_real_, NA_real_, NA_real_)
       )
-      
+
       paste0(
         round(auc_value, 3),
-        ' [95% CI ',
-        paste(round(auc_ci[c(1, 3)], 3), collapse = '~'),
-        ']'
+        " [95% CI ",
+        paste(round(auc_ci[c(1, 3)], 3), collapse = "~"),
+        "]"
       )
     }
   )
-  
-  labels <- paste0(names(roc_list), ' ', labels)
-  
+
+  labels <- paste0(names(roc_list), " ", labels)
+
   p <- pROC::ggroc(
     roc_list,
     legacy.axes = TRUE,
     linewidth = linewidth
   ) +
     ggplot2::annotate(
-      'segment',
+      "segment",
       x = 0, y = 0, xend = 1, yend = 1,
-      color = 'black',
-      linetype = 'longdash',
+      color = "black",
+      linetype = "longdash",
       linewidth = .35
     ) +
     ggplot2::scale_color_manual(
@@ -380,30 +376,31 @@ plot_roc_multiple <- function(roc_list, colors = NULL, plot_se = FALSE,
     ggplot2::scale_x_continuous(expand = c(.01, .01)) +
     ggplot2::scale_y_continuous(expand = c(.01, .01)) +
     ggplot2::labs(
-      x = '1 - Specificity',
-      y = 'Sensitivity',
-      color = '',
+      x = "1 - Specificity",
+      y = "Sensitivity",
+      color = "",
       title = title,
       subtitle = subtitle
     ) +
     theme_roc(
-      base_size = base_size, 
-      show_grid = show_grid, 
+      base_size = base_size,
+      show_grid = show_grid,
       style = theme_style
     )
-  
+
   ## 添加多个 ROC 的 sensitivity 置信区间
   if (isTRUE(plot_se)) {
-    
     roc_se <- purrr::imap_dfr(
       roc_list,
       \(x, y) {
         se_df <- roc_se_data(x)
-        if (is.null(se_df)) return(NULL)
+        if (is.null(se_df)) {
+          return(NULL)
+        }
         dplyr::mutate(se_df, class = y)
       }
     )
-    
+
     if (nrow(roc_se) > 0) {
       p <- p +
         ggplot2::geom_ribbon(
@@ -414,7 +411,7 @@ plot_roc_multiple <- function(roc_list, colors = NULL, plot_se = FALSE,
           show.legend = FALSE
         ) +
         ggplot2::scale_fill_manual(values = colors)
-      
+
       ## 让 ribbon 位于曲线下面
       p$layers <- c(
         p$layers[length(p$layers)],
@@ -422,6 +419,6 @@ plot_roc_multiple <- function(roc_list, colors = NULL, plot_se = FALSE,
       )
     }
   }
-  
+
   return(p)
 }

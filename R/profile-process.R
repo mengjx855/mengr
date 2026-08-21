@@ -31,9 +31,8 @@
 #' @return A result object described in the Details section.
 #' @export
 LOG2 <- function(x, pseudocount = 1e-6, use_half_minimum = TRUE) {
-  
   x <- as.numeric(x)
-  
+
   if (isTRUE(use_half_minimum)) {
     min_pos <- min(x[x > 0], na.rm = TRUE)
     if (!is.finite(min_pos)) min_pos <- pseudocount * 2
@@ -41,7 +40,7 @@ LOG2 <- function(x, pseudocount = 1e-6, use_half_minimum = TRUE) {
   } else {
     x[x <= 0 | is.na(x)] <- pseudocount
   }
-  
+
   log2(x)
 }
 
@@ -57,9 +56,8 @@ LOG2 <- function(x, pseudocount = 1e-6, use_half_minimum = TRUE) {
 #' @return A result object described in the Details section.
 #' @export
 LOG10 <- function(x, pseudocount = 1e-6, use_half_minimum = TRUE) {
-  
   x <- as.numeric(x)
-  
+
   if (isTRUE(use_half_minimum)) {
     min_pos <- min(x[x > 0], na.rm = TRUE)
     if (!is.finite(min_pos)) min_pos <- pseudocount * 2
@@ -67,7 +65,7 @@ LOG10 <- function(x, pseudocount = 1e-6, use_half_minimum = TRUE) {
   } else {
     x[x <= 0 | is.na(x)] <- pseudocount
   }
-  
+
   log10(x)
 }
 
@@ -83,9 +81,8 @@ LOG10 <- function(x, pseudocount = 1e-6, use_half_minimum = TRUE) {
 #' @return A result object described in the Details section.
 #' @export
 CLR <- function(x, pseudocount = 1e-6, use_half_minimum = FALSE) {
-  
   x <- as.numeric(x)
-  
+
   if (isTRUE(use_half_minimum)) {
     min_pos <- min(x[x > 0], na.rm = TRUE)
     if (!is.finite(min_pos)) min_pos <- pseudocount * 2
@@ -93,9 +90,9 @@ CLR <- function(x, pseudocount = 1e-6, use_half_minimum = FALSE) {
   } else {
     x[x <= 0 | is.na(x)] <- pseudocount
   }
-  
-  gm <- exp(mean(log(x), na.rm = TRUE))  # 计算每行的几何均值
-  log(x) - log(gm)                       # 执行CLR转换：log(x) - log(几何均值)
+
+  gm <- exp(mean(log(x), na.rm = TRUE)) # 计算每行的几何均值
+  log(x) - log(gm) # 执行CLR转换：log(x) - log(几何均值)
 }
 
 #### profile transformations ####
@@ -115,19 +112,18 @@ CLR <- function(x, pseudocount = 1e-6, use_half_minimum = FALSE) {
 #' @return A result object described in the Details section.
 #' @export
 profile_trans_log2 <- function(profile, pseudocount = 1e-6,
-                              use_half_minimum = FALSE, digits = NULL) {
-  
+                               use_half_minimum = FALSE, digits = NULL) {
   profile <- data.frame(profile, check.names = FALSE)
   profile <- apply(profile, 1, \(x) {
     LOG2(x, pseudocount = pseudocount, use_half_minimum = use_half_minimum)
   }) |>
     t() |>
     data.frame(check.names = FALSE)
-  
+
   if (!is.null(digits)) {
     profile <- round(profile, digits = digits)
   }
-  
+
   return(profile)
 }
 
@@ -145,19 +141,18 @@ profile_trans_log2 <- function(profile, pseudocount = 1e-6,
 #' @return A result object described in the Details section.
 #' @export
 profile_trans_log10 <- function(profile, pseudocount = 1e-6,
-                               use_half_minimum = FALSE, digits = NULL) {
-  
+                                use_half_minimum = FALSE, digits = NULL) {
   profile <- data.frame(profile, check.names = FALSE)
   profile <- apply(profile, 1, \(x) {
     LOG10(x, pseudocount = pseudocount, use_half_minimum = use_half_minimum)
   }) |>
     t() |>
     data.frame(check.names = FALSE)
-  
+
   if (!is.null(digits)) {
     profile <- round(profile, digits = digits)
   }
-  
+
   return(profile)
 }
 
@@ -175,18 +170,17 @@ profile_trans_log10 <- function(profile, pseudocount = 1e-6,
 #' @return A result object described in the Details section.
 #' @export
 profile_trans_clr <- function(profile, pseudocount = 1e-6,
-                             use_half_minimum = FALSE, digits = NULL) {
-  
+                              use_half_minimum = FALSE, digits = NULL) {
   profile <- data.frame(profile, check.names = FALSE)
   profile <- apply(profile, 2, \(x) {
     CLR(x, pseudocount = pseudocount, use_half_minimum = use_half_minimum)
   }) |>
     data.frame(check.names = FALSE)
-  
+
   if (!is.null(digits)) {
     profile <- round(profile, digits = digits)
   }
-  
+
   return(profile)
 }
 
@@ -202,14 +196,13 @@ profile_trans_clr <- function(profile, pseudocount = 1e-6,
 #' @return A result object described in the Details section.
 #' @export
 profile_trans_sqrt <- function(profile, digits = NULL) {
-  
   profile <- data.frame(profile, check.names = FALSE)
   profile <- sqrt(profile)
-  
+
   if (!is.null(digits)) {
     profile <- round(profile, digits = digits)
   }
-  
+
   return(profile)
 }
 
@@ -234,25 +227,24 @@ profile_trans_sqrt <- function(profile, digits = NULL) {
 #' @return A result object described in the Details section.
 #' @export
 profile_trans_ra <- function(
-    profile, base = 100, digits = 8, remove_empty = FALSE
-  ) {
-  
+  profile, base = 100, digits = 8, remove_empty = FALSE
+) {
   profile <- data.frame(profile, check.names = FALSE)
   profile <- as.matrix(profile)
-  suppressWarnings(storage.mode(profile) <- 'numeric')
-  
+  suppressWarnings(storage.mode(profile) <- "numeric")
+
   col_sum <- colSums(profile, na.rm = TRUE)
   col_sum[col_sum == 0] <- NA_real_
-  
-  profile <- sweep(profile, 2, col_sum, '/') * base
+
+  profile <- sweep(profile, 2, col_sum, "/") * base
   profile[!is.finite(profile)] <- 0
-  
+
   if (!is.null(digits)) {
     profile <- round(profile, digits = digits)
   }
-  
+
   profile <- data.frame(profile, check.names = FALSE)
-  
+
   if (isTRUE(remove_empty)) {
     profile <- profile[
       rowSums(profile, na.rm = TRUE) != 0,
@@ -260,7 +252,7 @@ profile_trans_ra <- function(
       drop = FALSE
     ]
   }
-  
+
   return(profile)
 }
 
@@ -279,16 +271,15 @@ profile_trans_ra <- function(
 #' @return A result object described in the Details section.
 #' @export
 profile_trans_hellinger <- function(profile, digits = NULL) {
-  
   profile <- data.frame(profile, check.names = FALSE)
-  profile <- vegan::decostand(t(profile), method = 'hellinger') |>
+  profile <- vegan::decostand(t(profile), method = "hellinger") |>
     t() |>
     data.frame(check.names = FALSE)
-  
+
   if (!is.null(digits)) {
     profile <- round(profile, digits = digits)
   }
-  
+
   return(profile)
 }
 
@@ -318,9 +309,9 @@ profile_trans_hellinger <- function(profile, digits = NULL) {
 #' @return A result object described in the Details section.
 #' @export
 profile_collapse <- function(
-    profile, group, sample_col = "sample", group_col = "group",
-    method = c('mean', 'median', 'sum'), na_fill = 0, group_level = NULL
-  ) {
+  profile, group, sample_col = "sample", group_col = "group",
+  method = c("mean", "median", "sum"), na_fill = 0, group_level = NULL
+) {
   if (is.function(method)) {
     stat_fun <- method
   } else {
@@ -330,56 +321,56 @@ profile_collapse <- function(
 
   profile <- data.frame(profile, check.names = FALSE)
   group <- data.frame(group, check.names = FALSE)
-  
+
   if (!all(c(sample_col, group_col) %in% colnames(group))) {
-    stop('group should contain columns: ', sample_col, ' | ', group_col)
+    stop("group should contain columns: ", sample_col, " | ", group_col)
   }
-  
+
   if (anyDuplicated(group[[sample_col]])) {
-    stop('Duplicated sample names found in group table.')
+    stop("Duplicated sample names found in group table.")
   }
-  
+
   sample_use <- intersect(colnames(profile), group[[sample_col]])
-  
+
   if (length(sample_use) == 0) {
-    stop('No matched samples between profile and group table.')
+    stop("No matched samples between profile and group table.")
   }
-  
+
   profile <- profile[, sample_use, drop = FALSE]
-  
+
   if (!is.null(na_fill)) {
     profile[is.na(profile)] <- na_fill
   }
-  
+
   meta <- group |>
     dplyr::select(
       sample = dplyr::all_of(sample_col),
       group = dplyr::all_of(group_col)
     )
-  
+
   profile_long_df <- data.frame(t(profile), check.names = FALSE) |>
-    tibble::rownames_to_column('sample') |>
-    dplyr::left_join(meta, by = 'sample') |>
+    tibble::rownames_to_column("sample") |>
+    dplyr::left_join(meta, by = "sample") |>
     dplyr::filter(!is.na(group))
-  
+
   if (is.null(group_level)) {
     group_level <- unique(profile_long_df$group)
   }
 
   profile_long_df <- profile_long_df |>
     dplyr::mutate(group = factor(group, levels = group_level))
-  
+
   profile <- profile_long_df |>
     dplyr::select(-sample) |>
     dplyr::group_by(group) |>
     dplyr::summarise(
       dplyr::across(dplyr::where(is.numeric), \(x) stat_fun(x, na.rm = TRUE)),
-      .groups = 'drop'
+      .groups = "drop"
     ) |>
-    tibble::column_to_rownames('group') |>
+    tibble::column_to_rownames("group") |>
     t() |>
     data.frame(check.names = FALSE)
-  
+
   return(profile)
 }
 
@@ -410,62 +401,62 @@ profile_collapse <- function(
 #' @return A result object described in the Details section.
 #' @export
 profile_filter <- function(
-    profile, group = NULL, sample_col = 'sample', group_col = 'group',
-    by_group = FALSE, all_group = FALSE, n_group = 1,
-    min_prevalence = 0.1, min_n = NULL, min_abundance = 0
-  ) {
-  
+  profile, group = NULL, sample_col = "sample", group_col = "group",
+  by_group = FALSE, all_group = FALSE, n_group = 1,
+  min_prevalence = 0.1, min_n = NULL, min_abundance = 0
+) {
   profile <- data.frame(profile, check.names = FALSE)
   profile <- as.matrix(profile)
-  suppressWarnings(storage.mode(profile) <- 'numeric')
-  
+  suppressWarnings(storage.mode(profile) <- "numeric")
+
   present <- !is.na(profile) & profile > min_abundance
-  
+
   ## 不分组过滤
   if (isFALSE(by_group)) {
-    
     present_n <- rowSums(present, na.rm = TRUE)
-    
+
     if (!is.null(min_n)) {
       keep <- present_n >= min_n
     } else {
       keep <- present_n / ncol(profile) >= min_prevalence
     }
-    
+
     profile <- profile[keep, , drop = FALSE]
     return(data.frame(profile, check.names = FALSE))
   }
-  
+
   ## 分组过滤
   if (is.null(group)) {
-    stop('if by_group = TRUE, group should be provided.')
+    stop("if by_group = TRUE, group should be provided.")
   }
-  
+
   group <- data.frame(group, check.names = FALSE)
-  
+
   if (!all(c(sample_col, group_col) %in% colnames(group))) {
-    stop('group should contain columns: ', sample_col, ' | ', group_col)
+    stop("group should contain columns: ", sample_col, " | ", group_col)
   }
-  
+
   if (anyDuplicated(group[[sample_col]])) {
-    stop('Duplicated sample names found in group table.')
+    stop("Duplicated sample names found in group table.")
   }
-  
+
   group <- group[match(colnames(profile), group[[sample_col]]), ]
-  
+
   if (any(is.na(group[[sample_col]])) || any(is.na(group[[group_col]]))) {
     miss <- colnames(profile)[is.na(group[[sample_col]]) | is.na(group[[group_col]])]
-    stop('Some profile samples are not found in group table: ',
-         paste(utils::head(miss, 10), collapse = ', '))
+    stop(
+      "Some profile samples are not found in group table: ",
+      paste(utils::head(miss, 10), collapse = ", ")
+    )
   }
-  
+
   group_vec <- as.character(group[[group_col]])
   group_level <- unique(group_vec)
-  
+
   count_mat <- sapply(group_level, \(x) {
     rowSums(present[, group_vec == x, drop = FALSE], na.rm = TRUE)
   })
-  
+
   if (is.null(dim(count_mat))) {
     count_mat <- matrix(
       count_mat,
@@ -474,22 +465,22 @@ profile_filter <- function(
       dimnames = list(rownames(profile), group_level)
     )
   }
-  
+
   if (!is.null(min_n)) {
     pass_mat <- count_mat >= min_n
   } else {
     group_size <- as.numeric(table(factor(group_vec, levels = group_level)))
-    pass_mat <- sweep(count_mat, 2, group_size, '/') >= min_prevalence
+    pass_mat <- sweep(count_mat, 2, group_size, "/") >= min_prevalence
   }
-  
+
   if (isTRUE(all_group)) {
     keep <- rowSums(pass_mat, na.rm = TRUE) == ncol(pass_mat)
   } else {
     keep <- rowSums(pass_mat, na.rm = TRUE) >= n_group
   }
-  
+
   profile <- profile[keep, , drop = FALSE]
-  
+
   return(data.frame(profile, check.names = FALSE))
 }
 
@@ -516,56 +507,52 @@ profile_filter <- function(
 #' @return A result object described in the Details section.
 #' @export
 profile_top_n <- function(profile, n = 12, out_other = FALSE,
-                          other_name = 'Other',
-                          sort_method = c('mean', 'sum', 'median')) {
-  
+                          other_name = "Other",
+                          sort_method = c("mean", "sum", "median")) {
   profile <- data.frame(profile, check.names = FALSE)
   profile <- as.matrix(profile)
-  suppressWarnings(storage.mode(profile) <- 'numeric')
-  
+  suppressWarnings(storage.mode(profile) <- "numeric")
+
   if (n <= 0) {
-    stop('n should be > 0.')
+    stop("n should be > 0.")
   }
-  
+
   if (nrow(profile) == 0) {
     return(data.frame())
   }
-  
+
   n <- min(n, nrow(profile))
-  
+
   if (is.function(sort_method)) {
     stat <- apply(profile, 1, \(x) sort_method(x, na.rm = TRUE))
   } else {
     sort_method <- match.arg(sort_method)
   }
 
-  if (!is.function(sort_method) && sort_method == 'mean') {
+  if (!is.function(sort_method) && sort_method == "mean") {
     stat <- rowMeans(profile, na.rm = TRUE)
-  } else if (!is.function(sort_method) && sort_method == 'sum') {
+  } else if (!is.function(sort_method) && sort_method == "sum") {
     stat <- rowSums(profile, na.rm = TRUE)
-  } else if (!is.function(sort_method) && sort_method == 'median') {
+  } else if (!is.function(sort_method) && sort_method == "median") {
     stat <- apply(profile, 1, stats::median, na.rm = TRUE)
   }
-  
+
   feats <- names(sort(stat, decreasing = TRUE))[seq_len(n)]
-  
+
   if (isFALSE(out_other)) {
-    
     profile <- profile[feats, , drop = FALSE]
-    
   } else {
-    
     group <- rownames(profile)
     group[!group %in% feats] <- other_name
-    
+
     profile <- rowsum(profile, group = group, reorder = FALSE, na.rm = TRUE)
-    
+
     row_order <- c(feats[feats %in% rownames(profile)], other_name)
     row_order <- row_order[row_order %in% rownames(profile)]
-    
+
     profile <- profile[row_order, , drop = FALSE]
   }
-  
+
   return(data.frame(profile, check.names = FALSE))
 }
 
@@ -589,21 +576,20 @@ profile_top_n <- function(profile, n = 12, out_other = FALSE,
 #' @return A result object described in the Details section.
 #' @export
 profile_top_frac <- function(profile, frac = 0.1, out_other = FALSE,
-                             other_name = 'Other',
-                             sort_method = c('mean', 'sum', 'median')) {
-  
+                             other_name = "Other",
+                             sort_method = c("mean", "sum", "median")) {
   profile <- data.frame(profile, check.names = FALSE)
-  
+
   if (!is.numeric(frac) || frac <= 0 || frac > 1) {
-    stop('frac should be in (0, 1].')
+    stop("frac should be in (0, 1].")
   }
-  
+
   if (nrow(profile) == 0) {
     return(data.frame())
   }
-  
+
   n <- max(1, floor(nrow(profile) * frac))
-  
+
   profile <- profile_top_n(
     profile = profile,
     n = n,
@@ -611,7 +597,7 @@ profile_top_frac <- function(profile, frac = 0.1, out_other = FALSE,
     other_name = other_name,
     sort_method = sort_method
   )
-  
+
   return(profile)
 }
 
@@ -637,20 +623,19 @@ profile_top_frac <- function(profile, frac = 0.1, out_other = FALSE,
 profile_replace <- function(profile, min_value = 1, fill_value = 0,
                             trans_ra = FALSE, base = 100,
                             remove_empty = TRUE) {
-  
   profile <- data.frame(profile, check.names = FALSE)
   profile <- as.matrix(profile)
-  suppressWarnings(storage.mode(profile) <- 'numeric')
-  
+  suppressWarnings(storage.mode(profile) <- "numeric")
+
   if (isTRUE(trans_ra)) {
     col_sum <- colSums(profile, na.rm = TRUE)
     col_sum[col_sum == 0] <- NA_real_
-    profile <- sweep(profile, 2, col_sum, '/') * base
+    profile <- sweep(profile, 2, col_sum, "/") * base
   }
-  
+
   profile[!is.finite(profile)] <- fill_value
   profile[profile <= min_value] <- fill_value
-  
+
   if (isTRUE(remove_empty)) {
     profile <- profile[
       rowSums(profile != fill_value, na.rm = TRUE) > 0,
@@ -658,7 +643,7 @@ profile_replace <- function(profile, min_value = 1, fill_value = 0,
       drop = FALSE
     ]
   }
-  
+
   return(data.frame(profile, check.names = FALSE))
 }
 
@@ -681,19 +666,18 @@ profile_replace <- function(profile, min_value = 1, fill_value = 0,
 #' @return A result object described in the Details section.
 #' @export
 profile_adjacency <- function(profile, logical = FALSE, min_abundance = 0) {
-  
   profile <- data.frame(profile, check.names = FALSE)
   profile <- as.matrix(profile)
-  suppressWarnings(storage.mode(profile) <- 'numeric')
-  
+  suppressWarnings(storage.mode(profile) <- "numeric")
+
   profile <- !is.na(profile) & profile > min_abundance
-  
+
   if (isFALSE(logical)) {
-    storage.mode(profile) <- 'integer'
+    storage.mode(profile) <- "integer"
   }
-  
+
   profile <- data.frame(profile, check.names = FALSE)
-  
+
   return(profile)
 }
 
@@ -724,59 +708,57 @@ profile_adjacency <- function(profile, logical = FALSE, min_abundance = 0) {
 #' @return A result object described in the Details section.
 #' @export
 profile_prevalence <- function(profile, group = NULL, by_group = TRUE,
-                               sample_col = 'sample', group_col = 'group',
+                               sample_col = "sample", group_col = "group",
                                min_abundance = 0, count = FALSE, base = 100) {
-  
   profile <- data.frame(profile, check.names = FALSE)
   profile <- as.matrix(profile)
-  suppressWarnings(storage.mode(profile) <- 'numeric')
-  
+  suppressWarnings(storage.mode(profile) <- "numeric")
+
   present <- !is.na(profile) & profile > min_abundance
-  
+
   ## 全部样本
   if (isFALSE(by_group)) {
-    
     value <- rowSums(present, na.rm = TRUE)
-    
+
     if (isFALSE(count)) {
       value <- value / ncol(profile) * base
     }
-    
+
     out <- data.frame(
       name = rownames(profile),
       prevalence = value,
       check.names = FALSE
     )
-    
+
     return(out)
   }
-  
+
   ## 分组样本
   if (is.null(group)) {
-    stop('if by_group = TRUE, group should be provided.')
+    stop("if by_group = TRUE, group should be provided.")
   }
-  
+
   group <- data.frame(group, check.names = FALSE)
-  
+
   if (!all(c(sample_col, group_col) %in% colnames(group))) {
-    stop('group should contain columns: ', sample_col, ' | ', group_col)
+    stop("group should contain columns: ", sample_col, " | ", group_col)
   }
-  
+
   sample_use <- intersect(colnames(profile), group[[sample_col]])
-  
+
   if (length(sample_use) == 0) {
-    stop('No matched samples between profile and group table.')
+    stop("No matched samples between profile and group table.")
   }
-  
+
   present <- present[, sample_use, drop = FALSE]
-  
+
   group_vec <- group[[group_col]][match(sample_use, group[[sample_col]])]
   group_level <- unique(group_vec)
-  
+
   out <- sapply(group_level, \(x) {
     rowSums(present[, group_vec == x, drop = FALSE], na.rm = TRUE)
   })
-  
+
   if (is.null(dim(out))) {
     out <- matrix(
       out,
@@ -785,14 +767,14 @@ profile_prevalence <- function(profile, group = NULL, by_group = TRUE,
       dimnames = list(rownames(profile), group_level)
     )
   }
-  
+
   if (isFALSE(count)) {
     group_size <- as.numeric(table(factor(group_vec, levels = group_level)))
-    out <- sweep(out, 2, group_size, '/') * base
+    out <- sweep(out, 2, group_size, "/") * base
   }
-  
+
   out <- data.frame(out, check.names = FALSE)
-  
+
   return(out)
 }
 
@@ -818,16 +800,14 @@ profile_prevalence <- function(profile, group = NULL, by_group = TRUE,
 #' @return A result object described in the Details section.
 #' @export
 profile_statistics <- function(profile, group = NULL, by_group = TRUE,
-                               sample_col = 'sample', group_col = 'group',
+                               sample_col = "sample", group_col = "group",
                                min_abundance = 0, base = 100) {
-  
   profile <- data.frame(profile, check.names = FALSE)
   profile <- as.matrix(profile)
-  suppressWarnings(storage.mode(profile) <- 'numeric')
-  
+  suppressWarnings(storage.mode(profile) <- "numeric")
+
   ## 不分组统计
   if (isFALSE(by_group)) {
-    
     out <- data.frame(
       name = rownames(profile),
       mean = rowMeans(profile, na.rm = TRUE),
@@ -836,51 +816,51 @@ profile_statistics <- function(profile, group = NULL, by_group = TRUE,
       prevalence = rowSums(profile > min_abundance, na.rm = TRUE) / ncol(profile) * base,
       check.names = FALSE
     )
-    
+
     return(out)
   }
-  
+
   ## 分组统计
   if (is.null(group)) {
-    stop('if by_group = TRUE, group should be provided.')
+    stop("if by_group = TRUE, group should be provided.")
   }
-  
+
   group <- data.frame(group, check.names = FALSE)
-  
+
   if (!all(c(sample_col, group_col) %in% colnames(group))) {
-    stop('group should contain columns: ', sample_col, ' | ', group_col)
+    stop("group should contain columns: ", sample_col, " | ", group_col)
   }
-  
+
   sample_use <- intersect(colnames(profile), group[[sample_col]])
-  
+
   if (length(sample_use) == 0) {
-    stop('No matched samples between profile and group table.')
+    stop("No matched samples between profile and group table.")
   }
-  
+
   profile <- profile[, sample_use, drop = FALSE]
   group_vec <- group[[group_col]][match(sample_use, group[[sample_col]])]
   group_level <- unique(group_vec)
-  
+
   out <- purrr::map_dfc(group_level, \(x) {
-    
     group_profile_mat <- profile[, group_vec == x, drop = FALSE]
-    
+
     data.frame(
       mean = rowMeans(group_profile_mat, na.rm = TRUE),
       sd = apply(group_profile_mat, 1, stats::sd, na.rm = TRUE),
       median = apply(group_profile_mat, 1, stats::median, na.rm = TRUE),
       prevalence = rowSums(
-        group_profile_mat > min_abundance, na.rm = TRUE
+        group_profile_mat > min_abundance,
+        na.rm = TRUE
       ) / ncol(group_profile_mat) * base,
       check.names = FALSE
     ) |>
-      dplyr::rename_with(~ paste0(x, '_', .x))
+      dplyr::rename_with(~ paste0(x, "_", .x))
   })
-  
+
   out <- out |>
     tibble::add_column(name = rownames(profile), .before = 1) |>
     data.frame(check.names = FALSE)
-  
+
   return(out)
 }
 
@@ -912,57 +892,57 @@ profile_statistics <- function(profile, group = NULL, by_group = TRUE,
 #' @return A result object described in the Details section.
 #' @export
 profile_aggregate <- function(
-    profile, metadata, feature_col = NULL, group_col = NULL, 
-    method = c('sum', 'mean', 'median'), unknown = 'unknown',
-    remove_unknown = FALSE, unknown_pattern = "unknown|unclassified|unassigned",
-    sep = '|'
-  ) {
-  
+  profile, metadata, feature_col = NULL, group_col = NULL,
+  method = c("sum", "mean", "median"), unknown = "unknown",
+  remove_unknown = FALSE, unknown_pattern = "unknown|unclassified|unassigned",
+  sep = "|"
+) {
   profile <- data.frame(profile, check.names = FALSE) |>
-    tibble::rownames_to_column('.feature')
-  
+    tibble::rownames_to_column(".feature")
+
   metadata <- data.frame(metadata, check.names = FALSE)
-  
+
   if (ncol(metadata) < 2) {
-    stop('metadata should contain at least two columns: feature and group.')
+    stop("metadata should contain at least two columns: feature and group.")
   }
-  
+
   ## 默认 metadata 第 1 列是 feature，第 2 列是 group
   if (is.null(feature_col)) feature_col <- colnames(metadata)[1]
   if (is.null(group_col)) group_col <- colnames(metadata)[2]
-  
+
   ## 支持用列号指定
   if (is.numeric(feature_col)) feature_col <- colnames(metadata)[feature_col]
   if (is.numeric(group_col)) group_col <- colnames(metadata)[group_col]
-  
+
   if (!feature_col %in% colnames(metadata)) {
-    stop('feature_col not found in metadata: ', feature_col)
+    stop("feature_col not found in metadata: ", feature_col)
   }
-  
+
   if (!all(group_col %in% colnames(metadata))) {
-    stop('group_col not found in metadata: ',
-         paste(setdiff(group_col, colnames(metadata)), collapse = ', '))
+    stop(
+      "group_col not found in metadata: ",
+      paste(setdiff(group_col, colnames(metadata)), collapse = ", ")
+    )
   }
-  
-  sample_cols <- setdiff(colnames(profile), '.feature')
-  
+
+  sample_cols <- setdiff(colnames(profile), ".feature")
+
   if (is.function(method)) {
     fun <- \(x) method(x, na.rm = TRUE)
   } else {
     method <- match.arg(method)
-    fun <- switch(
-      method,
+    fun <- switch(method,
       sum = \(x) sum(x, na.rm = TRUE),
       mean = \(x) mean(x, na.rm = TRUE),
       median = \(x) stats::median(x, na.rm = TRUE)
     )
   }
-  
+
   ## 匹配注释
   data <- profile |>
     dplyr::left_join(
       dplyr::select(metadata, dplyr::all_of(c(feature_col, group_col))),
-      by = c('.feature' = feature_col)
+      by = c(".feature" = feature_col)
     ) |>
     dplyr::mutate(
       dplyr::across(dplyr::all_of(sample_cols), as.numeric),
@@ -970,12 +950,12 @@ profile_aggregate <- function(
         dplyr::all_of(group_col),
         \(x) {
           x <- as.character(x)
-          x[is.na(x) | x == ''] <- unknown
+          x[is.na(x) | x == ""] <- unknown
           x
         }
       )
     )
-  
+
   ## 删除 unknown / unclassified 等未明确注释的 feature
   ## 多列 group_col 时，只要任意一列匹配 unknown_pattern 就删除
   if (isTRUE(remove_unknown)) {
@@ -987,38 +967,38 @@ profile_aggregate <- function(
         )
       )
   }
-  
+
   if (nrow(data) == 0) {
-    warning('No features remained after filtering metadata.')
+    warning("No features remained after filtering metadata.")
     return(data.frame())
   }
-  
+
   out <- data |>
     dplyr::select(dplyr::all_of(c(group_col, sample_cols))) |>
     dplyr::group_by(dplyr::across(dplyr::all_of(group_col))) |>
     dplyr::summarise(
       dplyr::across(dplyr::all_of(sample_cols), fun),
-      .groups = 'drop'
+      .groups = "drop"
     )
-  
+
   if (length(group_col) == 1) {
     group_name <- out[[group_col]]
   } else {
     group_name <- apply(out[, group_col, drop = FALSE], 1, paste, collapse = sep)
   }
-  
+
   out <- out |>
     dplyr::select(-dplyr::all_of(group_col)) |>
     data.frame(check.names = FALSE)
-  
+
   rownames(out) <- group_name
-  
+
   out <- out[
     rowSums(out, na.rm = TRUE) != 0,
     colSums(out, na.rm = TRUE) != 0,
     drop = FALSE
   ]
-  
+
   return(out)
 }
 

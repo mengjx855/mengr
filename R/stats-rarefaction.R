@@ -10,15 +10,17 @@
 #' @return A result object described in the Details section.
 #' @export
 calcu_specaccum <- function(
-    profile, permutations = 99,
-    method = c('random', 'collector', 'exact', 'rarefaction', 'coleman')) {
+  profile, permutations = 99,
+  method = c("random", "collector", "exact", "rarefaction", "coleman")
+) {
   ## 1. 整理为 sample × feature 矩阵
   method <- match.arg(method)
   profile_df <- .as_profile_df(profile, numeric = TRUE)
 
   ## 2. 计算累积曲线并整理输出
   specaccum_obj <- vegan::specaccum(
-    t(profile_df), method = method, permutations = permutations
+    t(profile_df),
+    method = method, permutations = permutations
   )
   sd_vec <- specaccum_obj$sd
   if (is.null(sd_vec)) sd_vec <- rep(NA_real_, length(specaccum_obj$sites))
@@ -50,15 +52,17 @@ calcu_specaccum <- function(
 #' @return A plot object; analysis data or models may also be stored as attributes.
 #' @export
 plot_specaccum <- function(
-    data, sample_n_col = 'sample_n', richness_col = 'richness', sd_col = 'sd',
-    color = '#de2726', add_errorbar = TRUE, add_ribbon = FALSE,
-    fill = '#fcbba1', linetype = 'solid', aspect_ratio = 1,
-    xlab = 'Cumulative samples', ylab = 'Cumulative features',
-    title = 'Rarefaction curve analysis') {
+  data, sample_n_col = "sample_n", richness_col = "richness", sd_col = "sd",
+  color = "#de2726", add_errorbar = TRUE, add_ribbon = FALSE,
+  fill = "#fcbba1", linetype = "solid", aspect_ratio = 1,
+  xlab = "Cumulative samples", ylab = "Cumulative features",
+  title = "Rarefaction curve analysis"
+) {
   ## 1. 统一作图列
   plot_df <- .as_df(data)
   .check_columns(
-    plot_df, c(sample_n_col, richness_col, sd_col), object = 'data'
+    plot_df, c(sample_n_col, richness_col, sd_col),
+    object = "data"
   )
   plot_df <- data.frame(
     sample_n = plot_df[[sample_n_col]],
@@ -109,9 +113,10 @@ plot_specaccum <- function(
 #' @return A result object described in the Details section.
 #' @export
 calcu_specaccum_by_group <- function(
-    profile, group, sample_col = 'sample', group_col = 'group',
-    group_level = NULL, permutations = 99,
-    method = c('random', 'collector', 'exact', 'rarefaction', 'coleman')) {
+  profile, group, sample_col = "sample", group_col = "group",
+  group_level = NULL, permutations = 99,
+  method = c("random", "collector", "exact", "rarefaction", "coleman")
+) {
   ## 1. 对齐 profile 与 group
   method <- match.arg(method)
   aligned <- .align_profile_group(
@@ -165,17 +170,19 @@ calcu_specaccum_by_group <- function(
 #' @return A plot object; analysis data or models may also be stored as attributes.
 #' @export
 plot_specaccum_by_group <- function(
-    data, sample_n_col = 'sample_n', richness_col = 'richness', sd_col = 'sd',
-    group_col = 'group', group_level = NULL, group_color = NULL,
-    add_errorbar = TRUE, add_group_label = FALSE, add_ribbon = FALSE,
-    fill = 'grey85', aspect_ratio = 1, linetype = 'solid',
-    xlab = 'Number of samples', ylab = 'Number of features',
-    title = 'Rarefaction curve analysis') {
+  data, sample_n_col = "sample_n", richness_col = "richness", sd_col = "sd",
+  group_col = "group", group_level = NULL, group_color = NULL,
+  add_errorbar = TRUE, add_group_label = FALSE, add_ribbon = FALSE,
+  fill = "grey85", aspect_ratio = 1, linetype = "solid",
+  xlab = "Number of samples", ylab = "Number of features",
+  title = "Rarefaction curve analysis"
+) {
   ## 1. 统一作图列和分组顺序
   plot_df <- .as_df(data)
   .check_columns(
     plot_df,
-    c(sample_n_col, richness_col, sd_col, group_col), object = 'data'
+    c(sample_n_col, richness_col, sd_col, group_col),
+    object = "data"
   )
   plot_df <- data.frame(
     sample_n = plot_df[[sample_n_col]], richness = plot_df[[richness_col]],
@@ -225,7 +232,7 @@ plot_specaccum_by_group <- function(
         ggplot2::aes(sample_n, richness, label = group),
         inherit.aes = FALSE, size = 2
       ) +
-      ggplot2::guides(color = 'none')
+      ggplot2::guides(color = "none")
   }
   p
 }
@@ -242,12 +249,12 @@ plot_specaccum_by_group <- function(
 calcu_specaccum_by_depth <- function(profile, step = 1000, seed = NULL) {
   ## 1. 检查深度并整理 count matrix
   if (!is.numeric(step) || length(step) != 1L || step <= 0) {
-    stop('step should be a single positive number.')
+    stop("step should be a single positive number.")
   }
   if (!is.null(seed)) set.seed(seed)
   profile_mat <- t(as.matrix(.as_profile_df(profile, numeric = TRUE)))
   if (any(profile_mat < 0) || any(profile_mat %% 1 != 0)) {
-    stop('profile should contain non-negative integer counts.')
+    stop("profile should contain non-negative integer counts.")
   }
   depth_vec <- rowSums(profile_mat)
   depth_grid <- seq(step, max(depth_vec), by = step)
@@ -255,7 +262,7 @@ calcu_specaccum_by_depth <- function(profile, step = 1000, seed = NULL) {
   if (max(depth_grid) < max(depth_vec)) depth_grid <- c(depth_grid, max(depth_vec))
 
   ## 2. 每个深度只抽平测序量足够的样本
-  result_list <- vector('list', length(depth_grid))
+  result_list <- vector("list", length(depth_grid))
   for (depth_idx in seq_along(depth_grid)) {
     sample_depth <- depth_grid[depth_idx]
     keep_sample <- depth_vec >= sample_depth
@@ -288,11 +295,12 @@ calcu_specaccum_by_depth <- function(profile, step = 1000, seed = NULL) {
 #' @return A plot object; analysis data or models may also be stored as attributes.
 #' @export
 plot_specaccum_by_depth <- function(
-    data, sample_col = 'sample', depth_col = 'depth',
-    richness_col = 'richness') {
+  data, sample_col = "sample", depth_col = "depth",
+  richness_col = "richness"
+) {
   ## 统一作图列
   plot_df <- .as_df(data)
-  .check_columns(plot_df, c(sample_col, depth_col, richness_col), 'data')
+  .check_columns(plot_df, c(sample_col, depth_col, richness_col), "data")
   plot_df <- data.frame(
     sample = plot_df[[sample_col]], depth = plot_df[[depth_col]],
     richness = plot_df[[richness_col]], check.names = FALSE
@@ -304,9 +312,9 @@ plot_specaccum_by_depth <- function(
     ggplot2::geom_line(linewidth = 0.6) +
     ggplot2::geom_point(size = 2) +
     ggplot2::labs(
-      x = 'Sequences per sample', y = 'Observed features', color = 'Sample'
+      x = "Sequences per sample", y = "Observed features", color = "Sample"
     ) +
-    ggplot2::scale_color_manual(values = palc('Rainbow5', n = color_n)) +
+    ggplot2::scale_color_manual(values = palc("Rainbow5", n = color_n)) +
     ggplot2::scale_x_continuous(
       labels = scales::label_number(scientific = FALSE)
     ) +
@@ -314,10 +322,10 @@ plot_specaccum_by_depth <- function(
     ggplot2::theme(
       aspect.ratio = 3 / 4, axis.line = ggplot2::element_blank(),
       axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
-      axis.ticks.length = grid::unit(2, 'mm'),
-      legend.position = 'right',
+      axis.ticks.length = grid::unit(2, "mm"),
+      legend.position = "right",
       panel.border = ggplot2::element_rect(
-        fill = NA, linewidth = 0.5, colour = 'black'
+        fill = NA, linewidth = 0.5, colour = "black"
       )
     )
 }
@@ -334,7 +342,8 @@ calcu_rankabund <- function(profile) {
   profile_df <- .as_profile_df(profile, numeric = TRUE)
   purrr::map2_dfr(profile_df, colnames(profile_df), function(value_vec, sample_name) {
     sample_mat <- matrix(
-      value_vec, nrow = 1,
+      value_vec,
+      nrow = 1,
       dimnames = list(sample_name, rownames(profile_df))
     )
     BiodiversityR::rankabundance(sample_mat) |>
@@ -357,12 +366,14 @@ calcu_rankabund <- function(profile) {
 #' @return A plot object; analysis data or models may also be stored as attributes.
 #' @export
 plot_rankabund <- function(
-    data, sample_col = 'sample', rank_col = 'rank',
-    log_abundance_col = 'log_abundance') {
+  data, sample_col = "sample", rank_col = "rank",
+  log_abundance_col = "log_abundance"
+) {
   ## 统一作图列
   plot_df <- .as_df(data)
   .check_columns(
-    plot_df, c(sample_col, rank_col, log_abundance_col), object = 'data'
+    plot_df, c(sample_col, rank_col, log_abundance_col),
+    object = "data"
   )
   plot_df <- data.frame(
     sample = plot_df[[sample_col]], rank = plot_df[[rank_col]],
@@ -376,19 +387,19 @@ plot_rankabund <- function(
   ) +
     ggplot2::geom_line(linewidth = 0.5) +
     ggplot2::labs(
-      x = 'Feature rank', y = 'log10 relative abundance (%)', color = NULL
+      x = "Feature rank", y = "log10 relative abundance (%)", color = NULL
     ) +
-    ggplot2::scale_color_manual(values = palc('Rainbow5', n = color_n)) +
+    ggplot2::scale_color_manual(values = palc("Rainbow5", n = color_n)) +
     ggplot2::theme(
       aspect.ratio = 3 / 4, axis.line = ggplot2::element_blank(),
-      axis.text = ggplot2::element_text(size = 11, color = 'black'),
-      axis.ticks.length = grid::unit(2, 'mm'),
+      axis.text = ggplot2::element_text(size = 11, color = "black"),
+      axis.ticks.length = grid::unit(2, "mm"),
       panel.grid = ggplot2::element_blank(),
       panel.border = ggplot2::element_rect(
-        fill = NA, linewidth = 0.5, colour = 'black'
+        fill = NA, linewidth = 0.5, colour = "black"
       ),
       panel.background = ggplot2::element_rect(
-        fill = 'transparent', color = 'black'
+        fill = "transparent", color = "black"
       ),
       legend.key = ggplot2::element_rect(fill = NA, color = NA)
     )

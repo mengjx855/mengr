@@ -1,8 +1,9 @@
 #### Jin-Xin Meng, 20241024, 20260820, v0.2.0 ####
 
 .prepare_svm_data <- function(
-    profile, group, sample_col = 'sample', group_col = 'group',
-    group_level = NULL) {
+  profile, group, sample_col = "sample", group_col = "group",
+  group_level = NULL
+) {
   aligned <- .align_profile_group(
     profile = profile, group = group,
     sample_col = sample_col, group_col = group_col,
@@ -10,7 +11,7 @@
   )
   group_factor <- droplevels(aligned$group_df[[group_col]])
   if (nlevels(group_factor) != 2L) {
-    stop('SVM functions currently require exactly two groups.')
+    stop("SVM functions currently require exactly two groups.")
   }
   list(
     x_mat = t(as.matrix(.as_profile_df(aligned$profile_df, numeric = TRUE))),
@@ -21,25 +22,26 @@
 }
 
 .fit_tuned_svm <- function(
-    x_mat, y, kernel, scale, cost_grid, gamma_grid,
-    tune_boot = 10, probability = TRUE) {
+  x_mat, y, kernel, scale, cost_grid, gamma_grid,
+  tune_boot = 10, probability = TRUE
+) {
   tune_args <- list(
     x = x_mat, y = y, kernel = kernel,
     cost = cost_grid,
     tunecontrol = e1071::tune.control(
-      sampling = 'bootstrap', nboot = tune_boot
+      sampling = "bootstrap", nboot = tune_boot
     )
   )
-  if (kernel != 'linear') tune_args$gamma <- gamma_grid
+  if (kernel != "linear") tune_args$gamma <- gamma_grid
   tune_obj <- do.call(e1071::tune.svm, tune_args)
 
   fit_args <- list(
     x = x_mat, y = y, kernel = kernel, scale = scale,
     probability = probability,
-    cost = tune_obj$best.parameters[['cost']]
+    cost = tune_obj$best.parameters[["cost"]]
   )
-  if (kernel != 'linear') {
-    fit_args$gamma <- tune_obj$best.parameters[['gamma']]
+  if (kernel != "linear") {
+    fit_args$gamma <- tune_obj$best.parameters[["gamma"]]
   }
   list(
     tune_obj = tune_obj,
@@ -49,9 +51,9 @@
 
 .svm_prediction_df <- function(model_obj, x_mat, sample_vec, positive_class) {
   class_vec <- stats::predict(model_obj, x_mat, probability = TRUE)
-  prob_mat <- attr(class_vec, 'probabilities')
+  prob_mat <- attr(class_vec, "probabilities")
   if (is.null(prob_mat) || !positive_class %in% colnames(prob_mat)) {
-    stop('Probability column not found for positive_class: ', positive_class)
+    stop("Probability column not found for positive_class: ", positive_class)
   }
   data.frame(
     sample = sample_vec,
@@ -99,12 +101,12 @@
 #' @return A result object described in the Details section.
 #' @export
 svm_base <- function(
-    profile, group, sample_col = 'sample', group_col = 'group',
-    group_level = NULL, positive_class = NULL,
-    rep = 5, seed = 2024, train_prop = 0.8,
-    kernel = c('radial', 'linear', 'polynomial', 'sigmoid'),
-    scale = TRUE, cost_grid = 10^(-1:3), gamma_grid = 10^(-3:1),
-    tune_boot = 10
+  profile, group, sample_col = "sample", group_col = "group",
+  group_level = NULL, positive_class = NULL,
+  rep = 5, seed = 2024, train_prop = 0.8,
+  kernel = c("radial", "linear", "polynomial", "sigmoid"),
+  scale = TRUE, cost_grid = 10^(-1:3), gamma_grid = 10^(-3:1),
+  tune_boot = 10
 ) {
   kernel <- match.arg(kernel)
   prepared <- .prepare_svm_data(
@@ -114,10 +116,10 @@ svm_base <- function(
     positive_class <- levels(prepared$group_factor)[2]
   }
   if (!positive_class %in% levels(prepared$group_factor)) {
-    stop('positive_class is not present in group.')
+    stop("positive_class is not present in group.")
   }
   if (train_prop <= 0 || train_prop >= 1) {
-    stop('train_prop should be between 0 and 1.')
+    stop("train_prop should be between 0 and 1.")
   }
 
   best_auc <- -Inf
@@ -126,7 +128,8 @@ svm_base <- function(
     model_seed <- seed + rep_idx - 1L
     set.seed(model_seed)
     train_idx <- caret::createDataPartition(
-      prepared$group_factor, p = train_prop, list = FALSE
+      prepared$group_factor,
+      p = train_prop, list = FALSE
     )
     test_idx <- setdiff(seq_len(nrow(prepared$x_mat)), train_idx)
     if (!length(test_idx)) next
@@ -162,7 +165,7 @@ svm_base <- function(
       ), metrics)
     }
   }
-  if (is.null(out)) stop('No valid SVM model was produced.')
+  if (is.null(out)) stop("No valid SVM model was produced.")
   out
 }
 
@@ -186,11 +189,11 @@ svm_base <- function(
 #' @return A result object described in the Details section.
 #' @export
 svm_kfold <- function(
-    profile, group, k = 5, sample_col = 'sample', group_col = 'group',
-    group_level = NULL, positive_class = NULL, seed = 2024,
-    kernel = c('radial', 'linear', 'polynomial', 'sigmoid'),
-    scale = TRUE, cost_grid = 10^(-1:3), gamma_grid = 10^(-3:1),
-    tune_boot = 10
+  profile, group, k = 5, sample_col = "sample", group_col = "group",
+  group_level = NULL, positive_class = NULL, seed = 2024,
+  kernel = c("radial", "linear", "polynomial", "sigmoid"),
+  scale = TRUE, cost_grid = 10^(-1:3), gamma_grid = 10^(-3:1),
+  tune_boot = 10
 ) {
   kernel <- match.arg(kernel)
   prepared <- .prepare_svm_data(
@@ -200,14 +203,15 @@ svm_kfold <- function(
     positive_class <- levels(prepared$group_factor)[2]
   }
   if (k < 2L || k > nrow(prepared$x_mat)) {
-    stop('k should be between 2 and the number of matched samples.')
+    stop("k should be between 2 and the number of matched samples.")
   }
 
   set.seed(seed)
   fold_list <- caret::createFolds(
-    prepared$group_factor, k = k, returnTrain = FALSE
+    prepared$group_factor,
+    k = k, returnTrain = FALSE
   )
-  result_list <- vector('list', length(fold_list))
+  result_list <- vector("list", length(fold_list))
   for (fold_idx in seq_along(fold_list)) {
     test_idx <- fold_list[[fold_idx]]
     train_idx <- setdiff(seq_len(nrow(prepared$x_mat)), test_idx)
@@ -250,12 +254,12 @@ svm_kfold <- function(
 #' @return A result object described in the Details section.
 #' @export
 svm_next_validate <- function(
-    profile_x, profile_y, group_x, group_y,
-    sample_col = 'sample', group_col = 'group',
-    group_level = NULL, positive_class = NULL, seed = 2024,
-    kernel = c('radial', 'linear', 'polynomial', 'sigmoid'),
-    scale = TRUE, cost_grid = 10^(-1:3), gamma_grid = 10^(-3:1),
-    tune_boot = 20
+  profile_x, profile_y, group_x, group_y,
+  sample_col = "sample", group_col = "group",
+  group_level = NULL, positive_class = NULL, seed = 2024,
+  kernel = c("radial", "linear", "polynomial", "sigmoid"),
+  scale = TRUE, cost_grid = 10^(-1:3), gamma_grid = 10^(-3:1),
+  tune_boot = 20
 ) {
   kernel <- match.arg(kernel)
   train <- .prepare_svm_data(
@@ -267,14 +271,14 @@ svm_next_validate <- function(
     group_level = levels(train$group_factor)
   )
   if (!identical(levels(train$group_factor), levels(test$group_factor))) {
-    stop('Training and validation datasets should contain the same two groups.')
+    stop("Training and validation datasets should contain the same two groups.")
   }
 
   feature_vec <- intersect(
     rownames(train$profile_df), rownames(test$profile_df)
   )
   if (!length(feature_vec)) {
-    stop('No matched features between profile_x and profile_y.')
+    stop("No matched features between profile_x and profile_y.")
   }
   train_x <- t(as.matrix(train$profile_df[feature_vec, , drop = FALSE]))
   test_x <- t(as.matrix(test$profile_df[feature_vec, , drop = FALSE]))
@@ -300,6 +304,6 @@ svm_next_validate <- function(
     tune_model = fitted$tune_obj,
     model = fitted$model_obj, pred = pred_df,
     roc = roc_obj, roc_plot = plot_roc(roc_obj),
-    method = 'svm', kernel = kernel, feature = feature_vec
+    method = "svm", kernel = kernel, feature = feature_vec
   ), metrics)
 }

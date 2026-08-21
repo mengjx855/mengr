@@ -30,145 +30,133 @@
 #' @return A result object described in the Details section.
 #' @export
 calcu_correlation <- function(
-    x, y = NULL, method = c('spearman', 'pearson', 'kendall'),
-    adjust = c(
-      'BH', 'holm', 'hochberg', 'hommel', 'bonferroni',
-      'BY', 'fdr', 'none'
-    ),
-    output = c('both', 'long', 'matrix'),
-    remove_zero_var = TRUE, na_fill = NULL, ...
+  x, y = NULL, method = c("spearman", "pearson", "kendall"),
+  adjust = c(
+    "BH", "holm", "hochberg", "hommel", "bonferroni",
+    "BY", "fdr", "none"
+  ),
+  output = c("both", "long", "matrix"),
+  remove_zero_var = TRUE, na_fill = NULL, ...
 ) {
-  
   method <- match.arg(method)
   adjust <- match.arg(adjust)
   output <- match.arg(output)
-  
+
   ## 1. 整理输入矩阵
   x <- data.frame(x, check.names = FALSE)
   x <- as.matrix(x)
-  suppressWarnings(storage.mode(x) <- 'numeric')
-  
+  suppressWarnings(storage.mode(x) <- "numeric")
+
   if (is.null(colnames(x))) {
-    colnames(x) <- paste0('X', seq_len(ncol(x)))
+    colnames(x) <- paste0("X", seq_len(ncol(x)))
   }
-  
+
   if (!is.null(y)) {
-    
     y <- data.frame(y, check.names = FALSE)
     y <- as.matrix(y)
-    suppressWarnings(storage.mode(y) <- 'numeric')
-    
+    suppressWarnings(storage.mode(y) <- "numeric")
+
     if (is.null(colnames(y))) {
-      colnames(y) <- paste0('Y', seq_len(ncol(y)))
+      colnames(y) <- paste0("Y", seq_len(ncol(y)))
     }
   }
-  
+
   x[is.infinite(x)] <- NA_real_
   if (!is.null(y)) y[is.infinite(y)] <- NA_real_
-  
+
   if (!is.null(na_fill)) {
     x[is.na(x)] <- na_fill
     if (!is.null(y)) y[is.na(y)] <- na_fill
   }
-  
+
   ## 2. 对齐样本
   if (!is.null(y)) {
-    
     if (!is.null(rownames(x)) && !is.null(rownames(y))) {
-      
       sample_use <- intersect(rownames(x), rownames(y))
-      
+
       if (length(sample_use) < 3) {
-        stop('Correlation analysis requires at least three matched samples.')
+        stop("Correlation analysis requires at least three matched samples.")
       }
-      
+
       x <- x[sample_use, , drop = FALSE]
       y <- y[sample_use, , drop = FALSE]
-      
     } else {
-      
       if (nrow(x) != nrow(y)) {
-        stop('x and y should have the same sample number.')
+        stop("x and y should have the same sample number.")
       }
     }
   }
-  
+
   if (nrow(x) < 3) {
-    stop('Correlation analysis requires at least three samples.')
+    stop("Correlation analysis requires at least three samples.")
   }
-  
+
   ## 3. 删除零方差 variable
   if (isTRUE(remove_zero_var)) {
-    
     keep_x <- apply(x, 2, \(v) {
       sum(is.finite(v)) >= 3 && stats::sd(v, na.rm = TRUE) > 0
     })
-    
+
     x <- x[, keep_x, drop = FALSE]
-    
+
     if (!is.null(y)) {
-      
       keep_y <- apply(y, 2, \(v) {
         sum(is.finite(v)) >= 3 && stats::sd(v, na.rm = TRUE) > 0
       })
-      
+
       y <- y[, keep_y, drop = FALSE]
     }
   }
-  
+
   if (ncol(x) == 0) {
-    stop('No valid variables remained in x.')
+    stop("No valid variables remained in x.")
   }
-  
+
   if (!is.null(y) && ncol(y) == 0) {
-    stop('No valid variables remained in y.')
+    stop("No valid variables remained in y.")
   }
-  
+
   ## 4. 计算相关性
   ## 注意：这里固定 adjust = 'none'，后面自己统一计算 padj
   if (is.null(y)) {
-    
     test <- psych::corr.test(
-      x, method = method, adjust = 'none',
+      x,
+      method = method, adjust = "none",
       ci = FALSE, ...
     )
-    
   } else {
-    
     test <- psych::corr.test(
-      x, y, method = method, adjust = 'none',
+      x, y,
+      method = method, adjust = "none",
       ci = FALSE, ...
     )
   }
-  
+
   r_matrix <- test$r
   pval_matrix <- test$p
-  
+
   ## 5. 统一计算 padj
   if (is.null(y)) {
-    
     ## 单矩阵：只对非重复 pair 做 p.adjust
     p_vec <- pval_matrix[lower.tri(pval_matrix)]
     padj_vec <- stats::p.adjust(p_vec, method = adjust)
-    
+
     padj_matrix <- matrix(
       NA_real_,
       nrow = nrow(pval_matrix),
       ncol = ncol(pval_matrix),
       dimnames = dimnames(pval_matrix)
     )
-    
+
     padj_matrix[lower.tri(padj_matrix)] <- padj_vec
     padj_matrix[upper.tri(padj_matrix)] <- t(padj_matrix)[upper.tri(padj_matrix)]
-    
+
     ## pval 也整理成对称矩阵
     pval_matrix[upper.tri(pval_matrix)] <- t(pval_matrix)[upper.tri(pval_matrix)]
-    
+
     diag(pval_matrix) <- 0
     diag(padj_matrix) <- 0
-    
   } else {
-    
     ## 双矩阵：对所有 x-y pair 做 p.adjust
     padj_matrix <- matrix(
       stats::p.adjust(as.vector(pval_matrix), method = adjust),
@@ -177,10 +165,9 @@ calcu_correlation <- function(
       dimnames = dimnames(pval_matrix)
     )
   }
-  
+
   ## 6. long-format 输出
   if (is.null(y)) {
-    
     long <- data.frame(
       name_x = rownames(r_matrix)[row(r_matrix)[lower.tri(r_matrix)]],
       name_y = colnames(r_matrix)[col(r_matrix)[lower.tri(r_matrix)]],
@@ -189,34 +176,32 @@ calcu_correlation <- function(
       padj = padj_matrix[lower.tri(padj_matrix)],
       check.names = FALSE
     )
-    
   } else {
-    
     long <- as.data.frame(as.table(r_matrix), stringsAsFactors = FALSE) |>
       dplyr::rename(name_x = Var1, name_y = Var2, r = Freq) |>
       dplyr::left_join(
         as.data.frame(as.table(pval_matrix), stringsAsFactors = FALSE) |>
           dplyr::rename(name_x = Var1, name_y = Var2, pval = Freq),
-        by = c('name_x', 'name_y')
+        by = c("name_x", "name_y")
       ) |>
       dplyr::left_join(
         as.data.frame(as.table(padj_matrix), stringsAsFactors = FALSE) |>
           dplyr::rename(name_x = Var1, name_y = Var2, padj = Freq),
-        by = c('name_x', 'name_y')
+        by = c("name_x", "name_y")
       )
   }
-  
+
   long <- long |>
     dplyr::mutate(
       abs_r = abs(r),
       cor_type = dplyr::case_when(
-        r > 0 ~ 'positive',
-        r < 0 ~ 'negative',
-        TRUE ~ 'zero'
+        r > 0 ~ "positive",
+        r < 0 ~ "negative",
+        TRUE ~ "zero"
       )
     ) |>
     dplyr::arrange(padj, dplyr::desc(abs_r))
-  
+
   ## 7. 输出
   result <- list(
     r = r_matrix,
@@ -226,15 +211,15 @@ calcu_correlation <- function(
     method = method,
     adjust = adjust
   )
-  
-  if (output == 'matrix') {
-    return(result[c('r', 'pval', 'padj')])
+
+  if (output == "matrix") {
+    return(result[c("r", "pval", "padj")])
   }
-  
-  if (output == 'long') {
+
+  if (output == "long") {
     return(long)
   }
-  
+
   return(result)
 }
 
@@ -266,43 +251,43 @@ calcu_correlation <- function(
 #' @return A result object described in the Details section.
 #' @export
 tidy_correlation <- function(
-    r_mat, p_mat, r = 0, pval = 0.05, only_signif = FALSE
+  r_mat, p_mat, r = 0, pval = 0.05, only_signif = FALSE
 ) {
   r_mat <- as.matrix(r_mat)
   p_mat <- as.matrix(p_mat)
-  
+
   # 检查是否存在行名和列名
   if (
-    is.null(rownames(r_mat)) || is.null(colnames(r_mat)) || 
-    is.null(rownames(p_mat)) || is.null(colnames(p_mat))
+    is.null(rownames(r_mat)) || is.null(colnames(r_mat)) ||
+      is.null(rownames(p_mat)) || is.null(colnames(p_mat))
   ) {
     stop("r_mat 和 p_mat 必须同时具有行名和列名")
   }
-  
+
   common_rows <- rownames(r_mat)[rownames(r_mat) %in% rownames(p_mat)]
   common_cols <- colnames(r_mat)[colnames(r_mat) %in% colnames(p_mat)]
   r_mat <- r_mat[common_rows, common_cols, drop = FALSE]
   p_mat <- p_mat[common_rows, common_cols, drop = FALSE]
-  
+
   # 判断每个位置是否满足相关系数和 P 值阈值
   signif_mat <- (abs(r_mat) >= r & p_mat < pval & !is.na(r_mat) & !is.na(p_mat))
-  
+
   # 保留至少存在一个显著相关性的行/列
   keep_rows <- rowSums(signif_mat, na.rm = TRUE) > 0
   keep_cols <- colSums(signif_mat, na.rm = TRUE) > 0
-  
+
   # 先根据显著相关性筛选行和列
   r_mat <- r_mat[keep_rows, keep_cols, drop = FALSE]
   p_mat <- p_mat[keep_rows, keep_cols, drop = FALSE]
-  
+
   signif_mat <- signif_mat[keep_rows, keep_cols, drop = FALSE]
-  
+
   # only_signif = TRUE 时，仅保留显著位置
   if (only_signif) {
     r_mat[!signif_mat] <- 0
     p_mat[!signif_mat] <- 1
   }
-  
+
   return(
     list(
       r_mat = r_mat,
@@ -330,23 +315,25 @@ tidy_correlation <- function(
 #' @return A result object described in the Details section.
 #' @export
 get_nwk_attr <- function(
-    adjacency, suffix = NULL,
-    mode = c('undirected', 'directed', 'max', 'min', 'upper', 'lower', 'plus'),
-    weighted = TRUE,
-    interaction = c('all', 'between_prefix'), prefix_length = 1,
-    export = c('none', 'cytoscape', 'gephi', 'both'),
-    output_dir = '.') {
+  adjacency, suffix = NULL,
+  mode = c("undirected", "directed", "max", "min", "upper", "lower", "plus"),
+  weighted = TRUE,
+  interaction = c("all", "between_prefix"), prefix_length = 1,
+  export = c("none", "cytoscape", "gephi", "both"),
+  output_dir = "."
+) {
   ## 1. 检查参数并建立网络
   mode <- match.arg(mode)
   interaction <- match.arg(interaction)
   export <- match.arg(export)
   adjacency_mat <- as.matrix(adjacency)
   if (nrow(adjacency_mat) != ncol(adjacency_mat)) {
-    stop('adjacency should be a square matrix.')
+    stop("adjacency should be a square matrix.")
   }
   graph_obj <- igraph::graph_from_adjacency_matrix(
-    adjacency_mat, mode = mode,
-    weighted = if (isTRUE(weighted)) 'weight' else NULL,
+    adjacency_mat,
+    mode = mode,
+    weighted = if (isTRUE(weighted)) "weight" else NULL,
     diag = FALSE
   )
 
@@ -361,17 +348,20 @@ get_nwk_attr <- function(
     weight = if (isTRUE(weighted)) igraph::E(graph_obj)$weight else 1,
     association = if (isTRUE(weighted)) {
       igraph::E(graph_obj)$association
-    } else 1,
+    } else {
+      1
+    },
     check.names = FALSE
   )
 
   ## 3. 可选：仅保留不同前缀类型之间的连边
-  if (interaction == 'between_prefix') {
+  if (interaction == "between_prefix") {
     source_prefix <- substr(edge_df$source, 1, prefix_length)
     target_prefix <- substr(edge_df$target, 1, prefix_length)
     edge_df <- edge_df[source_prefix != target_prefix, , drop = FALSE]
     graph_obj <- igraph::graph_from_data_frame(
-      edge_df, directed = mode == 'directed'
+      edge_df,
+      directed = mode == "directed"
     )
   }
   node_df <- data.frame(
@@ -382,28 +372,30 @@ get_nwk_attr <- function(
 
   ## 4. 默认不写文件；仅在明确指定 export 时导出
   file_list <- character()
-  if (export != 'none') {
+  if (export != "none") {
     if (is.null(suffix) || !nzchar(suffix)) {
-      stop('suffix is required when export is not none.')
+      stop("suffix is required when export is not none.")
     }
-    if (!dir.exists(output_dir)) stop('output_dir does not exist: ', output_dir)
-    edge_file <- file.path(output_dir, paste0(suffix, '-network-edge.tsv'))
-    node_file <- file.path(output_dir, paste0(suffix, '-network-node.tsv'))
+    if (!dir.exists(output_dir)) stop("output_dir does not exist: ", output_dir)
+    edge_file <- file.path(output_dir, paste0(suffix, "-network-edge.tsv"))
+    node_file <- file.path(output_dir, paste0(suffix, "-network-node.tsv"))
     utils::write.table(
-      edge_df, edge_file, sep = '\t', row.names = FALSE, quote = FALSE
+      edge_df, edge_file,
+      sep = "\t", row.names = FALSE, quote = FALSE
     )
     utils::write.table(
-      node_df, node_file, sep = '\t', row.names = FALSE, quote = FALSE
+      node_df, node_file,
+      sep = "\t", row.names = FALSE, quote = FALSE
     )
     file_list <- c(edge = edge_file, node = node_file)
-    if (export %in% c('cytoscape', 'both')) {
-      gml_file <- file.path(output_dir, paste0(suffix, '-network.gml'))
-      igraph::write_graph(graph_obj, gml_file, format = 'gml')
+    if (export %in% c("cytoscape", "both")) {
+      gml_file <- file.path(output_dir, paste0(suffix, "-network.gml"))
+      igraph::write_graph(graph_obj, gml_file, format = "gml")
       file_list <- c(file_list, cytoscape = gml_file)
     }
-    if (export %in% c('gephi', 'both')) {
-      graphml_file <- file.path(output_dir, paste0(suffix, '-network.graphml'))
-      igraph::write_graph(graph_obj, graphml_file, format = 'graphml')
+    if (export %in% c("gephi", "both")) {
+      graphml_file <- file.path(output_dir, paste0(suffix, "-network.graphml"))
+      igraph::write_graph(graph_obj, graphml_file, format = "graphml")
       file_list <- c(file_list, gephi = graphml_file)
     }
   }
@@ -424,11 +416,12 @@ get_nwk_attr <- function(
 #' @return A result object described in the Details section.
 #' @export
 get_nwk_stat <- function(
-    graph, prefix_pattern = c(bacteria = '^b_', fungi = '^f_')) {
+  graph, prefix_pattern = c(bacteria = "^b_", fungi = "^f_")
+) {
   ## 1. 读取基础网络属性
-  association_vec <- igraph::edge_attr(graph, 'association')
+  association_vec <- igraph::edge_attr(graph, "association")
   if (is.null(association_vec)) {
-    association_vec <- igraph::edge_attr(graph, 'weight')
+    association_vec <- igraph::edge_attr(graph, "weight")
   }
   if (is.null(association_vec)) {
     association_vec <- rep(NA_real_, igraph::ecount(graph))
@@ -453,7 +446,7 @@ get_nwk_stat <- function(
     check.names = FALSE
   )
   for (name in names(prefix_count)) {
-    result_df[[paste0(name, '_n')]] <- prefix_count[[name]]
+    result_df[[paste0(name, "_n")]] <- prefix_count[[name]]
   }
   result_df
 }

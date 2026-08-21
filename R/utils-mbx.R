@@ -18,7 +18,7 @@
 #'   time of maximum intensity.
 #' @export
 parse_MChromatograms <- function(data, label = "MChromatograms object") {
-  if (length(data) == 0) stop(label, ' is empty.')
+  if (length(data) == 0) stop(label, " is empty.")
 
   # 1. 将每条色谱整理为独立数据框
   chromatogram_list <- lapply(seq_along(data), \(index) {
@@ -34,9 +34,12 @@ parse_MChromatograms <- function(data, label = "MChromatograms object") {
 
   # 2. 提取保留时间范围、最强峰位置和强度分位数
   result_df <- purrr::imap_dfr(chromatogram_list, \(chromatogram_df, name) {
-    if (nrow(chromatogram_df) == 0) return(NULL)
+    if (nrow(chromatogram_df) == 0) {
+      return(NULL)
+    }
     intensity_quantile <- stats::quantile(
-      chromatogram_df$intensity, na.rm = TRUE, names = FALSE
+      chromatogram_df$intensity,
+      na.rm = TRUE, names = FALSE
     )
     max_index <- which.max(chromatogram_df$intensity)
     data.frame(
@@ -55,7 +58,7 @@ parse_MChromatograms <- function(data, label = "MChromatograms object") {
   dplyr::arrange(result_df, .data$rt_intensity_max)
 }
 
-#### MBT_eKEGG #### 
+#### MBT_eKEGG ####
 #' MBT eKEGG utility
 #'
 #' `MBT_eKEGG()` provides a reusable mengR workflow with input validation and standardized
@@ -68,19 +71,22 @@ parse_MChromatograms <- function(data, label = "MChromatograms object") {
 #' @return A result object described in the Details section.
 #' @export
 MBT_eKEGG <- function(
-    cpd_list,
-    database = .mengR_db_file(
-      'KEGG', 'enrichment_analysis', 'cpd2path_enrichment.tsv'
-    )) {
+  cpd_list,
+  database = .mengR_db_file(
+    "KEGG", "enrichment_analysis", "cpd2path_enrichment.tsv"
+  )
+) {
   if (!file.exists(database)) {
-    stop('KEGG enrichment mapping file not found: ', database)
+    stop("KEGG enrichment mapping file not found: ", database)
   }
 
   path_info <- utils::read.delim(database)
-  
-  eKEGG <- clusterProfiler::enricher(cpd_list, TERM2GENE = path_info, minGSSize = 1, 
-                    pvalueCutoff = 1, qvalueCutoff = 1) |> 
+
+  eKEGG <- clusterProfiler::enricher(cpd_list,
+    TERM2GENE = path_info, minGSSize = 1,
+    pvalueCutoff = 1, qvalueCutoff = 1
+  ) |>
     data.frame()
-  
+
   return(eKEGG)
 }

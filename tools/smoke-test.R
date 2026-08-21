@@ -64,6 +64,23 @@ with(test_env, {
   jsd <- calcu_jsd_dist(profile)
   stopifnot(inherits(jsd, 'dist'), all(as.matrix(jsd) >= 0))
 
+  ## 默认候选向量应由 match.arg() 选择第一个值
+  pcoa_profile <- data.frame(
+    S1 = c(8, 2, 1), S2 = c(7, 3, 1),
+    S3 = c(1, 3, 7), S4 = c(1, 2, 8),
+    row.names = c('g1', 'g2', 'g3'), check.names = FALSE
+  )
+  pcoa_group <- data.frame(
+    sample = paste0('S', 1:4), group = c('case', 'case', 'control', 'control')
+  )
+  pcoa_plot <- plot_PCoA(
+    pcoa_profile, pcoa_group, adonis2 = FALSE, conf_type = 'none'
+  )
+  stopifnot(
+    inherits(pcoa_plot, 'ggplot'),
+    inherits(attr(pcoa_plot, 'distance'), 'dist')
+  )
+
   ## 4. rarefaction and categorical tests
   spec_df <- calcu_specaccum(profile, method = 'collector')
   stopifnot(all(c('sample_n', 'richness', 'sd') %in% colnames(spec_df)))

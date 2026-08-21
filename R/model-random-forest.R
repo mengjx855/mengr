@@ -1,8 +1,9 @@
 #### Jin-Xin Meng, 20220529, 20260820, v0.4.0 ####
 
 .prepare_rf_data <- function(
-    profile, group, sample_col = 'sample', group_col = 'group',
-    group_level = NULL, na_fill = NULL, remove_zero_var = TRUE) {
+  profile, group, sample_col = "sample", group_col = "group",
+  group_level = NULL, na_fill = NULL, remove_zero_var = TRUE
+) {
   ## 对齐样本并转为 sample × feature 数值表
   aligned <- .align_profile_group(
     profile = profile, group = group,
@@ -14,14 +15,14 @@
     check.names = FALSE
   )
   if (anyNA(x_df)) {
-    if (is.null(na_fill)) stop('NA values found in profile; set na_fill if needed.')
+    if (is.null(na_fill)) stop("NA values found in profile; set na_fill if needed.")
     x_df[is.na(x_df)] <- na_fill
   }
   if (isTRUE(remove_zero_var)) {
     keep_feature <- vapply(x_df, stats::var, numeric(1), na.rm = TRUE) > 0
     x_df <- x_df[, keep_feature, drop = FALSE]
   }
-  if (!ncol(x_df)) stop('No valid features remained for random forest.')
+  if (!ncol(x_df)) stop("No valid features remained for random forest.")
 
   ## randomForest 对复杂 feature 名不稳定，内部改名并保留映射
   feature_df <- data.frame(
@@ -32,7 +33,7 @@
   colnames(x_df) <- feature_df$model_feature
   y_factor <- droplevels(aligned$group_df[[group_col]])
   if (nlevels(y_factor) < 2L) {
-    stop('Random forest classification requires at least two groups.')
+    stop("Random forest classification requires at least two groups.")
   }
   list(
     x_df = x_df, y_factor = y_factor,
@@ -42,7 +43,7 @@
 
 .rf_probability_df <- function(model_obj, test_x, level_vec) {
   probability_df <- data.frame(
-    stats::predict(model_obj, test_x, type = 'prob'),
+    stats::predict(model_obj, test_x, type = "prob"),
     check.names = FALSE
   )
   missing_level <- setdiff(level_vec, colnames(probability_df))
@@ -69,25 +70,27 @@
 #' @return A result object described in the Details section.
 #' @export
 rf_kfold <- function(
-    profile, group, k = 5, seed = 2025, ntree = 1000,
-    sample_col = 'sample', group_col = 'group', group_level = NULL,
-    remove_zero_var = TRUE, na_fill = NULL, progress = TRUE, ...) {
+  profile, group, k = 5, seed = 2025, ntree = 1000,
+  sample_col = "sample", group_col = "group", group_level = NULL,
+  remove_zero_var = TRUE, na_fill = NULL, progress = TRUE, ...
+) {
   ## 1. 统一输入并创建 stratified folds
   prepared <- .prepare_rf_data(
     profile, group, sample_col, group_col, group_level,
     na_fill, remove_zero_var
   )
   if (k < 2L || k > nrow(prepared$x_df)) {
-    stop('k should be between 2 and the number of matched samples.')
+    stop("k should be between 2 and the number of matched samples.")
   }
   set.seed(seed)
   fold_list <- caret::createFolds(
-    prepared$y_factor, k = k, returnTrain = FALSE
+    prepared$y_factor,
+    k = k, returnTrain = FALSE
   )
-  result_list <- vector('list', length(fold_list))
+  result_list <- vector("list", length(fold_list))
   if (isTRUE(progress)) {
     progress_bar <- utils::txtProgressBar(
-      min = 0, max = length(fold_list), style = 3, width = 50, char = '#'
+      min = 0, max = length(fold_list), style = 3, width = 50, char = "#"
     )
     on.exit(close(progress_bar), add = TRUE)
   }
@@ -98,7 +101,7 @@ rf_kfold <- function(
     train_idx <- setdiff(seq_len(nrow(prepared$x_df)), test_idx)
     train_y <- droplevels(prepared$y_factor[train_idx])
     if (nlevels(train_y) < 2L) {
-      stop('A training fold contains fewer than two groups; reduce k.')
+      stop("A training fold contains fewer than two groups; reduce k.")
     }
     set.seed(seed + fold_idx - 1L)
     model_obj <- randomForest::randomForest(
@@ -141,11 +144,12 @@ rf_kfold <- function(
 #' @return A result object described in the Details section.
 #' @export
 rf_repeated_kfold <- function(
-    profile, group, k = 5, repeats = 5, seed = 2026, ntree = 1000,
-    sample_col = 'sample', group_col = 'group', group_level = NULL,
-    remove_zero_var = TRUE, na_fill = NULL, progress = TRUE, ...) {
+  profile, group, k = 5, repeats = 5, seed = 2026, ntree = 1000,
+  sample_col = "sample", group_col = "group", group_level = NULL,
+  remove_zero_var = TRUE, na_fill = NULL, progress = TRUE, ...
+) {
   ## 1. 重复执行 K-fold，并记录每次预测
-  result_list <- vector('list', repeats)
+  result_list <- vector("list", repeats)
   for (repeat_idx in seq_len(repeats)) {
     repeat_df <- rf_kfold(
       profile = profile, group = group, k = k,
@@ -158,7 +162,7 @@ rf_repeated_kfold <- function(
     result_list[[repeat_idx]] <- repeat_df
   }
   all_df <- dplyr::bind_rows(result_list)
-  info_col <- c('sample', 'actual', 'predicted', 'fold', 'repeat_id')
+  info_col <- c("sample", "actual", "predicted", "fold", "repeat_id")
   probability_col <- setdiff(colnames(all_df), info_col)
 
   ## 2. 对每个样本的重复预测概率取均值
@@ -168,7 +172,7 @@ rf_repeated_kfold <- function(
       dplyr::across(
         dplyr::all_of(probability_col), \(x) mean(x, na.rm = TRUE)
       ),
-      .groups = 'drop'
+      .groups = "drop"
     )
   probability_mat <- as.matrix(result_df[, probability_col, drop = FALSE])
   result_df$predicted <- probability_col[max.col(probability_mat)]
@@ -193,14 +197,16 @@ rf_repeated_kfold <- function(
 #' @return A result object described in the Details section.
 #' @export
 rf_cross_dataset_validate <- function(
-    profile, group, dataset_col = 'dataset', dataset_level = NULL,
-    seed = 2026, ntree = 1000, sample_col = 'sample',
-    group_col = 'group', positive_class = NULL, na_fill = 0, ...) {
+  profile, group, dataset_col = "dataset", dataset_level = NULL,
+  seed = 2026, ntree = 1000, sample_col = "sample",
+  group_col = "group", positive_class = NULL, na_fill = 0, ...
+) {
   ## 1. 检查 metadata 并确定数据集顺序
   profile_df <- .as_profile_df(profile, numeric = TRUE)
   group_df <- .as_df(group)
   .check_columns(
-    group_df, c(sample_col, group_col, dataset_col), object = 'group'
+    group_df, c(sample_col, group_col, dataset_col),
+    object = "group"
   )
   if (is.null(dataset_level)) {
     dataset_level <- unique(as.character(group_df[[dataset_col]]))
@@ -211,7 +217,8 @@ rf_cross_dataset_validate <- function(
   ## 2. 依次使用一个数据集训练，其他数据集验证
   for (train_dataset in dataset_level) {
     train_group_df <- group_df[
-      group_df[[dataset_col]] == train_dataset, , drop = FALSE
+      group_df[[dataset_col]] == train_dataset, ,
+      drop = FALSE
     ]
     train <- .prepare_rf_data(
       profile_df, train_group_df, sample_col, group_col,
@@ -232,7 +239,8 @@ rf_cross_dataset_validate <- function(
     )
     for (test_dataset in setdiff(dataset_level, train_dataset)) {
       test_group_df <- group_df[
-        group_df[[dataset_col]] == test_dataset, , drop = FALSE
+        group_df[[dataset_col]] == test_dataset, ,
+        drop = FALSE
       ]
       test <- .prepare_rf_data(
         profile_df, test_group_df, sample_col, group_col,
@@ -290,13 +298,15 @@ rf_cross_dataset_validate <- function(
 #' @return A result object described in the Details section.
 #' @export
 rf_importance <- function(
-    profile, group, seed = 2026, ntree = 1000,
-    sample_col = 'sample', group_col = 'group', group_level = NULL,
-    na_fill = 0, ...) {
+  profile, group, seed = 2026, ntree = 1000,
+  sample_col = "sample", group_col = "group", group_level = NULL,
+  na_fill = 0, ...
+) {
   ## 1. 预处理并拟合全数据模型
   prepared <- .prepare_rf_data(
     profile, group, sample_col, group_col, group_level,
-    na_fill, remove_zero_var = TRUE
+    na_fill,
+    remove_zero_var = TRUE
   )
   set.seed(seed)
   model_obj <- randomForest::randomForest(
@@ -307,13 +317,13 @@ rf_importance <- function(
   ## 2. 把内部安全列名还原成原始 feature 名
   result_df <- randomForest::importance(model_obj) |>
     data.frame(check.names = FALSE) |>
-    tibble::rownames_to_column('model_feature') |>
-    dplyr::left_join(prepared$feature_df, by = 'model_feature') |>
+    tibble::rownames_to_column("model_feature") |>
+    dplyr::left_join(prepared$feature_df, by = "model_feature") |>
     dplyr::select(feature, dplyr::everything(), -model_feature)
-  if ('MeanDecreaseAccuracy' %in% colnames(result_df)) {
+  if ("MeanDecreaseAccuracy" %in% colnames(result_df)) {
     result_df <- dplyr::arrange(result_df, dplyr::desc(MeanDecreaseAccuracy))
   }
-  attr(result_df, 'model') <- model_obj
+  attr(result_df, "model") <- model_obj
   result_df
 }
 
@@ -334,18 +344,20 @@ rf_importance <- function(
 #' @return A result object described in the Details section.
 #' @export
 rf_leave_one_out <- function(
-    profile, group, seed = 2026, ntree = 1000,
-    sample_col = 'sample', group_col = 'group', group_level = NULL,
-    na_fill = 0, progress = TRUE, ...) {
+  profile, group, seed = 2026, ntree = 1000,
+  sample_col = "sample", group_col = "group", group_level = NULL,
+  na_fill = 0, progress = TRUE, ...
+) {
   ## 1. 预处理并逐个留出样本
   prepared <- .prepare_rf_data(
     profile, group, sample_col, group_col, group_level,
-    na_fill, remove_zero_var = TRUE
+    na_fill,
+    remove_zero_var = TRUE
   )
-  result_list <- vector('list', nrow(prepared$x_df))
+  result_list <- vector("list", nrow(prepared$x_df))
   if (isTRUE(progress)) {
     progress_bar <- utils::txtProgressBar(
-      min = 0, max = nrow(prepared$x_df), style = 3, width = 50, char = '#'
+      min = 0, max = nrow(prepared$x_df), style = 3, width = 50, char = "#"
     )
     on.exit(close(progress_bar), add = TRUE)
   }
@@ -354,7 +366,8 @@ rf_leave_one_out <- function(
     train_y <- droplevels(prepared$y_factor[train_idx])
     if (nlevels(train_y) < 2L) {
       probability_df <- as.data.frame(matrix(
-        NA_real_, nrow = 1, ncol = nlevels(prepared$y_factor),
+        NA_real_,
+        nrow = 1, ncol = nlevels(prepared$y_factor),
         dimnames = list(NULL, levels(prepared$y_factor))
       ))
     } else {
@@ -406,14 +419,15 @@ rf_leave_one_out <- function(
 #' @return A result object described in the Details section.
 #' @export
 rf_next_validate <- function(
-    profile_x, profile_y, group_x, group_y,
-    seed = 2026, ntree = 1000,
-    sample_col = 'sample', group_col = 'group',
-    group_level = NULL, na_fill = 0, ...) {
+  profile_x, profile_y, group_x, group_y,
+  seed = 2026, ntree = 1000,
+  sample_col = "sample", group_col = "group",
+  group_level = NULL, na_fill = 0, ...
+) {
   ## 1. 仅保留训练集和验证集共有 feature
   feature_vec <- intersect(rownames(profile_x), rownames(profile_y))
   if (!length(feature_vec)) {
-    stop('No matched features between profile_x and profile_y.')
+    stop("No matched features between profile_x and profile_y.")
   }
   train <- .prepare_rf_data(
     profile_x[feature_vec, , drop = FALSE], group_x,
@@ -429,7 +443,7 @@ rf_next_validate <- function(
   test_col <- test$feature_df$model_feature[
     match(selected_feature, test$feature_df$feature)
   ]
-  if (anyNA(test_col)) stop('Validation data are missing selected features.')
+  if (anyNA(test_col)) stop("Validation data are missing selected features.")
   test_x <- test$x_df[, test_col, drop = FALSE]
   colnames(test_x) <- train$feature_df$model_feature
 
@@ -447,6 +461,6 @@ rf_next_validate <- function(
     predicted = colnames(probability_df)[max.col(probability_df)],
     probability_df, check.names = FALSE
   )
-  attr(result_df, 'model') <- model_obj
+  attr(result_df, "model") <- model_obj
   result_df
 }

@@ -22,15 +22,15 @@
 #' @return A result object described in the Details section.
 #' @export
 calcu_fisher <- function(
-    data, feature_col = 'name', x_pos_col = 'x_pos', y_pos_col = 'y_pos',
-    x_neg_col = 'x_neg', y_neg_col = 'y_neg',
-    add_plab = FALSE, add_padj = TRUE,
-    p_adjust_method = c(
-      'BH', 'holm', 'hochberg', 'hommel', 'bonferroni',
-      'BY', 'fdr', 'none'
-    ),
-    add_enriched = FALSE, enriched_by = c('padj', 'pval'),
-    cutoff = 0.05, x_name = 'x', y_name = 'y', ...
+  data, feature_col = "name", x_pos_col = "x_pos", y_pos_col = "y_pos",
+  x_neg_col = "x_neg", y_neg_col = "y_neg",
+  add_plab = FALSE, add_padj = TRUE,
+  p_adjust_method = c(
+    "BH", "holm", "hochberg", "hommel", "bonferroni",
+    "BY", "fdr", "none"
+  ),
+  add_enriched = FALSE, enriched_by = c("padj", "pval"),
+  cutoff = 0.05, x_name = "x", y_name = "y", ...
 ) {
   ## 1. 统一输入列并检查计数
   p_adjust_method <- match.arg(p_adjust_method)
@@ -39,7 +39,7 @@ calcu_fisher <- function(
   required_cols <- c(
     feature_col, x_pos_col, y_pos_col, x_neg_col, y_neg_col
   )
-  .check_columns(test_df, required_cols, object = 'data')
+  .check_columns(test_df, required_cols, object = "data")
   test_df <- data.frame(
     name = as.character(test_df[[feature_col]]),
     x_pos = as.numeric(test_df[[x_pos_col]]),
@@ -50,7 +50,7 @@ calcu_fisher <- function(
   )
   count_mat <- as.matrix(test_df[, -1, drop = FALSE])
   if (any(!is.finite(count_mat)) || any(count_mat < 0)) {
-    stop('Count columns should contain finite non-negative values.')
+    stop("Count columns should contain finite non-negative values.")
   }
 
   ## 2. 逐个 feature 进行 Fisher exact test
@@ -75,15 +75,18 @@ calcu_fisher <- function(
   )
   result_df$x_occur[!is.finite(result_df$x_occur)] <- NA_real_
   result_df$y_occur[!is.finite(result_df$y_occur)] <- NA_real_
-  if (isTRUE(add_padj) || enriched_by == 'padj') {
+  if (isTRUE(add_padj) || enriched_by == "padj") {
     result_df$padj <- stats::p.adjust(
-      result_df$pval, method = p_adjust_method
+      result_df$pval,
+      method = p_adjust_method
     )
   }
   if (isTRUE(add_plab)) {
-    label_source <- if ('padj' %in% colnames(result_df)) {
+    label_source <- if ("padj" %in% colnames(result_df)) {
       result_df$padj
-    } else result_df$pval
+    } else {
+      result_df$pval
+    }
     result_df$plab <- .add_plab(label_source)
   }
   if (isTRUE(add_enriched)) {
@@ -93,11 +96,11 @@ calcu_fisher <- function(
       x_name,
       ifelse(
         signif_vec & result_df$x_occur < result_df$y_occur,
-        y_name, 'none'
+        y_name, "none"
       )
     )
   }
-  colnames(result_df)[colnames(result_df) == 'x_occur'] <- paste0(x_name, '_occur')
-  colnames(result_df)[colnames(result_df) == 'y_occur'] <- paste0(y_name, '_occur')
+  colnames(result_df)[colnames(result_df) == "x_occur"] <- paste0(x_name, "_occur")
+  colnames(result_df)[colnames(result_df) == "y_occur"] <- paste0(y_name, "_occur")
   result_df
 }

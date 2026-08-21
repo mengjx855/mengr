@@ -42,66 +42,61 @@
 #' @param quiet Whether to suppress progress messages.
 #' @return A result object described in the Details section.
 #' @export
-calcu_feature_auc <- function(profile, label, sample_col = 'sample', 
-                              group_col = 'group', levels = NULL,
-                              direction = c('auto', '<', '>'), ci = TRUE,
+calcu_feature_auc <- function(profile, label, sample_col = "sample",
+                              group_col = "group", levels = NULL,
+                              direction = c("auto", "<", ">"), ci = TRUE,
                               quiet = TRUE) {
-  
   direction <- match.arg(direction)
   profile <- data.frame(profile, check.names = FALSE)
-  
+
   ## 1. 整理 label
   if (is.data.frame(label)) {
-    
     label <- data.frame(label, check.names = FALSE)
-    
+
     if (!all(c(sample_col, group_col) %in% colnames(label))) {
-      stop('label data.frame should contain columns: ', sample_col, ' | ', group_col)
+      stop("label data.frame should contain columns: ", sample_col, " | ", group_col)
     }
-    
+
     label_vec <- label[[group_col]]
     names(label_vec) <- label[[sample_col]]
-    
   } else {
-    
     label_vec <- label
-    
+
     if (is.null(names(label_vec))) {
-      stop('label should be a named vector or a data.frame with sample/group columns.')
+      stop("label should be a named vector or a data.frame with sample/group columns.")
     }
   }
-  
+
   ## 2. 对齐样本
   common <- intersect(colnames(profile), names(label_vec))
-  
+
   if (length(common) < 3) {
-    stop('Too few matched samples between profile and label.')
+    stop("Too few matched samples between profile and label.")
   }
-  
+
   profile <- profile[, common, drop = FALSE]
   label_vec <- label_vec[common]
-  
+
   ## 3. 设置二分类水平
   if (is.null(levels)) {
     levels <- unique(as.character(label_vec))
   }
-  
+
   if (length(levels) != 2) {
     stop('levels should contain exactly two groups, such as c("HC", "IBD").')
   }
-  
+
   label_vec <- factor(label_vec, levels = levels)
-  
+
   ## 4. 逐个 feature 计算 AUC
   res <- lapply(rownames(profile), \(f) {
-    
     x <- suppressWarnings(as.numeric(profile[f, ]))
     y <- label_vec
-    
+
     ok <- is.finite(x) & !is.na(y)
     x <- x[ok]
     y <- y[ok]
-    
+
     ## 如果只有一个分组，或 feature 没有变化，则无法计算 ROC
     if (length(unique(y)) < 2 || length(unique(x)) < 2) {
       return(data.frame(
@@ -115,7 +110,7 @@ calcu_feature_auc <- function(profile, label, sample_col = 'sample',
         enriched = NA_character_
       ))
     }
-    
+
     roc_obj <- tryCatch(
       pROC::roc(
         response = y,
@@ -126,7 +121,7 @@ calcu_feature_auc <- function(profile, label, sample_col = 'sample',
       ),
       error = function(e) NULL
     )
-    
+
     if (is.null(roc_obj)) {
       return(data.frame(
         feature = f,
@@ -139,9 +134,9 @@ calcu_feature_auc <- function(profile, label, sample_col = 'sample',
         enriched = NA_character_
       ))
     }
-    
+
     auc_val <- as.numeric(pROC::auc(roc_obj))
-    
+
     if (isTRUE(ci)) {
       auc_ci <- tryCatch(
         as.numeric(pROC::ci.auc(roc_obj)),
@@ -150,16 +145,16 @@ calcu_feature_auc <- function(profile, label, sample_col = 'sample',
     } else {
       auc_ci <- c(NA_real_, NA_real_, NA_real_)
     }
-    
+
     mean_control <- mean(x[y == levels[1]], na.rm = TRUE)
     mean_case <- mean(x[y == levels[2]], na.rm = TRUE)
-    
+
     enriched <- dplyr::case_when(
       mean_case > mean_control ~ levels[2],
       mean_case < mean_control ~ levels[1],
-      TRUE ~ 'none'
+      TRUE ~ "none"
     )
-    
+
     data.frame(
       feature = f,
       auc = auc_val,
@@ -172,10 +167,9 @@ calcu_feature_auc <- function(profile, label, sample_col = 'sample',
       stringsAsFactors = FALSE
     )
   })
-  
+
   res <- dplyr::bind_rows(res) |>
     dplyr::arrange(dplyr::desc(signal))
-  
+
   return(res)
 }
-

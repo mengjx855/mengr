@@ -10,14 +10,14 @@
 #' @export
 mengR_config <- function(database = NULL) {
   if (!is.null(database)) {
-    database <- normalizePath(database, winslash = '/', mustWork = FALSE)
+    database <- normalizePath(database, winslash = "/", mustWork = FALSE)
     options(mengR.database = database)
   }
 
   config <- list(
     database = getOption(
-      'mengR.database',
-      Sys.getenv('MENGR_DATABASE', unset = 'F:/database')
+      "mengR.database",
+      Sys.getenv("MENGR_DATABASE", unset = "F:/database")
     )
   )
 

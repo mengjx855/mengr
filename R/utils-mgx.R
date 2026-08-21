@@ -169,24 +169,24 @@
 #' ggsave("PPM_associated_taxa.pdf", p, width = 9, height = 6)
 #' @export
 plot_maaslin3_multi <- function(
-    maaslin3_result,
-    metadata = "group", value = "Case", ref = NULL,
-    feature_col = "feature", coef_col = "coef",
-    p_col = "qval_individual", p_cutoff = 0.05,
-    levels_keep = c("p", "c", "o", "f", "g", "s"),
-    point_top_n = 20, point_by = c("p", "abs_coef"),
-    point_side = c("both", "positive", "negative", "all"),
-    label_top_n = 5, label_by = c("p", "abs_coef"),
-    label_side = c("both", "positive", "negative", "all"),
-    manual_label_taxa = NULL, manual_label_features = NULL,
-    point_size = 2.5, jitter_width = 0.3, strip_height = NULL,
-    strip_palette = c(
-      "#F46D43","#FDAE61","#FEE08B","#FFFFBF",
-      "#E6F598","#ABDDA4","#66C2A5","#3288BD"
-    ),
-    sig_colors = c(sig = "#D53E4F", ns = "#0099C7"),
-    title = NULL, verbose = TRUE) {
-  
+  maaslin3_result,
+  metadata = "group", value = "Case", ref = NULL,
+  feature_col = "feature", coef_col = "coef",
+  p_col = "qval_individual", p_cutoff = 0.05,
+  levels_keep = c("p", "c", "o", "f", "g", "s"),
+  point_top_n = 20, point_by = c("p", "abs_coef"),
+  point_side = c("both", "positive", "negative", "all"),
+  label_top_n = 5, label_by = c("p", "abs_coef"),
+  label_side = c("both", "positive", "negative", "all"),
+  manual_label_taxa = NULL, manual_label_features = NULL,
+  point_size = 2.5, jitter_width = 0.3, strip_height = NULL,
+  strip_palette = c(
+    "#F46D43", "#FDAE61", "#FEE08B", "#FFFFBF",
+    "#E6F598", "#ABDDA4", "#66C2A5", "#3288BD"
+  ),
+  sig_colors = c(sig = "#D53E4F", ns = "#0099C7"),
+  title = NULL, verbose = TRUE
+) {
   ## 0. 参数匹配与结果表检查
   ## point_by/label_by 控制按显著性或效应大小排序；
   ## point_side/label_side 控制选择正向、负向或双向结果。
@@ -194,25 +194,25 @@ plot_maaslin3_multi <- function(
   label_by <- match.arg(label_by)
   point_side <- match.arg(point_side)
   label_side <- match.arg(label_side)
-  
+
   ## 1. 整理 MaAsLin3 结果
   ## 仅保留 abundance 模型结果，并去除报错行。
   ## 如果没有 model/error 列，则自动跳过。
   maaslin <- data.frame(maaslin3_result, check.names = FALSE)
-  
+
   if ("model" %in% colnames(maaslin)) {
     maaslin <- dplyr::filter(maaslin, model == "abundance")
   }
   if ("error" %in% colnames(maaslin)) {
     maaslin <- dplyr::filter(maaslin, is.na(error))
   }
-  
+
   need_cols <- c(feature_col, "metadata", "value", coef_col, p_col)
   miss_cols <- setdiff(need_cols, colnames(maaslin))
   if (length(miss_cols) > 0) {
     stop("Missing columns in MaAsLin3 result: ", paste(miss_cols, collapse = ", "))
   }
-  
+
   ## 2. 解析 feature 中的分类层级
   ## 从形如 k__Bacteria|p__...|g__... 的字符串中提取最后一级分类。
   ## .rank_letter 用于判断层级，.taxon/.label 用于后续标注。
@@ -224,7 +224,7 @@ plot_maaslin3_multi <- function(
     "Domain", "Kingdom", "Phylum", "Class",
     "Order", "Family", "Genus", "Species", "Strain"
   )
-  
+
   parse_taxa <- function(x) {
     parts <- stringr::str_extract_all(as.character(x), "[dkpcofgst]__[^|;]+")[[1]]
     if (length(parts) == 0) {
@@ -240,13 +240,13 @@ plot_maaslin3_multi <- function(
       label = taxon
     )
   }
-  
+
   taxa_info <- dplyr::bind_rows(lapply(maaslin[[feature_col]], parse_taxa))
   maaslin$.rank_letter <- taxa_info$rank_letter
   maaslin$.rank <- taxa_info$rank
   maaslin$.taxon <- taxa_info$taxon
   maaslin$.label <- taxa_info$label
-  
+
   ## 3. 提取目标变量的效应结果
   ## 例如 metadata = "group", value = "PPM" 表示提取 PPM 相对于参考组的效应。
   ## coef > 0 表示与 value 正相关；coef < 0 表示与参考组方向相关。
@@ -267,7 +267,7 @@ plot_maaslin3_multi <- function(
       .sig_group = ifelse(.p < p_cutoff, "sig", "ns")
     ) |>
     dplyr::filter(!is.na(.coef), !is.na(.p), !is.na(.rank))
-  
+
   ## 4. 根据分类层级筛选结果
   ## levels_keep 使用分类层级字母：
   ## p = Phylum, c = Class, o = Order, f = Family, g = Genus, s = Species。
@@ -277,9 +277,9 @@ plot_maaslin3_multi <- function(
   if (nrow(data) == 0) {
     stop("No rows remained after filtering metadata/value/taxonomic levels.")
   }
-  
+
   data$.rank <- factor(data$.rank, levels = rank_order)
-  
+
   ## 5. 定义 top 选择函数
   ## 选择每个分类层级中的 top 结果
   ## by = "p" 时优先选择 p/q 值最小的结果；
@@ -288,15 +288,17 @@ plot_maaslin3_multi <- function(
   select_top <- function(x, top_n, by, side) {
     if (side == "positive") x <- dplyr::filter(x, .coef > 0)
     if (side == "negative") x <- dplyr::filter(x, .coef < 0)
-    
+
     if (by == "p") {
       x <- dplyr::arrange(x, .rank, .p, dplyr::desc(.abs_coef))
     } else {
       x <- dplyr::arrange(x, .rank, dplyr::desc(.abs_coef), .p)
     }
-    
-    if (is.null(top_n)) return(x)
-    
+
+    if (is.null(top_n)) {
+      return(x)
+    }
+
     if (side == "both") {
       x |>
         dplyr::filter(.direction %in% c("positive", "negative")) |>
@@ -310,19 +312,19 @@ plot_maaslin3_multi <- function(
         dplyr::ungroup()
     }
   }
-  
+
   ## 6. 选择要展示的点
   ## point_top_n 控制每个分类层级展示多少个点。
   ## 如果 point_side = "both"，则每个层级中正向和负向各取 point_top_n 个。
   plot_df <- select_top(data, point_top_n, point_by, point_side)
   plot_df <- plot_df[!duplicated(plot_df[[feature_col]]), , drop = FALSE]
   if (nrow(plot_df) == 0) stop("No taxa selected for plotting.")
-  
+
   ## 7. 选择要标注的标签
   ## 标签只从已经展示的点中选择，不会额外增加新的点。
   ## label_top_n 控制每个分类层级标注多少个标签。
   label_df <- select_top(plot_df, label_top_n, label_by, label_side)
-  
+
   ## 8. 加入手动指定标签
   ## manual_label_taxa 使用短分类名匹配，例如 Lactobacillus；
   ## manual_label_features 使用完整 feature 字符串匹配。
@@ -337,10 +339,10 @@ plot_maaslin3_multi <- function(
       dplyr::filter(.data[[feature_col]] %in% manual_label_features)
     manual_label_df <- dplyr::bind_rows(manual_label_df, selected_df)
   }
-  
+
   label_df <- dplyr::bind_rows(label_df, manual_label_df)
   label_df <- label_df[!duplicated(label_df[[feature_col]]), , drop = FALSE]
-  
+
   if (!is.null(manual_label_taxa)) {
     missing_taxa <- setdiff(manual_label_taxa, unique(plot_df$.taxon))
     if (length(missing_taxa) > 0) {
@@ -350,7 +352,7 @@ plot_maaslin3_multi <- function(
       )
     }
   }
-  
+
   if (!is.null(manual_label_features)) {
     missing_features <- setdiff(manual_label_features, unique(plot_df[[feature_col]]))
     if (length(missing_features) > 0) {
@@ -360,30 +362,30 @@ plot_maaslin3_multi <- function(
       )
     }
   }
-  
+
   ## 9. 确定实际展示的分类层级
   ## 不能直接使用 levels(plot_df$.rank)，因为 factor levels 可能包含未展示层级。
   ## 这里根据 plot_df 中真实存在的层级重新确定 x 轴顺序。
   rank_levels <- rank_order[rank_order %in% unique(as.character(plot_df$.rank))]
   n_rank <- length(rank_levels)
-  
+
   plot_df$.rank <- factor(plot_df$.rank, levels = rank_levels)
   plot_df$.x_id <- as.numeric(plot_df$.rank)
-  
+
   ## 10. 生成 x 轴位置和 jitter 坐标
   ## jitter 坐标只生成一次，并同时赋给点和标签。
   ## 这样标签可以准确对应到被 jitter 后的点。
   set.seed(123)
   plot_df$.x_jit <- plot_df$.x_id +
     stats::runif(nrow(plot_df), -jitter_width, jitter_width)
-  
+
   label_df$.x_jit <- plot_df$.x_jit[
     match(label_df[[feature_col]], plot_df[[feature_col]])
   ]
   label_df$.x_id <- plot_df$.x_id[
     match(label_df[[feature_col]], plot_df[[feature_col]])
   ]
-  
+
   ## 11. 将正向和负向效应拆成上下两个面板
   ## coef > 0 的结果绘制在上方面板；## coef < 0 的结果绘制在下方面板；
   ## 中间面板仅用于显示分类层级色条，避免点和色条重叠。
@@ -391,13 +393,13 @@ plot_maaslin3_multi <- function(
   plot_bottom_df <- dplyr::filter(plot_df, .coef < 0)
   label_df_top <- dplyr::filter(label_df, .coef > 0)
   label_df_bottom <- dplyr::filter(label_df, .coef < 0)
-  
+
   ## 12. 生成每个分类层级的灰色背景块
   ## 灰色背景高度根据该分类层级内点的最大/最小 coef 自动确定，
   ## 而不是铺满整个坐标系。
   coef_range <- range(plot_df$.coef, na.rm = TRUE)
   bg_pad <- max(0.3, diff(coef_range) * 0.04)
-  
+
   ## 根据每个分类层级的点范围生成灰色背景块
   ## top 面板从 0 延伸到该层级最大正效应；
   ## bottom 面板从该层级最小负效应延伸到 0。
@@ -406,7 +408,7 @@ plot_maaslin3_multi <- function(
     if (nrow(x) == 0) {
       return(data.frame(xmin = numeric(), xmax = numeric(), ymin = numeric(), ymax = numeric()))
     }
-    
+
     out <- x |>
       dplyr::group_by(.rank, .x_id) |>
       dplyr::summarise(
@@ -418,10 +420,10 @@ plot_maaslin3_multi <- function(
       )
     out
   }
-  
+
   bg_df_top <- make_bg(plot_top_df, "top")
   bg_df_bottom <- make_bg(plot_bottom_df, "bottom")
-  
+
   ## 13. 生成中间分类层级色条
   ## 色条颜色使用 Spectral 风格调色板，并根据实际展示的层级数量自动插值。
   if (is.null(strip_height)) {
@@ -429,7 +431,7 @@ plot_maaslin3_multi <- function(
   } else {
     strip_half_height <- strip_height / 2
   }
-  
+
   strip_df <- data.frame(
     .rank = factor(rank_levels, levels = rank_levels),
     xmin = seq_len(n_rank) - 0.45,
@@ -438,36 +440,38 @@ plot_maaslin3_multi <- function(
     ymax = strip_half_height,
     fill = grDevices::colorRampPalette(strip_palette)(n_rank)
   )
-  
+
   strip_label_df <- data.frame(
     x = seq_len(n_rank),
     y = 0,
     label = rank_levels
   )
-  
+
   ## 14. 添加标签函数
   ## 优先使用 ggrepel 避免标签重叠；
   ## 如果未安装 ggrepel，则退回到普通 geom_text。
   if (is.null(ref)) ref <- "Reference"
   if (is.null(title)) title <- paste0("MaAsLin3 effect: ", metadata, " = ", value)
-  
-  p_prefix <- dplyr::if_else(grepl('qval', p_col), 'P.adjust', 'P.value')
-  
+
+  p_prefix <- dplyr::if_else(grepl("qval", p_col), "P.adjust", "P.value")
+
   sig_labels <- c(
     paste0(p_prefix, " < ", p_cutoff), paste0(p_prefix, " >= ", p_cutoff)
   )
-  
+
   ## 给指定面板添加标签
   ## 标签数据已经继承了点的 jitter 坐标，因此标签会对准对应点。
   add_label <- function(p, label_df) {
-    if (nrow(label_df) == 0) return(p)
-    
+    if (nrow(label_df) == 0) {
+      return(p)
+    }
+
     if (requireNamespace("ggrepel", quietly = TRUE)) {
       p + ggrepel::geom_text_repel(
         data = label_df,
         ggplot2::aes(x = .x_jit, y = .coef, label = .label),
         size = 3.5, max.overlaps = Inf, box.padding = 0.35,
-        point.padding = 0.25, min.segment.length = 0, 
+        point.padding = 0.25, min.segment.length = 0,
         seed = 123, show.legend = FALSE
       )
     } else {
@@ -478,7 +482,7 @@ plot_maaslin3_multi <- function(
       )
     }
   }
-  
+
   ## 15. 定义点图层
   ## 统一点图层样式
   ## sig/ns 由 p_col 和 p_cutoff 判断，并通过 color 颜色区分。
@@ -489,15 +493,15 @@ plot_maaslin3_multi <- function(
       size = point_size, alpha = 0.95
     )
   }
-  
+
   base_x <- ggplot2::scale_x_continuous(
     breaks = seq_len(n_rank), labels = rank_levels, expand = c(0.02, 0.02)
   )
-  
+
   color_scale <- ggplot2::scale_color_manual(
     values = sig_colors, breaks = c("sig", "ns"), labels = sig_labels, name = NULL
   )
-  
+
   ## 16. 绘制上方面板
   ## 仅展示 coef > 0 的菌，表示与 value 方向正相关。
   p_top <- ggplot2::ggplot() +
@@ -507,7 +511,7 @@ plot_maaslin3_multi <- function(
       inherit.aes = FALSE, fill = "grey92", color = NA
     ) +
     point_layer(plot_top_df) +
-    color_scale + 
+    color_scale +
     base_x +
     ggplot2::labs(
       title = title,
@@ -528,24 +532,24 @@ plot_maaslin3_multi <- function(
       axis.ticks.x = ggplot2::element_blank(),
       axis.text.x = ggplot2::element_blank(),
       axis.ticks.length.y = grid::unit(2, "mm"),
-      axis.ticks.y = ggplot2::element_line(linewidth = .5, colour = 'black'),
-      axis.line.y = ggplot2::element_line(linewidth = .5, colour = 'black'),
+      axis.ticks.y = ggplot2::element_line(linewidth = .5, colour = "black"),
+      axis.line.y = ggplot2::element_line(linewidth = .5, colour = "black"),
       axis.text.y = ggplot2::element_text(size = 12, color = "black"),
       plot.title = ggplot2::element_text(hjust = 0.5, face = "bold", size = 12),
       plot.subtitle = ggplot2::element_text(hjust = 0.5, size = 10),
       plot.margin = ggplot2::margin(t = 5.5, r = 5.5, b = 0, l = 5.5),
       legend.position = "top"
     )
-  
+
   p_top <- add_label(p_top, label_df_top)
-  
+
   ## 17. 绘制中间分类层级色条
   ## 该面板只显示分类层级名称，不展示散点。
   p_mid <- ggplot2::ggplot() +
     ggplot2::geom_rect(
       data = strip_df,
       ggplot2::aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill = .rank),
-      inherit.aes = FALSE, color = "black", linewidth = 0.4 
+      inherit.aes = FALSE, color = "black", linewidth = 0.4
     ) +
     ggplot2::scale_fill_manual(
       values = stats::setNames(strip_df$fill, strip_df$.rank),
@@ -564,7 +568,7 @@ plot_maaslin3_multi <- function(
       axis.title.y = ggplot2::element_text(size = 12, color = "black", angle = 90),
       plot.margin = ggplot2::margin(t = 0, r = 5.5, b = 0, l = 5.5)
     )
-  
+
   ## 18. 绘制下方面板
   ## 仅展示 coef < 0 的菌，表示与参考组方向相关。
   p_bottom <- ggplot2::ggplot() +
@@ -586,31 +590,31 @@ plot_maaslin3_multi <- function(
       axis.ticks.x = ggplot2::element_blank(),
       axis.text.x = ggplot2::element_blank(),
       axis.ticks.length.y = grid::unit(2, "mm"),
-      axis.ticks.y = ggplot2::element_line(linewidth = .5, colour = 'black'),
-      axis.line.y = ggplot2::element_line(linewidth = .5, colour = 'black'),
+      axis.ticks.y = ggplot2::element_line(linewidth = .5, colour = "black"),
+      axis.line.y = ggplot2::element_line(linewidth = .5, colour = "black"),
       axis.text.y = ggplot2::element_text(size = 12, color = "black"),
       plot.margin = ggplot2::margin(t = 0, r = 5.5, b = 5.5, l = 5.5),
       legend.position = "none"
     )
-  
+
   p_bottom <- add_label(p_bottom, label_df_bottom)
-  
+
   ## 19. 拼接三个面板
   ## 上：正向效应；中：分类层级色条；下：负向效应。
   if (!requireNamespace("patchwork", quietly = TRUE)) {
     stop("Package 'patchwork' is required.")
   }
-  
+
   p <- p_top / p_mid / p_bottom +
     patchwork::plot_layout(heights = c(4.8, 0.6, 4.8))
-  
+
   ## 20. 保存作图数据
   ## plot_df 为最终展示的点；
   ## label_df 为最终标注的标签。
   ## 可用 attr(p, "plot_df") 和 attr(p, "label_df") 取出。
   attr(p, "plot_df") <- plot_df
   attr(p, "label_df") <- label_df
-  
+
   ## 21. 输出当前绘图参数和数据量，便于检查筛选结果
   if (isTRUE(verbose)) {
     message(
@@ -625,7 +629,7 @@ plot_maaslin3_multi <- function(
       "  labeled taxa: ", nrow(label_df)
     )
   }
-  
+
   return(p)
 }
 
@@ -643,36 +647,35 @@ plot_maaslin3_multi <- function(
 #' @return A plot object; analysis data or models may also be stored as attributes.
 #' @export
 plot_maaslin3_abundance <- function(
-    data, p_col = 'qval_joint'
+  data, p_col = "qval_joint"
 ) {
-  
   data <- data.frame(data, check.names = FALSE)
-  
+
   ## 必须手动指定 p_col
   if (missing(p_col) || is.null(p_col) || length(p_col) != 1) {
     stop(
       'Please specify p_col, for example: p_col = "qval_joint".'
     )
   }
-  
+
   if (!p_col %in% colnames(data)) {
     stop("p_col not found in data: ", p_col)
   }
-  
+
   ## 检查必要列
   need_cols <- c(
     "feature", "coef", "null_hypothesis", "model"
   )
-  
+
   miss_cols <- setdiff(need_cols, colnames(data))
-  
+
   if (length(miss_cols) > 0) {
     stop(
       "Missing required columns: ",
       paste(miss_cols, collapse = ", ")
     )
   }
-  
+
   ## 整理数据
   plot_df <- data |>
     dplyr::mutate(
@@ -687,32 +690,32 @@ plot_maaslin3_abundance <- function(
       is.finite(coef),
       is.finite(null_hypothesis),
       is.finite(p_value)
-    ) |> 
+    ) |>
     dplyr::mutate(
       model_label = dplyr::case_when(
         model == "abundance" ~ "Abundance",
         TRUE ~ model
       )
     )
-  
+
   if (nrow(plot_df) == 0) {
     stop("No valid abundance rows remained.")
   }
-  
+
   ## feature 顺序：输入表格第一行显示在图最上方
   feature_levels <- dplyr::arrange(plot_df, coef) |>
     dplyr::pull(feature)
-  
+
   plot_df <- plot_df |>
     dplyr::mutate(
       feature = factor(feature, levels = feature_levels),
       y = match(feature, feature_levels),
       sig = -log10(pmax(p_value, .Machine$double.xmin))
     )
-  
+
   ## 颜色刻度：pretty() 自动生成
   sig_range <- range(plot_df$sig, na.rm = TRUE)
-  
+
   if (diff(sig_range) == 0) {
     fill_breaks <- sig_range
   } else {
@@ -724,22 +727,22 @@ plot_maaslin3_abundance <- function(
       fill_breaks <- sig_range
     }
   }
-  
+
   fill_labels <- formatC(10^(-fill_breaks), format = "g", digits = 2)
-  
+
   fill_title <- if (
     grepl("qval|fdr", p_col, ignore.case = TRUE)
   ) {
-    expression(Abundance~P[FDR])
+    expression(Abundance ~ P[FDR])
   } else {
-    expression(Abundance~P)
+    expression(Abundance ~ P)
   }
-  
+
   ## Null hypothesis 线：每种 model 一个或多个 null 值
   null_df <- plot_df |>
     dplyr::select(model_label, null_hypothesis) |>
     dplyr::distinct()
-  
+
   ## 作图
   p <- ggplot2::ggplot() +
     ## 0 线：只是方向参考，不是 MaAsLin3 的 null
@@ -754,7 +757,8 @@ plot_maaslin3_abundance <- function(
     ) +
     ## association：abundance 圆形
     ggplot2::geom_point(
-      ggplot2::aes(x = coef, y = y, fill = sig), data = plot_df,
+      ggplot2::aes(x = coef, y = y, fill = sig),
+      data = plot_df,
       size = 3.4, stroke = 0.8, color = "black", shape = 21
     ) +
     ggplot2::scale_linetype_manual(
@@ -770,29 +774,29 @@ plot_maaslin3_abundance <- function(
       expand = ggplot2::expansion(add = c(0.5, 0.5))
     ) +
     ggplot2::labs(
-      x = expression(beta~coefficient), y = "Feature"
+      x = expression(beta ~ coefficient), y = "Feature"
     ) +
     ggplot2::guides(
       linetype = ggplot2::guide_legend(order = 1),
-      fill = ggplot2::guide_colorbar(order = 2,reverse = TRUE)
+      fill = ggplot2::guide_colorbar(order = 2, reverse = TRUE)
     ) +
     ggplot2::theme_bw(base_size = 13) +
     ggplot2::theme(
       panel.grid.major = ggplot2::element_line(color = "grey88", linewidth = 0.4),
       panel.grid.minor = ggplot2::element_blank(),
-      panel.background = ggplot2::element_rect(fill = NA, color = 'black', linewidth = .4),
+      panel.background = ggplot2::element_rect(fill = NA, color = "black", linewidth = .4),
       axis.text = ggplot2::element_text(color = "black"),
       axis.title = ggplot2::element_text(color = "black"),
       axis.ticks = ggplot2::element_line(color = "black", linewidth = .4),
-      axis.ticks.length = grid::unit(1.6, 'mm'),
+      axis.ticks.length = grid::unit(1.6, "mm"),
       legend.position = "right",
       legend.key = ggplot2::element_blank(),
       legend.title = ggplot2::element_text(color = "black"),
       legend.text = ggplot2::element_text(color = "black")
     )
-  
+
   attr(p, "plot_df") <- plot_df
-  
+
   return(p)
 }
 
@@ -812,37 +816,36 @@ plot_maaslin3_abundance <- function(
 #' @return A plot object; analysis data or models may also be stored as attributes.
 #' @export
 plot_maaslin3_both <- function(
-  data, p_col = 'qval_individual', title = NULL, point_size = 3.8,
+  data, p_col = "qval_individual", title = NULL, point_size = 3.8,
   aspect_ratio = 2
 ) {
-  
   data <- data.frame(data, check.names = FALSE)
-  
+
   ## 指定 p_col
   if (is.null(p_col) || length(p_col) != 1) {
     stop(
       'Please specify p_col, for example: p_col = "qval_joint".'
     )
   }
-  
+
   if (!p_col %in% colnames(data)) {
     stop("p_col not found in data: ", p_col)
   }
-  
+
   ## 检查必要列
   need_cols <- c(
     "feature", "coef", "null_hypothesis", "model"
   )
-  
+
   miss_cols <- setdiff(need_cols, colnames(data))
-  
+
   if (length(miss_cols) > 0) {
     stop(
       "Missing required columns: ",
       paste(miss_cols, collapse = ", ")
     )
   }
-  
+
   ## 整理数据
   plot_df <- data |>
     dplyr::mutate(
@@ -865,36 +868,36 @@ plot_maaslin3_both <- function(
         TRUE ~ model
       )
     )
-  
+
   if (nrow(plot_df) == 0) {
     stop("No valid abundance/prevalence rows remained.")
   }
-  
+
   ## feature 顺序：输入表格第一行显示在图最上方
   feature_levels <- dplyr::group_by(plot_df, feature) |>
-    dplyr::slice_max(order_by = abs(coef),n = 1) |> 
+    dplyr::slice_max(order_by = abs(coef), n = 1) |>
     # dplyr::summarise(coef = mean(coef)) |>
     dplyr::arrange(coef) |>
     dplyr::pull(feature)
-  
+
   plot_df <- plot_df |>
     dplyr::mutate(
       feature = factor(feature, levels = feature_levels),
       y = match(feature, feature_levels),
       sig = -log10(pmax(p_value, .Machine$double.xmin))
     )
-  
+
   df_abun <- plot_df |>
     dplyr::filter(model == "abundance")
-  
+
   df_prev <- plot_df |>
     dplyr::filter(model == "prevalence")
-  
+
   ## Null hypothesis 线：每种 model 一个或多个 null 值
   null_df <- plot_df |>
     dplyr::select(model_label, null_hypothesis) |>
     dplyr::distinct()
-  
+
   ## abundance 颜色刻度
   if (nrow(df_abun) > 0) {
     abun_range <- range(df_abun$sig, na.rm = TRUE)
@@ -911,7 +914,7 @@ plot_maaslin3_both <- function(
     }
     abun_labels <- formatC(10^(-abun_breaks), format = "g", digits = 2)
   }
-  
+
   ## prevalence 颜色刻度
   if (nrow(df_prev) > 0) {
     prev_range <- range(df_prev$sig, na.rm = TRUE)
@@ -928,32 +931,31 @@ plot_maaslin3_both <- function(
     }
     prev_labels <- formatC(10^(-prev_breaks), format = "g", digits = 2)
   }
-  
+
   abun_title <- ifelse(
-    grepl("qval|fdr", p_col, ignore.case = TRUE), 
-    expression(Abundance~P[FDR]),
-    expression(Abundance~P)
+    grepl("qval|fdr", p_col, ignore.case = TRUE),
+    expression(Abundance ~ P[FDR]),
+    expression(Abundance ~ P)
   )
-  
+
   prev_title <- ifelse(
     grepl("qval|fdr", p_col, ignore.case = TRUE),
-    expression(Prevalence~P[FDR]),
-    expression(Prevalence~P)
+    expression(Prevalence ~ P[FDR]),
+    expression(Prevalence ~ P)
   )
-  
+
   ## 基础图
   p <- ggplot2::ggplot() +
-    
+
     ## MaAsLin3 null_hypothesis 线
     ggplot2::geom_vline(
       data = null_df,
       ggplot2::aes(xintercept = null_hypothesis, linetype = model_label),
       linewidth = 0.55, color = "black"
     )
-  
+
   ## abundance 点：圆形，紫色
   if (nrow(df_abun) > 0) {
-    
     p <- p +
       ggplot2::geom_point(
         ggplot2::aes(x = coef, y = y, shape = model_label, fill = sig),
@@ -964,10 +966,9 @@ plot_maaslin3_both <- function(
         labels = abun_labels, name = abun_title
       )
   }
-  
+
   ## prevalence 点：三角形，青绿色
   if (nrow(df_prev) > 0) {
-
     p <- p +
       ggnewscale::new_scale_fill() +
       ggplot2::geom_point(
@@ -979,7 +980,7 @@ plot_maaslin3_both <- function(
         labels = prev_labels, name = prev_title
       )
   }
-  
+
   p <- p +
     ggplot2::scale_linetype_manual(
       name = "Null hypothesis", drop = FALSE,
@@ -993,7 +994,7 @@ plot_maaslin3_both <- function(
       breaks = seq_along(feature_levels), labels = feature_levels,
       expand = ggplot2::expansion(add = c(0.5, 0.5))
     ) +
-    ggplot2::labs(x = expression(beta~coefficient), y = "Feature", title = title) +
+    ggplot2::labs(x = expression(beta ~ coefficient), y = "Feature", title = title) +
     ggplot2::guides(
       linetype = ggplot2::guide_legend(order = 1),
       shape = ggplot2::guide_legend(
@@ -1004,23 +1005,23 @@ plot_maaslin3_both <- function(
     ggplot2::theme(
       panel.grid.major = ggplot2::element_line(color = "grey88", linewidth = 0.4),
       panel.grid.minor = ggplot2::element_blank(),
-      panel.background = ggplot2::element_rect(fill = NA, color = 'black', linewidth = .4),
+      panel.background = ggplot2::element_rect(fill = NA, color = "black", linewidth = .4),
       panel.border = ggplot2::element_blank(),
       axis.line = ggplot2::element_blank(),
-      plot.title = ggplot2::element_text(color = 'black', face = 'bold', hjust = .5, size = 13),
+      plot.title = ggplot2::element_text(color = "black", face = "bold", hjust = .5, size = 13),
       axis.text = ggplot2::element_text(color = "black"),
       axis.title = ggplot2::element_text(color = "black"),
       axis.ticks = ggplot2::element_line(color = "black", linewidth = .4),
-      axis.ticks.length = grid::unit(1.6, 'mm'),
+      axis.ticks.length = grid::unit(1.6, "mm"),
       legend.position = "right",
       legend.key = ggplot2::element_blank(),
       legend.title = ggplot2::element_text(color = "black"),
       legend.text = ggplot2::element_text(color = "black"),
       aspect.ratio = aspect_ratio
     )
-  
+
   attr(p, "plot_df") <- plot_df
-  
+
   return(p)
 }
 
@@ -1041,76 +1042,77 @@ plot_maaslin3_both <- function(
 #' @return A result object described in the Details section.
 #' @export
 load_KEGG_info <- function(
-    database = .mengR_db_file(
-      'KEGG', 'KO', 'KO_level_A_B_C_D_Description'
-    ),
-    level = c('A', 'B', 'C', 'D'), relation = NULL, 
-    keep_desc = TRUE, add_prefix = TRUE, distinct = TRUE
-  ) {
-  if (!file.exists(database)) stop('KEGG annotation file not found: ', database)
+  database = .mengR_db_file(
+    "KEGG", "KO", "KO_level_A_B_C_D_Description"
+  ),
+  level = c("A", "B", "C", "D"), relation = NULL,
+  keep_desc = TRUE, add_prefix = TRUE, distinct = TRUE
+) {
+  if (!file.exists(database)) stop("KEGG annotation file not found: ", database)
 
   kegg_db <- utils::read.delim(
-    database, sep = '\t', quote = '', check.names = FALSE, stringsAsFactors = FALSE
-    )
-  
-  lv_map <- c(A = 'lvA', B = 'lvB', C = 'lvC', D = 'lvD')
-  
+    database,
+    sep = "\t", quote = "", check.names = FALSE, stringsAsFactors = FALSE
+  )
+
+  lv_map <- c(A = "lvA", B = "lvB", C = "lvC", D = "lvD")
+
   level <- toupper(level)
-  
+
   if (!all(level %in% names(lv_map))) {
-    stop('`level` should be selected from: A, B, C, D')
+    stop("`level` should be selected from: A, B, C, D")
   }
-  
+
   ## 如果指定 relation，则输出两个层级之间的对应关系
   ## 例如 relation = c('D', 'C') 表示 KO 到 pathway C 的关系
   if (!is.null(relation)) {
     relation <- toupper(relation)
-    
+
     if (length(relation) != 2) {
       stop("`relation` should be length 2, e.g. c('D', 'C')")
     }
-    
+
     if (!all(relation %in% names(lv_map))) {
-      stop('`relation` should be selected from: A, B, C, D')
+      stop("`relation` should be selected from: A, B, C, D")
     }
-    
+
     cols <- lv_map[relation]
-    
+
     if (isTRUE(keep_desc)) {
-      desc_cols <- paste0(cols, 'des')
+      desc_cols <- paste0(cols, "des")
       cols <- as.vector(rbind(cols, desc_cols))
       cols <- cols[cols %in% colnames(kegg_db)]
     }
-    
+
     result <- kegg_db[, cols, drop = FALSE]
-    
+
     if (isTRUE(distinct)) {
       result <- dplyr::distinct(result)
     }
-    
+
     return(result)
   }
-  
+
   ## 否则输出指定 level 的信息
   cols <- lv_map[level]
-  
+
   if (isTRUE(keep_desc)) {
-    desc_cols <- paste0(cols, 'des')
+    desc_cols <- paste0(cols, "des")
     cols <- as.vector(rbind(cols, desc_cols))
     cols <- cols[cols %in% colnames(kegg_db)]
   }
-  
+
   result <- kegg_db[, cols, drop = FALSE]
-  
+
   if (isTRUE(distinct)) {
     result <- dplyr::distinct(result)
   }
-  
+
   result <- dplyr::mutate(
-    result, 
-    dplyr::across(dplyr::where(is.character), ~ gsub('\"', '', .x) ) 
-    )
-  
+    result,
+    dplyr::across(dplyr::where(is.character), ~ gsub('"', "", .x))
+  )
+
   return(result)
 }
 
@@ -1135,59 +1137,62 @@ load_KEGG_info <- function(
 #' @return A result object described in the Details section.
 #' @export
 profile_KEGG_trans <- function(
-    profile, to = c('A', 'B', 'C'), trans_ra = FALSE, base = 100,
-    rownames_fmt = c('both', 'id', 'name'), 
-    remove_unknown = FALSE, filter = NULL,
-    database = .mengR_db_file(
-      'KEGG', 'KO', 'KO_level_A_B_C_D_Description'
-    ),
-    split_multi = TRUE, ...) {
-  
+  profile, to = c("A", "B", "C"), trans_ra = FALSE, base = 100,
+  rownames_fmt = c("both", "id", "name"),
+  remove_unknown = FALSE, filter = NULL,
+  database = .mengR_db_file(
+    "KEGG", "KO", "KO_level_A_B_C_D_Description"
+  ),
+  split_multi = TRUE, ...
+) {
   to <- match.arg(to)
   rownames_fmt <- match.arg(rownames_fmt)
-  
-  lv_col <- c(A = 'lvA', B = 'lvB', C = 'lvC')[[to]]
-  desc_col <- paste0(lv_col, 'des')
-  
+
+  lv_col <- c(A = "lvA", B = "lvB", C = "lvC")[[to]]
+  desc_col <- paste0(lv_col, "des")
+
   profile <- data.frame(profile, check.names = FALSE)
 
-  if (!file.exists(database)) stop('KEGG annotation file not found: ', database)
-  
+  if (!file.exists(database)) stop("KEGG annotation file not found: ", database)
+
   sample_cols <- colnames(profile)
-  
+
   kegg_db <- utils::read.delim(
-    database, sep = '\t', quote = '', check.names = FALSE, 
+    database,
+    sep = "\t", quote = "", check.names = FALSE,
     stringsAsFactors = FALSE, ...
   )
-  
+
   if (!is.null(filter)) {
     kegg_db <- kegg_db |>
       dplyr::filter(lvAdes %in% filter)
   }
-  
+
   ## KO -> KEGG level map
   kegg_map <- kegg_db |>
     dplyr::select(lvD, name = dplyr::all_of(lv_col)) |>
     dplyr::distinct() |>
     dplyr::filter(lvD %in% rownames(profile))
-  
+
   ## KEGG ID -> KEGG description map
   kegg_name <- kegg_db |>
-    dplyr::select(name = dplyr::all_of(lv_col),
-                  des = dplyr::all_of(desc_col)) |>
+    dplyr::select(
+      name = dplyr::all_of(lv_col),
+      des = dplyr::all_of(desc_col)
+    ) |>
     dplyr::distinct()
-  
+
   ## profile long mapping
   data <- profile |>
-    tibble::rownames_to_column('lvD') |>
-    dplyr::left_join(kegg_map, by = 'lvD') |>
-    dplyr::mutate(name = ifelse(is.na(name), 'Unknown', name))
-  
+    tibble::rownames_to_column("lvD") |>
+    dplyr::left_join(kegg_map, by = "lvD") |>
+    dplyr::mutate(name = ifelse(is.na(name), "Unknown", name))
+
   if (isTRUE(remove_unknown)) {
     data <- data |>
-      dplyr::filter(name != 'Unknown')
+      dplyr::filter(name != "Unknown")
   }
-  
+
   ## 如果一个 KO 对应多个 KEGG 分类，平均分配丰度
   if (isTRUE(split_multi)) {
     data <- data |>
@@ -1202,7 +1207,7 @@ profile_KEGG_trans <- function(
       ) |>
       dplyr::select(-.n)
   }
-  
+
   ## 汇总到 KEGG A/B/C 层级
   data <- data |>
     dplyr::select(-lvD) |>
@@ -1212,38 +1217,35 @@ profile_KEGG_trans <- function(
         dplyr::all_of(sample_cols),
         ~ sum(.x, na.rm = TRUE)
       ),
-      .groups = 'drop'
+      .groups = "drop"
     )
-  
+
   ## 修改行名格式
-  if (rownames_fmt %in% c('name', 'both')) {
-    
+  if (rownames_fmt %in% c("name", "both")) {
     data <- data |>
-      dplyr::left_join(kegg_name, by = 'name')
-    
+      dplyr::left_join(kegg_name, by = "name")
+
     data$des[is.na(data$des)] <- data$name[is.na(data$des)]
-    
-    if (rownames_fmt == 'name') {
-      data$rowname <- gsub('"', '', data$des)
+
+    if (rownames_fmt == "name") {
+      data$rowname <- gsub('"', "", data$des)
     }
-    
-    if (rownames_fmt == 'both') {
+
+    if (rownames_fmt == "both") {
       data$rowname <- ifelse(
-        data$name == 'Unknown',
-        'Unknown',
-        paste0(data$name, '|', gsub('"', '', data$des) )
+        data$name == "Unknown",
+        "Unknown",
+        paste0(data$name, "|", gsub('"', "", data$des))
       )
     }
-    
+
     data <- data |>
       dplyr::select(rowname, dplyr::all_of(sample_cols))
-    
   } else {
-    
     data <- data |>
       dplyr::rename(rowname = name)
   }
-  
+
   ## 如果不同 ID 对应同一个 description，再合并一次
   data <- data |>
     dplyr::group_by(rowname) |>
@@ -1252,20 +1254,20 @@ profile_KEGG_trans <- function(
         dplyr::all_of(sample_cols),
         ~ sum(.x, na.rm = TRUE)
       ),
-      .groups = 'drop'
+      .groups = "drop"
     ) |>
-    tibble::column_to_rownames('rowname') |>
+    tibble::column_to_rownames("rowname") |>
     data.frame(check.names = FALSE)
-  
+
   ## 转成相对丰度百分比
   if (isTRUE(trans_ra)) {
     cs <- colSums(data, na.rm = TRUE)
-    data <- (sweep(data, 2, cs, '/') * base) |> 
+    data <- (sweep(data, 2, cs, "/") * base) |>
       as.data.frame(check.names = FALSE)
   }
-  
-  rownames(data) <- gsub('\'', '', rownames(data))
-  
+
+  rownames(data) <- gsub("'", "", rownames(data))
+
   return(data)
 }
 
@@ -1282,19 +1284,24 @@ profile_KEGG_trans <- function(
 #' @export
 tidy_LEfSe <- function(data) {
   RENAMES <- data.frame(
-    full = c('domain','kingdom','phylum','class','order','family','genus','species', 'strain'),
-    abbr = c('d__','k__','p__','c__','o__', 'f__','g__','s__','t__')
+    full = c("domain", "kingdom", "phylum", "class", "order", "family", "genus", "species", "strain"),
+    abbr = c("d__", "k__", "p__", "c__", "o__", "f__", "g__", "s__", "t__")
+  )
+
+  data <- data.frame(data, row.names = NULL) |>
+    dplyr::mutate(
+      name = purrr::map_vec(Taxa, ~ {
+        full_name <- unlist(strsplit(.x, split = "\\|"), use.names = FALSE)
+        length_name <- length(full_name)
+        full_name[[length_name]]
+      }),
+      taxa_level = RENAMES$full[match(substr(name, 1, 3), RENAMES$abbr)]
+    ) |>
+    dplyr::select(name, taxa_level,
+      full_name = Taxa, comparison = Comparison,
+      LDA, pval = P.unadj, qval = P.adj, qlab = Significance,
+      method = Method, enriched = Group
     )
-  
-  data <- data.frame(data, row.names = NULL) |> 
-    dplyr::mutate(name = purrr::map_vec(Taxa, ~ {
-      full_name = unlist(strsplit(.x, split = '\\|'), use.names = FALSE)
-      length_name = length(full_name)
-      full_name[[length_name]] } ),
-      taxa_level = RENAMES$full[match(substr(name, 1, 3), RENAMES$abbr)]) |> 
-    dplyr::select(name, taxa_level, full_name = Taxa, comparison = Comparison, 
-                  LDA, pval = P.unadj, qval = P.adj, qlab = Significance, 
-                  method = Method, enriched = Group)
   return(data)
 }
 
@@ -1311,13 +1318,13 @@ tidy_LEfSe <- function(data) {
 #' @export
 tidy_CAZyme_profile <- function(data) {
   ## 1. 去除 CAZyme 编号后缀，并合并同名条目
-  profile_df <- tibble::rownames_to_column(.as_df(data), 'name')
-  profile_df$name <- gsub('_\\d+', '', profile_df$name)
+  profile_df <- tibble::rownames_to_column(.as_df(data), "name")
+  profile_df$name <- gsub("_\\d+", "", profile_df$name)
   profile_df <- stats::aggregate(. ~ name, data = profile_df, FUN = sum)
 
   ## 2. 用“|”拆分复合名称，并把丰度平均分配给各名称
   result_list <- lapply(seq_len(nrow(profile_df)), function(row_idx) {
-    name_vec <- strsplit(profile_df$name[row_idx], '\\|')[[1]]
+    name_vec <- strsplit(profile_df$name[row_idx], "\\|")[[1]]
     value_vec <- as.numeric(profile_df[row_idx, -1, drop = TRUE]) /
       length(name_vec)
     value_mat <- matrix(
@@ -1329,6 +1336,5 @@ tidy_CAZyme_profile <- function(data) {
   })
   result_df <- dplyr::bind_rows(result_list)
   result_df <- stats::aggregate(. ~ new_name, data = result_df, FUN = sum)
-  tibble::column_to_rownames(result_df, 'new_name')
+  tibble::column_to_rownames(result_df, "new_name")
 }
-

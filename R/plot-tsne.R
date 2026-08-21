@@ -40,16 +40,16 @@
 #' @return A plot object; analysis data or models may also be stored as attributes.
 #' @export
 plot_tsne <- function(
-    profile, group, sample_col = 'sample', group_col = 'group',
-    group_level = NULL, group_color = NULL, seed = 2025,
-    theta = 0.4, perplexity = 30, pca = TRUE, max_iter = 1000,
-    verbose = FALSE, display_type = c('line', 'point'),
-    conf_type = c('ellipse', 'encircle', 'none'), ellipse_level = 0.75,
-    title = NULL, subtitle = NULL, xlab = 'tSNE_1', ylab = 'tSNE_2',
-    legend_title = 'Group', add_group_label = FALSE,
-    add_sample_label = FALSE, label_size = 1.5, point_size = 1.5,
-    show_legend = TRUE, show_grid = FALSE, show_line = TRUE,
-    aspect_ratio = 3 / 4, theme = c('default', 'pubr'), ...
+  profile, group, sample_col = "sample", group_col = "group",
+  group_level = NULL, group_color = NULL, seed = 2025,
+  theta = 0.4, perplexity = 30, pca = TRUE, max_iter = 1000,
+  verbose = FALSE, display_type = c("line", "point"),
+  conf_type = c("ellipse", "encircle", "none"), ellipse_level = 0.75,
+  title = NULL, subtitle = NULL, xlab = "tSNE_1", ylab = "tSNE_2",
+  legend_title = "Group", add_group_label = FALSE,
+  add_sample_label = FALSE, label_size = 1.5, point_size = 1.5,
+  show_legend = TRUE, show_grid = FALSE, show_line = TRUE,
+  aspect_ratio = 3 / 4, theme = c("default", "pubr"), ...
 ) {
   display_type <- match.arg(display_type)
   conf_type <- match.arg(conf_type)
@@ -67,10 +67,10 @@ plot_tsne <- function(
   group_color <- .resolve_group_colors(group_level, group_color)
 
   sample_n <- ncol(profile_df)
-  if (sample_n < 4) stop('t-SNE requires at least four matched samples.')
+  if (sample_n < 4) stop("t-SNE requires at least four matched samples.")
   if (!is.numeric(perplexity) || length(perplexity) != 1L ||
-      perplexity <= 0 || 3 * perplexity >= sample_n - 1) {
-    stop('perplexity should satisfy 0 < 3 * perplexity < number of samples - 1.')
+    perplexity <= 0 || 3 * perplexity >= sample_n - 1) {
+    stop("perplexity should satisfy 0 < 3 * perplexity < number of samples - 1.")
   }
 
   set.seed(seed)
@@ -91,11 +91,11 @@ plot_tsne <- function(
     X2 = tsne_obj$Y[, 2],
     check.names = FALSE
   ) |>
-    dplyr::left_join(group_key_df, by = 'sample') |>
+    dplyr::left_join(group_key_df, by = "sample") |>
     dplyr::mutate(group = factor(group, levels = group_level))
 
   if (is.null(title)) {
-    title <- 't-distributed stochastic neighbor embedding analysis'
+    title <- "t-distributed stochastic neighbor embedding analysis"
   }
 
   plot_dim(
