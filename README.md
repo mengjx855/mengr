@@ -6,8 +6,6 @@ omics analysis, statistics, machine-learning, and visualization functions.
 `mengR` 是 Jin-Xin Meng 的个人 R 工具包，主要整理可复用的生物信息学、组学
 数据处理、统计分析、机器学习和绘图函数。
 
-Contact: `jinxmeng@zju.edu.cn` / `mengjx855@163.com`.
-
 Version: `0.0.1` (initial development version).
 
 The package is currently prepared as source files for review and testing. It has
