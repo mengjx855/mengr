@@ -5,8 +5,6 @@
 #' `profile` uses features as rows and samples as columns. `group` may use
 #' arbitrary column names through `sample_col` and `group_col`.
 #'
-#' Chinese summary: 对齐样本分组后执行 t-SNE，并返回统一风格降维图。
-#'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.

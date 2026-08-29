@@ -2,7 +2,7 @@
 % Please edit documentation in R/profile-taxa.R
 \name{profile_mpa}
 \alias{profile_mpa}
-\title{Profile Mpa utility}
+\title{Build a MetaPhlAn-like profile}
 \usage{
 profile_mpa(
   profile,
@@ -27,9 +27,6 @@ profile_mpa(
 A result object described in the Details section.
 }
 \description{
-\code{profile_mpa()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 处理 MetaPhlAn 风格 profile，拆分层级并输出指定分类水平。
+Build a Metaphlan-style profile, split the taxonomic
+hierarchy and output the profile of the specified classification level.
 }

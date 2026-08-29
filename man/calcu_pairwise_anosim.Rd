@@ -40,6 +40,7 @@ calcu_pairwise_anosim(
 }
 \value{
 A result object described in the Details section.
+#importFrom rlang .data
 }
 \description{
 \code{calcu_pairwise_anosim()} provides a reusable mengR workflow with input validation and

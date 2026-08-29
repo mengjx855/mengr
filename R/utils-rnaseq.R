@@ -1,8 +1,548 @@
-#### Jinxin Meng, 20251229, 20260527, v0.2 ####
+#### Jinxin Meng, 20251229, 20260822 ####
 
+# time-stamp:
 # 20251229: create script, add function 'plot_gsea_barcode()'.
 # 20260527: add function 'plot_GO_bar()', 'plot_GO_circular_bar()'.
+# 20260822: add function 'run_limma_diff()', 'run_voom_diff()', 'run_deseq2_diff()'
+#           for RNA-seq differential analysis in different scenarios.
 
+#### run_limma_diff ####
+# 使用 limma 对连续型 profile 数据进行组间差异分析
+# 使用场景：
+#   适用于已经标准化并转换到适合线性模型分析尺度的连续型 profile，例如：
+#   - log2(TPM + 1)
+#   - log2(FPKM + 1)
+#   - log2(CPM + 1)
+#   - 标准化后的 microarray expression matrix
+#   - 其他经过适当转换的连续型 abundance/profile 数据
+#   如果有 RNA-seq raw count，优先考虑：
+#   - run_voom_diff()
+#   - run_deseq2_diff()
+# 输入：
+#   profile:
+#     数值型 matrix 或 data.frame。
+#     行为 feature，列为 sample；
+#     rownames 为 feature 名称，colnames 为样本名称。
+#   metadata:
+#     样本信息表，至少包含 sample_col 和 group_col 指定的两列。
+#   comparisons:
+#     pairwise comparison list。
+#     例如：
+#       list(
+#         c("IBD", "HC"),
+#         c("CD", "HC")
+#       )
+#     c("IBD", "HC") 表示 IBD vs HC：
+#       log2FC > 0 -> IBD 更高
+#       log2FC < 0 -> HC 更高
+#   sample_col:
+#     metadata 中样本名称所在列。
+#   group_col:
+#     metadata 中分组信息所在列。
+#   fc_cutoff:
+#     判断差异 feature 的 |log2FC| 阈值，默认 1。
+#   padj_cutoff:
+#     判断差异 feature 的 BH-adjusted P value 阈值，默认 0.05。
+# 返回：
+#   list：
+#   - difference:
+#       每个 comparison 的完整 limma 差异分析结果。
+#   - summary:
+#       每个 comparison 中两个差异方向及非差异 feature 的数量。
+#
+# 注意事项：
+#   1. 不要将 RNA-seq raw count 直接输入本函数。
+#   2. TPM/FPKM 等通常应先进行 log2 转换，例如：
+#        profile <- log2(profile + 1)
+#   3. log2FC 实际表示输入 log2 scale 上的组间均值差。
+#      对 log2(TPM + 1) 等数据，不严格等同于两个组原始 TPM 均值之比的 log2。
+#   4. comparisons 中第一个组为 numerator，第二个组为 denominator。
+#   5. limma::makeContrasts() 要求 group 名称适合作为 R model coefficient，
+#      建议使用 WT、KO、Control、Treat 等简单名称，避免空格和 "-"。
+
+run_limma_diff <- function(
+    profile, metadata, comparisons, sample_col = "sample", group_col = "group",
+    fc_cutoff = 1, padj_cutoff = .05
+) {
+  
+  # 匹配 metadata 与 profile 中的样本，并统一样本顺序
+  metadata <- metadata |>
+    dplyr::filter(.data[[sample_col]] %in% colnames(profile)) |>
+    dplyr::arrange(match(.data[[sample_col]], colnames(profile)))
+  
+  profile <- profile[, metadata[[sample_col]], drop = FALSE]
+  
+  # 构建分组因子，保持 metadata 中首次出现的分组顺序
+  group <- factor(metadata[[group_col]], unique(metadata[[group_col]]))
+  
+  # 无截距 design，每个 group 对应一个 coefficient
+  design <- stats::model.matrix(~ 0 + group)
+  colnames(design) <- levels(group)
+  
+  # 根据 comparisons 构建 contrasts
+  # 例如 c("IBD", "HC") -> IBD - HC
+  contrasts <- limma::makeContrasts(
+    contrasts = purrr::map_vec(
+      comparisons, ~ paste(.x, collapse = "-")
+    ),
+    levels = design
+  )
+  
+  # 拟合线性模型并进行 empirical Bayes moderation
+  fit <- limma::lmFit(profile, design) |>
+    limma::contrasts.fit(contrasts) |>
+    limma::eBayes()
+  
+  # 提取每个 comparison 的差异分析结果
+  difference <- purrr::map(
+    comparisons, ~
+      limma::topTable(
+        fit, coef = paste(.x, collapse = "-"),
+        adjust.method = "BH", number = Inf
+      ) |>
+      tibble::rownames_to_column("name") |>
+      dplyr::rename(
+        log2FC  = logFC,
+        pvalue  = P.Value,
+        padjust = adj.P.Val
+      ) |>
+      dplyr::mutate(
+        enriched = dplyr::case_when(
+          .data[["log2FC"]] >  fc_cutoff & .data[["padjust"]] < padj_cutoff ~ .x[1],
+          .data[["log2FC"]] < -fc_cutoff & .data[["padjust"]] < padj_cutoff ~ .x[2],
+          TRUE ~ "none"
+        )
+      )
+  ) |>
+    purrr::set_names(
+      purrr::map_vec(
+        comparisons, ~ paste(.x, collapse = "_vs_")
+      )
+    )
+  
+  # 汇总各 comparison 中的差异 feature 数量
+  summary <- purrr::map2_dfr(
+    names(difference), comparisons, \(x, y)
+    data.frame(
+      comparison = x,
+      up   = sum(difference[[x]]$enriched == y[1]),
+      down = sum(difference[[x]]$enriched == y[2]),
+      none = sum(difference[[x]]$enriched == "none")
+    )
+  )
+  
+  list(
+    difference = difference,
+    summary = summary
+  )
+}
+
+#### run_voom_diff ####
+# 使用 voom/voomLmFit + limma 对 raw count 数据进行差异分析
+# 使用场景：
+#   适用于 RNA-seq 等 sequencing count 数据，例如：
+#   - featureCounts gene count
+#   - HTSeq count
+#   - 其他 gene/feature-level sequencing count matrix
+#   与其他两个函数的区别：
+#   run_limma_diff()
+#     输入已经转换后的连续型 profile。
+#   run_voom_diff()
+#     输入 count matrix，
+#     使用 voom 建模 mean-variance relationship 后进入 limma。
+#   run_deseq2_diff()
+#     输入 raw integer count，
+#     使用 negative binomial GLM。
+# 输入：
+#   rc:
+#     非负 count matrix 或 data.frame。
+#     行为 feature，列为 sample；
+#     rownames 为 feature 名称，colnames 为样本名称。
+#   metadata:
+#     样本信息表，至少包含 sample_col 和 group_col 指定的两列。
+#   comparisons:
+#     pairwise comparison list。
+#     例如：
+#       list(
+#         c("KO", "WT"),
+#         c("Treat", "Control")
+#       )
+#     c("KO", "WT") 表示 KO vs WT：
+#       log2FC > 0 -> KO 更高
+#       log2FC < 0 -> WT 更高
+#   sample_col:
+#     metadata 中样本名称所在列。
+#   group_col:
+#     metadata 中分组信息所在列。
+#   method:
+#     voom 分析方法：
+#     "voomLmFit":
+#       使用 edgeR::voomLmFit()。
+#       默认方法，对含较多 exact zero count 的数据处理更完善。
+#     "voom":
+#       使用经典 limma::voom() + limma::lmFit()。
+#   fc_cutoff:
+#     判断差异 feature 的 |log2FC| 阈值，默认 1。
+#   padj_cutoff:
+#     判断差异 feature 的 BH-adjusted P value 阈值，默认 0.05。
+#   plot:
+#     是否绘制 voom mean-variance trend，默认 FALSE。
+# 返回：
+#   list：
+#   - difference:
+#       每个 comparison 的 limma 差异分析结果。
+#   - logCPM:
+#       经过低表达过滤、TMM normalization 和 voom 转换后的
+#       normalized log2-CPM matrix。
+#       可用于 PCA、heatmap、聚类和样本相关性分析。
+#   - summary:
+#       每个 comparison 的差异 feature 数量。
+# 注意事项：
+#   1. 输入应为 sequencing count，不要输入 TPM、FPKM 或 log2 expression。
+#   2. 函数内部使用 edgeR::filterByExpr() 去除低表达 feature。
+#   3. 使用 edgeR::calcNormFactors() 计算 TMM normalization factor。
+#      calcNormFactors() 不会直接修改原始 count，而是修正 effective library size。
+#   4. voom 根据 count 的 mean-variance relationship 计算 precision weights。
+#   5. logCPM 只包含通过 filterByExpr() 的 feature。
+#   6. comparisons 中第一个组为 numerator，第二个组为 denominator。
+#   7. group 名称建议使用简单且合法的 R coefficient 名称。
+
+run_voom_diff <- function(
+    rc, metadata, comparisons, sample_col = "sample", group_col = "group",
+    method = c("voomLmFit", "voom"), fc_cutoff = 1, padj_cutoff = .05,
+    plot = FALSE
+) {
+  
+  method <- match.arg(method)
+  
+  # 匹配 metadata 与 count matrix，并统一样本顺序
+  metadata <- metadata |>
+    dplyr::filter(.data[[sample_col]] %in% colnames(rc)) |>
+    dplyr::arrange(match(.data[[sample_col]], colnames(rc)))
+  
+  rc <- rc[, metadata[[sample_col]], drop = FALSE] |>
+    as.matrix()
+  
+  # 构建分组因子
+  group <- factor(metadata[[group_col]], unique(metadata[[group_col]]))
+  
+  # 无截距 design，每个 group 对应一个 coefficient
+  design <- stats::model.matrix(~ 0 + group)
+  colnames(design) <- levels(group)
+  
+  # 构建 edgeR count object
+  dge <- edgeR::DGEList(counts = rc, group = group)
+  
+  # 根据表达水平、library size 和组内样本量过滤低表达 feature
+  keep <- edgeR::filterByExpr(dge, group = group)
+  
+  dge <- dge[keep, , keep.lib.sizes = FALSE]
+  
+  # TMM normalization
+  # normalization factor 会参与 effective library size 的计算
+  dge <- edgeR::calcNormFactors(dge, method = "TMM")
+  
+  if (method == "voomLmFit") {
+    # 同时进行 voom mean-variance 建模和 linear model fitting
+    fit <- edgeR::voomLmFit(dge, design = design, plot = plot, keep.EList = TRUE)
+    
+    # 提取 normalized log2-CPM
+    logCPM <- fit$EList$E
+    
+  } else {
+    
+    # 经典 voom：生成 log2-CPM 和 observation-level weights
+    voom <- limma::voom(dge, design = design, plot = plot)
+    
+    # 使用 voom weights 拟合 linear model
+    fit <- limma::lmFit(voom, design)
+    
+    logCPM <- voom$E
+  }
+  
+  # 根据 comparisons 构建 contrast matrix
+  contrasts <- limma::makeContrasts(
+    contrasts = purrr::map_vec(
+      comparisons, ~ paste(.x, collapse = "-")
+    ),
+    levels = design
+  )
+  
+  # 应用 contrasts 并进行 empirical Bayes moderation
+  fit <- fit |>
+    limma::contrasts.fit(contrasts) |>
+    limma::eBayes()
+  
+  # 提取每个 comparison 的差异分析结果
+  difference <- purrr::map(
+    comparisons, ~
+      limma::topTable(
+        fit, coef = paste(.x, collapse = "-"), 
+        adjust.method = "BH", number = Inf
+      ) |>
+      tibble::rownames_to_column("name") |>
+      dplyr::rename(
+        log2FC  = logFC,
+        pvalue  = P.Value,
+        padjust = adj.P.Val
+      ) |>
+      dplyr::mutate(
+        enriched = dplyr::case_when(
+          .data[["log2FC"]] >  fc_cutoff & .data[["padjust"]] < padj_cutoff ~ .x[1],
+          .data[["log2FC"]] < -fc_cutoff & .data[["padjust"]] < padj_cutoff ~ .x[2],
+          TRUE ~ "none"
+        )
+      )
+  ) |>
+    purrr::set_names(
+      purrr::map_vec(
+        comparisons, ~ paste(.x, collapse = "_vs_")
+      )
+    )
+  
+  # 汇总差异 feature 数量
+  summary <- purrr::map2_dfr(
+    names(difference), comparisons, \(x, y)
+    data.frame(
+      comparison = x,
+      up   = sum(difference[[x]]$enriched == y[1]),
+      down = sum(difference[[x]]$enriched == y[2]),
+      none = sum(difference[[x]]$enriched == "none")
+    )
+  )
+  
+  list(
+    difference = difference,
+    logCPM = logCPM,
+    summary = summary
+  )
+}
+
+#### run_deseq2_diff ####
+# 使用 DESeq2 对 raw count 数据进行组间差异分析
+# 使用场景：
+#   适用于 RNA-seq 等基于 sequencing count 的差异分析，例如：
+#   - featureCounts gene count
+#   - HTSeq count
+#   - 其他非负整数型 gene/feature count matrix
+#   输入必须是 raw integer count，不能是：
+#   - TPM
+#   - FPKM
+#   - CPM
+#   - log2 transformed expression
+#   - VST/rlog transformed expression
+# 输入：
+#   rc:
+#     非负整数型 raw count matrix 或 data.frame。
+#     行为 feature，列为 sample；
+#     rownames 为 feature 名称，colnames 为样本名称。
+#   metadata:
+#     样本信息表，至少包含 sample_col 和 group_col 指定的两列。
+#   comparisons:
+#     pairwise comparison list。
+#     例如：
+#       list(
+#         c("KO", "WT"),
+#         c("Treat", "Control")
+#       )
+#     c("KO", "WT") 表示 KO vs WT：
+#       log2FC > 0 -> KO 更高
+#       log2FC < 0 -> WT 更高
+#   sample_col:
+#     metadata 中样本名称所在列。
+#   group_col:
+#     metadata 中分组信息所在列。
+#   pairwise:
+#     FALSE：
+#       所有组共同建立一个 DESeq2 模型，
+#       然后从同一模型中提取不同 contrasts。
+#       默认并推荐这种方式。
+#     TRUE：
+#       每个 comparison 单独提取两个组，
+#       并分别进行 filtering、normalization、
+#       dispersion estimation 和模型拟合。
+#   fc_cutoff:
+#     判断差异 feature 的 |log2FC| 阈值，默认 1。
+#   padj_cutoff:
+#     判断差异 feature 的 BH-adjusted P value 阈值，默认 0.05。
+#     同时作为 results() independent filtering 的 alpha。
+# 返回：
+#   list：
+#   - difference:
+#       每个 comparison 的完整 DESeq2 差异分析结果。
+#       independent filtering 或 outlier detection 可能产生 padjust = NA。
+#   - norm_count:
+#       经过低表达预过滤后，
+#       基于 DESeq2 size factor normalization 的 count matrix。
+#   - vst:
+#       经过低表达预过滤后的 variance stabilized expression matrix。
+#       可用于 PCA、heatmap、聚类和样本相关性分析。
+#   - summary:
+#       每个 comparison 的差异 feature 数量。
+# 注意事项：
+#   1. rc 必须是真实的非负整数 count。
+#      本函数不会通过 round() 将其他类型的数据伪装成 count。
+#   2. 函数使用 edgeR::filterByExpr() 进行低表达 pre-filtering，
+#      这里只使用 edgeR 的过滤策略，不进行 TMM normalization。
+#   3. DESeq2 使用自己的 size factor normalization。
+#      不要在输入 DESeq2 前使用 calcNormFactors() 后的 normalized values。
+#   4. DESeq2 的差异检验直接基于 raw count model，
+#      不使用 norm_count 或 vst 进行差异检验。
+#   5. results() 仍会执行 DESeq2 自身的 independent filtering。
+#   6. padjust = NA 的 feature 会保留在 difference 中，
+#      enriched 自动记为 "none"。
+#   7. vst 使用 blind = FALSE，
+#      适用于已知 experimental design 后的下游可视化和探索分析。
+#   8. pairwise = TRUE 时，各 comparison 独立拟合；
+#      但返回的 norm_count 和 vst 仍来自全部样本建立的整体 DESeq2 对象。
+#   9. comparisons 中第一个组为 numerator，第二个组为 denominator。
+
+run_deseq2_diff <- function(
+    rc, metadata, comparisons, sample_col = "sample", group_col = "group",
+    pairwise = FALSE, fc_cutoff = 1, padj_cutoff = .05
+) {
+  
+  # 匹配 metadata 与 raw count matrix，并统一样本顺序
+  metadata <- metadata |>
+    dplyr::filter(.data[[sample_col]] %in% colnames(rc)) |>
+    dplyr::arrange(match(.data[[sample_col]], colnames(rc)))
+  
+  rc <- rc[, metadata[[sample_col]], drop = FALSE] |>
+    as.matrix()
+  
+  # 构建全样本分组因子
+  group <- factor(metadata[[group_col]], unique(metadata[[group_col]]))
+  
+  # 低表达 pre-filter
+  # 这里只使用 edgeR 的 filtering strategy，不进行 TMM normalization
+  keep <- edgeR::filterByExpr(rc, group = group)
+  
+  rc_all <- rc[keep, , drop = FALSE]
+  
+  # 构建 DESeq2 sample metadata
+  metadata_all <- data.frame(row.names = metadata[[sample_col]], group = group)
+  
+  # 创建 DESeqDataSet
+  # countData 必须是未经 normalization 的 raw integer count
+  dds <- DESeq2::DESeqDataSetFromMatrix(
+    countData = rc_all, colData = metadata_all, design = ~ group
+  )
+  
+  # 完成 size factor、dispersion 和 negative binomial GLM estimation
+  des <- DESeq2::DESeq(dds)
+  
+  if (!pairwise) {
+    
+    # 所有 comparison 共用同一个 DESeq2 model
+    difference <- purrr::map(
+      comparisons, ~
+        DESeq2::results(
+          des, contrast = c("group", .x[1], .x[2]),
+          alpha = padj_cutoff # 用实际目标 FDR 优化 independent filtering
+        ) |>
+        data.frame(check.names = FALSE) |>
+        tibble::rownames_to_column("name") |>
+        dplyr::rename(
+          log2FC  = log2FoldChange,
+          padjust = padj
+        ) |>
+        dplyr::mutate(
+          enriched = dplyr::case_when(
+            .data[["log2FC"]] >  fc_cutoff & .data[["padjust"]] < padj_cutoff ~ .x[1],
+            .data[["log2FC"]] < -fc_cutoff & .data[["padjust"]] < padj_cutoff ~ .x[2],
+            TRUE ~ "none"
+          )
+        )
+    )
+    
+  } else {
+    
+    # 每个 comparison 独立重新拟合 DESeq2 model
+    difference <- purrr::map(
+      comparisons, \(x) {
+        # 提取当前 comparison 的样本
+        metadata_x <- metadata |> dplyr::filter(.data[[group_col]] %in% x)
+        
+        rc_x <- rc[, metadata_x[[sample_col]], drop = FALSE]
+        
+        # 重新建立当前 pairwise comparison 的 group factor，
+        # 避免 metadata 原 factor 中残留其他 unused levels
+        group_x <- factor(metadata_x[[group_col]], levels = x)
+        
+        # 根据当前两个组重新进行低表达过滤
+        keep_x <- edgeR::filterByExpr(rc_x, group = group_x)
+        
+        rc_x <- rc_x[keep_x, , drop = FALSE]
+        
+        # 第二个组作为 reference level
+        metadata_x <- data.frame(
+          row.names = metadata_x[[sample_col]],
+          group = factor(metadata_x[[group_col]], levels = c(x[2], x[1]))
+        )
+        
+        # 当前 comparison 独立建立 DESeq2 model
+        dds_x <- DESeq2::DESeqDataSetFromMatrix(
+          countData = rc_x, colData = metadata_x, design = ~ group
+        )
+        
+        des_x <- DESeq2::DESeq(dds_x)
+        
+        # 提取 x[1] vs x[2]
+        DESeq2::results(
+          des_x, contrast = c("group", x[1], x[2]),
+          alpha = padj_cutoff
+        ) |>
+          data.frame(check.names = FALSE) |>
+          tibble::rownames_to_column("name") |>
+          dplyr::rename(
+            log2FC  = .data[["log2FoldChange"]],
+            padjust = .data[["padj"]]
+          ) |>
+          dplyr::mutate(
+            enriched = dplyr::case_when(
+              .data[["log2FC"]] >  fc_cutoff & .data[["padjust"]] < padj_cutoff ~ x[1],
+              .data[["log2FC"]] < -fc_cutoff & .data[["padjust"]] < padj_cutoff ~ x[2],
+              TRUE ~ "none"
+            )
+          )
+      }
+    )
+  }
+  
+  # 为 difference list 添加 comparison 名称
+  difference <- difference |>
+    purrr::set_names(
+      purrr::map_vec(
+        comparisons, ~ paste(.x, collapse = "_vs_")
+      )
+    )
+  
+  # DESeq2 size-factor normalized count
+  norm_count <- DESeq2::counts(des, normalized = TRUE)
+  
+  # variance stabilizing transformation
+  # 用于 PCA、heatmap、聚类等，不用于差异检验
+  vst <- DESeq2::varianceStabilizingTransformation(des, blind = FALSE) |>
+    SummarizedExperiment::assay()
+  
+  # 汇总各 comparison 中的差异 feature 数量
+  summary <- purrr::map2_dfr(
+    names(difference), comparisons, \(x, y)
+    data.frame(
+      comparison = x,
+      up   = sum(difference[[x]]$enriched == y[1]),
+      down = sum(difference[[x]]$enriched == y[2]),
+      none = sum(difference[[x]]$enriched == "none")
+    )
+  )
+  
+  list(
+    difference = difference,
+    norm_count = norm_count,
+    vst = vst,
+    summary = summary
+  )
+}
 
 #### plot_gsea_barcode ####
 #' Plot Gsea Barcode utility

@@ -6,7 +6,7 @@
 # 20260827: update function.
 
 
-#### plot_NMDS ####
+#### plot_nmds ####
 # 绘制 NMDS 图
 # profile: 行为 feature，列为 sample 的丰度表
 # distance: 已经计算好的距离矩阵或 dist 对象；如果提供 distance，则优先使用 distance
@@ -20,7 +20,7 @@
 
 #' Plot NMDS utility
 #'
-#' `plot_NMDS()` provides a reusable mengR workflow with input validation and standardized
+#' `plot_nmds()` provides a reusable mengR workflow with input validation and standardized
 #'   output.
 #'
 #' Chinese summary: 从 profile 或距离对象执行 NMDS，可附加 ANOSIM 结果。
@@ -58,8 +58,9 @@
 #' @param trymax Maximum number of random starts attempted by NMDS.
 #' @param ... Additional arguments passed to the underlying function.
 #' @return A plot object; analysis data or models may also be stored as attributes.
+#' @importFrom rlang .data
 #' @export
-plot_NMDS <- function(
+plot_nmds <- function(
   profile = NULL, group, distance = NULL,
   sample_col = "sample", group_col = "group",
   group_level = NULL, group_color = NULL,
@@ -192,21 +193,20 @@ plot_NMDS <- function(
   group_color <- .resolve_group_colors(group_level, group_color)
 
   ## 5. NMDS 降维
-  NMDS <- vegan::metaMDS(
-    distance,
-    k = 2, trace = 0, trymax = trymax
+  nmds <- vegan::metaMDS(
+    distance, k = 2, trace = 0, trymax = trymax
   )
 
-  NMDS_points <- data.frame(
-    NMDS$points[, 1:2, drop = FALSE],
+  nmds_points <- data.frame(
+    nmds$points[, 1:2, drop = FALSE],
     check.names = FALSE
   ) |>
     dplyr::rename_with(~ c("X1", "X2")) |>
     tibble::rownames_to_column("sample")
 
-  NMDS_stress <- round(NMDS$stress, digits = 4)
+  nmds_stress <- round(nmds$stress, digits = 4)
 
-  plot_df <- NMDS_points |>
+  plot_df <- nmds_points |>
     dplyr::left_join(
       dplyr::select(
         group,
@@ -255,7 +255,7 @@ plot_NMDS <- function(
     subtitle <- substitute(
       "Stress =" ~ a ~ ", ANOSIM " * R == b ~ ", " ~ italic(p) < c,
       list(
-        a = NMDS_stress,
+        a = nmds_stress,
         b = round(anosim_result$statistic, 4),
         c = ifelse(
           anosim_result$signif < 0.001, 0.001, anosim_result$signif
@@ -283,7 +283,7 @@ plot_NMDS <- function(
 
   if (!is.null(anosim_result)) attr(p, "anosim") <- anosim_result
 
-  return(p)
+  p
 }
 
 #### calcu_pairwise_anosim ####
@@ -312,6 +312,7 @@ plot_NMDS <- function(
 #' @param add_plab Logical control for `add_plab`.
 #' @param ... Additional arguments passed to the underlying function.
 #' @return A result object described in the Details section.
+#' #importFrom rlang .data
 #' @export
 calcu_pairwise_anosim <- function(
   profile, group, sample_col = "sample", group_col = "group",
@@ -514,5 +515,5 @@ plot_pairwise_anosim <- function(data, group_level = NULL) {
       )
     )
 
-  return(p)
+  p
 }

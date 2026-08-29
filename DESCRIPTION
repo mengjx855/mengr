@@ -1,7 +1,7 @@
 Package: mengR
 Type: Package
 Title: Personal Bioinformatics Analysis and Visualization Utilities
-Version: 0.0.2
+Version: 0.0.1
 Authors@R: person(
     given = "Jin-Xin",
     family = "Meng",

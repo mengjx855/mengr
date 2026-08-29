@@ -7,7 +7,6 @@
 # 20260301: add new function with 'multiple' suffix for multivariable analysis.
 # 20260502: update functions.
 
-
 #### help function ####
 .check_group <- function(
   group, sample_col = "sample", group_col = "group",
@@ -32,9 +31,8 @@
   list(group_df = group_df, comparison = comparison)
 }
 
-
+#' @importFrom rlang .data
 .add_p_q_label <- function(data) {
-  
   data |>
     dplyr::rename(pval = p) |>
     rstatix::add_significance(
@@ -43,14 +41,16 @@
       cutpoints = c(0, 0.001, 0.01, 0.05, 1),
       symbols = c("***", "**", "*", "ns")
     ) |>
-    dplyr::mutate(qval = stats::p.adjust(pval, method = "BH")) |>
+    dplyr::mutate(qval = stats::p.adjust(.data[["pval"]], method = "BH")) |>
     rstatix::add_significance(
       p.col = "qval",
       output.col = "qlab",
       cutpoints = c(0, 0.001, 0.01, 0.05, 1),
       symbols = c("***", "**", "*", "ns")
     ) |>
-    dplyr::relocate(plab, qval, qlab, .after = pval) |>
+    dplyr::relocate(
+      dplyr::all_of(c("plab", "qval", "qlab")),
+      .after = dplyr::all_of("pval")) |>
     dplyr::select(-dplyr::any_of(".y.")) |>
     dplyr::rename_with(~ gsub("\\.", "_", .x))
 }
@@ -75,6 +75,7 @@
 #' @param pvalue Maximum raw P value retained in the result.
 #' @param add_enriched Logical control for `add_enriched`.
 #' @return A result object described in the Details section.
+#' @importFrom rlang .data
 #' @export
 calcu_stamp <- function(
   profile, group, sample_col = "sample", group_col = "group",
@@ -190,6 +191,7 @@ calcu_stamp <- function(
 #' @param right_title Optional label used for right title.
 #' @param show_label Logical control for `show_label`.
 #' @return A plot object; analysis data or models may also be stored as attributes.
+#' @importFrom rlang .data
 #' @export
 plot_stamp <- function(
   data, top_n = 10, comparison = NULL, palette = c("#E69F00", "#56B4E9"),
@@ -385,6 +387,7 @@ plot_stamp <- function(
 #' @param group_level Optional order of group levels.
 #' @param method Analysis or summary method; supported values are shown in the usage.
 #' @return A result object described in the Details section.
+#' @importFrom rlang .data
 #' @export
 calcu_stamp_multiple <- function(
   profile, group, sample_col = "sample", group_col = "group",
