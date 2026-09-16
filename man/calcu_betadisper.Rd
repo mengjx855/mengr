@@ -39,15 +39,11 @@ calcu_betadisper(
 
 \item{bias_adjust}{Whether to apply the small-sample bias correction in \code{vegan::betadisper()}.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments forwarded to \code{calcu_distance()}.}
 }
 \value{
-A result object described in the Details section.
+A list containing the betadisper object, group metadata, permutation/ANOVA/Tukey tests, and sample distances to group centers.
 }
 \description{
-\code{calcu_betadisper()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 检验各组到中心或中位数中心的 multivariate dispersion。
+检验各组到中心或中位数中心的 multivariate dispersion。
 }

@@ -36,11 +36,11 @@ rf_leave_one_out(
 
 \item{progress}{Whether progress information is printed during repeated analyses.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{randomForest::randomForest()}.}
 }
 \value{
-A result object described in the Details section.
+A data frame of leave-one-out predictions and class probabilities.
 }
 \description{
-Chinese summary: 执行 leave-one-out random-forest 预测。
+执行 leave-one-out random-forest 预测。
 }

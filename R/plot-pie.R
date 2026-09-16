@@ -1,8 +1,12 @@
-#### Jin-Xin Meng, 20231113, 20260820, v0.2.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20231113, 20260916 ####
+
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
+
+#### plot_pie ####
 
 #' Plot a pie chart
 #'
-#' Chinese summary: 从指定名称列和值列绘制饼图或环形图。
+#' 从指定名称列和值列绘制饼图或环形图。
 #'
 #' @param data An input data frame or compatible object.
 #' @param name_col Name of the `name_col` input column.
@@ -12,18 +16,18 @@
 #' @param top_n Number of highest-ranking features or categories retained.
 #' @param other_name Label assigned to features combined into the residual category.
 #' @param other_last Whether the residual `Other` category is placed last.
-#' @param add_count Logical control for `add_count`.
-#' @param add_percent Logical control for `add_percent`.
+#' @param add_count Whether to include counts in slice labels.
+#' @param add_percent Whether to include percentages in slice labels.
 #' @param circular_label Whether category labels should follow the circular plotting direction.
-#' @param flip_label Whether to enable the flip label behavior.
+#' @param flip_label Whether to reverse labels on the left half of the pie for readability.
 #' @param title Optional plot or result title.
 #' @param border_color Color specification for `border_color`.
 #' @param fill Color specification for fill.
-#' @param font_size Numeric setting for `font_size`.
+#' @param font_size Base text size used in the plot.
 #' @param hemisphere Portion of the circle used for the pie layout; supported values are shown in Usage.
 #' @param start Starting angle, in radians, used for the circular coordinate system.
 #' @param percent_digits Number of decimal places shown in percentage labels.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_pie <- function(
   data, name_col = "name", value_col = "n", name_level = NULL,

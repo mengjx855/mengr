@@ -39,11 +39,11 @@ rf_cross_dataset_validate(
 
 \item{na_fill}{Value used to replace missing observations before analysis.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{randomForest::randomForest()}.}
 }
 \value{
-A result object described in the Details section.
+A data frame of training/testing dataset combinations, sample predictions, probabilities, and AUC values.
 }
 \description{
-Chinese summary: 按 dataset 留一验证，评估跨队列 random-forest 泛化能力。
+按 dataset 留一验证，评估跨队列 random-forest 泛化能力。
 }

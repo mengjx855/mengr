@@ -1,9 +1,10 @@
-#### Jin-Xin Meng, 20250307, 20260827, v0.2.1 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250307, 20260916 ####
 
 # 20250417: plot function pass to plot_dim()
 # 20251129: 未来考虑 NMDS 中加入 vegan::anosim 分析
 # 20260419: 修改anosim输入矩阵为距离矩阵
 # 20260827: update function.
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
 
 
 #### plot_nmds ####
@@ -20,10 +21,8 @@
 
 #' Plot NMDS utility
 #'
-#' `plot_nmds()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 从 profile 或距离对象执行 NMDS，可附加 ANOSIM 结果。
+#' 从 profile 或距离对象执行 NMDS，可附加 ANOSIM 结果。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -44,20 +43,20 @@
 #' @param xlab Optional x-axis label.
 #' @param ylab Optional y-axis label.
 #' @param legend_title Legend title; `NULL` uses a context-dependent default.
-#' @param add_group_label Logical control for `add_group_label`.
-#' @param add_sample_label Logical control for `add_sample_label`.
-#' @param label_size Numeric setting for `label_size`.
-#' @param point_size Numeric setting for `point_size`.
-#' @param show_legend Logical control for `show_legend`.
-#' @param show_grid Logical control for `show_grid`.
-#' @param show_line Logical control for `show_line`.
+#' @param add_group_label Whether to label group centroids.
+#' @param add_sample_label Whether to label individual samples.
+#' @param label_size Text size for sample or group labels.
+#' @param point_size Point size used for samples or observations.
+#' @param show_legend Whether to display the plot legend.
+#' @param show_grid Whether to draw panel grid lines.
+#' @param show_line Whether to draw horizontal and vertical reference lines at zero.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
 #' @param theme Plot theme preset; supported values are shown in Usage.
 #' @param anosim Whether to run ANOSIM and annotate its statistic and P value.
 #' @param permutations Number of permutations used by the significance test.
 #' @param trymax Maximum number of random starts attempted by NMDS.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param ... Additional arguments passed to `vegan::vegdist()` and `plot_dim()`.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @importFrom rlang .data
 #' @export
 plot_nmds <- function(
@@ -296,10 +295,8 @@ plot_nmds <- function(
 
 #' Calcu Pairwise Anosim utility
 #'
-#' `calcu_pairwise_anosim()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 对各分组组合执行 pairwise ANOSIM。
+#' 对各分组组合执行 pairwise ANOSIM。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -309,9 +306,9 @@ plot_nmds <- function(
 #' @param dist_method Distance method; available values are validated with `match.arg()`.
 #' @param transform Optional transformation applied before analysis.
 #' @param permutations Number of permutations used by the significance test.
-#' @param add_plab Logical control for `add_plab`.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param add_plab Whether to add formatted significance labels.
+#' @param ... Additional arguments passed to `vegan::anosim()`.
+#' @return A data frame containing each group comparison, ANOSIM statistic, P value, adjusted P value, and optional significance label.
 #' #importFrom rlang .data
 #' @export
 calcu_pairwise_anosim <- function(
@@ -425,14 +422,12 @@ calcu_pairwise_anosim <- function(
 
 #' Plot Pairwise Anosim utility
 #'
-#' `plot_pairwise_anosim()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 将 pairwise ANOSIM 结果绘制为矩阵式结果图。
+#' 将 pairwise ANOSIM 结果绘制为矩阵式结果图。
 #'
 #' @param data An input data frame or compatible object.
 #' @param group_level Optional order of group levels.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_pairwise_anosim <- function(data, group_level = NULL) {
   data <- data.frame(data, check.names = FALSE)
@@ -460,14 +455,14 @@ plot_pairwise_anosim <- function(data, group_level = NULL) {
       y = factor(y, levels = rev(group_level)),
       r_size = abs(r),
       plab = dplyr::case_when(
-        pval <= 0.001 ~ "p≤0.001",
+        pval <= 0.001 ~ "p\u22640.001",
         pval < 0.01 ~ "p<0.01",
         pval < 0.05 ~ "p<0.05",
-        TRUE ~ "p≥0.05"
+        TRUE ~ "p\u22650.05"
       ),
       plab = factor(
         plab,
-        levels = c("p≤0.001", "p<0.01", "p<0.05", "p≥0.05")
+        levels = c("p\u22640.001", "p<0.01", "p<0.05", "p\u22650.05")
       )
     )
 
@@ -487,12 +482,12 @@ plot_pairwise_anosim <- function(data, group_level = NULL) {
     ) +
     ggplot2::scale_fill_manual(
       values = c(
-        "p≤0.001" = "#f46d43",
+        "p\u22640.001" = "#f46d43",
         "p<0.01" = "#fee08b",
         "p<0.05" = "#abdda4",
-        "p≥0.05" = "#3288bd"
+        "p\u22650.05" = "#3288bd"
       ),
-      breaks = c("p≤0.001", "p<0.01", "p<0.05", "p≥0.05")
+      breaks = c("p\u22640.001", "p<0.01", "p<0.05", "p\u22650.05")
     ) +
     ggplot2::scale_size_continuous(range = c(6, 12)) +
     ggplot2::labs(x = "", y = "") +

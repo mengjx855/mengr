@@ -10,12 +10,8 @@ profile_remove_zero_var(profile)
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 }
 \value{
-A result object described in the Details section.
+A feature-by-sample data frame with zero-variance features removed.
 }
 \description{
-\code{profile_remove_zero_var()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 删除跨样本零方差的 feature，避免降维或模型拟合失败。
+删除跨样本零方差的 feature，避免降维或模型拟合失败。
 }

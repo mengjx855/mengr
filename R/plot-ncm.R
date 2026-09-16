@@ -1,16 +1,20 @@
-#### Jin-Xin Meng, 20240307, 20260820, v0.2.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20240307, 20260916 ####
+
+# 20260916: rename NCM functions to lowercase and standardize documentation and naming.
+
+#### calcu_ncm ####
 
 #' Fit Sloan's neutral community model
 #'
-#' Chinese summary: 拟合 neutral community model，返回摘要、拟合数据和模型。
+#' 拟合 neutral community model，返回摘要、拟合数据和模型。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param name Display or identifier name for name.
+#' @param name Optional identifier appended to the model summary.
 #' @param conf_level Optional order for `conf_level`.
 #' @param max_iter Maximum number of iterations allowed during model fitting.
-#' @return A result object described in the Details section.
+#' @return A list with `summary_df`, feature-level `fit_df`, and the fitted nonlinear model.
 #' @export
-calcu_NCM <- function(
+calcu_ncm <- function(
   profile, name = NULL, conf_level = 0.95, max_iter = 500
 ) {
   ## 1. 整理 sample × feature count matrix
@@ -82,17 +86,19 @@ calcu_NCM <- function(
   list(summary_df = summary_df, fit_df = fit_df, model = model_obj)
 }
 
+#### plot_ncm ####
+
 #' Plot Sloan's neutral community model
 #'
-#' Chinese summary: 绘制 neutral community model 的拟合曲线和置信边界。
+#' 绘制 neutral community model 的拟合曲线和置信边界。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param ncm_result Optional result returned by `calcu_NCM()` to avoid refitting the model.
+#' @param ncm_result Optional result returned by `calcu_ncm()` to avoid refitting the model.
 #' @param title Optional plot or result title.
 #' @param class_color Color specification for `class_color`.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
-plot_NCM <- function(
+plot_ncm <- function(
   profile = NULL, ncm_result = NULL, title = NULL,
   class_color = c(
     neutral = "#000000", below = "#a52a2a", above = "#29a6a6"
@@ -101,10 +107,10 @@ plot_NCM <- function(
   ## 1. 复用已有计算结果；未提供时才重新拟合
   if (is.null(ncm_result)) {
     if (is.null(profile)) stop("Supply either profile or ncm_result.")
-    ncm_result <- calcu_NCM(profile)
+    ncm_result <- calcu_ncm(profile)
   }
   if (!all(c("summary_df", "fit_df", "model") %in% names(ncm_result))) {
-    stop("ncm_result should be returned by calcu_NCM().")
+    stop("ncm_result should be returned by calcu_ncm().")
   }
   plot_df <- ncm_result$fit_df
   summary_df <- ncm_result$summary_df

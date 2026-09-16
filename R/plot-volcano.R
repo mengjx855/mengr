@@ -1,8 +1,12 @@
-#### Jin-Xin Meng, 20240328, 20260820, v0.2.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20240328, 20260916 ####
+
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
+
+#### plot_volcano ####
 
 #' Plot a volcano plot
 #'
-#' Chinese summary: 根据 effect、P 值和富集方向绘制 volcano plot。
+#' 根据 effect、P 值和富集方向绘制 volcano plot。
 #'
 #' @param data An input data frame or compatible object.
 #' @param feature_col Name of the feature-identifier column.
@@ -11,15 +15,15 @@
 #' @param enriched_col Name of the `enriched_col` input column.
 #' @param group_level Optional order of group levels.
 #' @param group_color Optional colors aligned to `group_level`.
-#' @param p_cutoff Numeric setting for `p_cutoff`.
-#' @param effect_cutoff Numeric setting for `effect_cutoff`.
+#' @param p_cutoff P-value threshold used to classify significant features.
+#' @param effect_cutoff Absolute effect-size threshold used to classify features.
 #' @param x_limit Optional numeric limits for the x axis.
 #' @param title Optional plot or result title.
 #' @param xlab Optional x-axis label.
 #' @param ylab Optional y-axis label.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
 #' @param subtitle_keywords Keywords whose occurrences are highlighted in the plot subtitle.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_volcano <- function(
   data, feature_col = "name", effect_col = "log2FC", p_col = "pval",

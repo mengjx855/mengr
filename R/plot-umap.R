@@ -1,8 +1,12 @@
-#### Jin-Xin Meng, 20241204, 20260820, v0.3.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241204, 20260916 ####
+
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
+
+#### plot_umap ####
 
 #' Plot a UMAP ordination
 #'
-#' Chinese summary: 对齐样本分组后执行 UMAP，并返回统一风格降维图。
+#' 对齐样本分组后执行 UMAP，并返回统一风格降维图。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -18,17 +22,17 @@
 #' @param xlab Optional x-axis label.
 #' @param ylab Optional y-axis label.
 #' @param legend_title Legend title; `NULL` uses a context-dependent default.
-#' @param add_group_label Logical control for `add_group_label`.
-#' @param add_sample_label Logical control for `add_sample_label`.
-#' @param label_size Numeric setting for `label_size`.
-#' @param point_size Numeric setting for `point_size`.
-#' @param show_legend Logical control for `show_legend`.
-#' @param show_grid Logical control for `show_grid`.
-#' @param show_line Logical control for `show_line`.
+#' @param add_group_label Whether to label group centroids.
+#' @param add_sample_label Whether to label individual samples.
+#' @param label_size Text size for sample or group labels.
+#' @param point_size Point size used for samples or observations.
+#' @param show_legend Whether to display the plot legend.
+#' @param show_grid Whether to draw panel grid lines.
+#' @param show_line Whether to draw horizontal and vertical reference lines at zero.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
 #' @param theme Plot theme preset; supported values are shown in Usage.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param ... Additional arguments passed to `umap::umap()`.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_umap <- function(
   profile, group, sample_col = "sample", group_col = "group",

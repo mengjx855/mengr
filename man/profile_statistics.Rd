@@ -27,15 +27,11 @@ profile_statistics(
 
 \item{min_abundance}{Minimum abundance above which a feature is considered present.}
 
-\item{base}{Numeric setting for \code{base}.}
+\item{base}{Scaling constant used for relative-abundance output.}
 }
 \value{
-A result object described in the Details section.
+A feature-level data frame of abundance and prevalence summaries, optionally stratified by group.
 }
 \description{
-\code{profile_statistics()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 计算 feature 的 mean、SD、median 和 prevalence，可按组汇总。
+计算 feature 的 mean、SD、median 和 prevalence，可按组汇总。
 }

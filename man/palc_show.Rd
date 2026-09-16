@@ -7,19 +7,15 @@
 palc_show(name = NULL, n = 2, ...)
 }
 \arguments{
-\item{name}{Display or identifier name for name.}
+\item{name}{Name of a continuous palette.}
 
 \item{n}{Requested number of values, features, or results.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments forwarded to \code{palc()}.}
 }
 \value{
 A palette preview or a character summary of available palettes.
 }
 \description{
-\code{palc_show()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 预览指定的连续调色板。
+预览指定的连续调色板。
 }

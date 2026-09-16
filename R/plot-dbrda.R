@@ -1,4 +1,8 @@
-#### Jin-Xin Meng, 20220927, 20260820, v0.2.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220927, 20260916 ####
+
+# 20260916: rename `plot_dbRDA()` to `plot_dbrda()` and standardize documentation and naming.
+
+#### plot_dbrda ####
 
 #' Plot distance-based redundancy analysis
 #'
@@ -6,7 +10,7 @@
 #' The columns in `constraint_cols` are used as explanatory variables, while
 #' `group_col` controls the plot colour.
 #'
-#' Chinese summary: 从 profile 或距离对象执行 constrained dbRDA，并绘制样本和变量箭头。
+#' 从 profile 或距离对象执行 constrained dbRDA，并绘制样本和变量箭头。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -26,21 +30,21 @@
 #' @param xlab Optional x-axis label.
 #' @param ylab Optional y-axis label.
 #' @param legend_title Legend title; `NULL` uses a context-dependent default.
-#' @param add_group_label Logical control for `add_group_label`.
-#' @param add_sample_label Logical control for `add_sample_label`.
-#' @param label_size Numeric setting for `label_size`.
-#' @param point_size Numeric setting for `point_size`.
-#' @param show_legend Logical control for `show_legend`.
-#' @param show_grid Logical control for `show_grid`.
-#' @param show_variable Logical control for `show_variable`.
-#' @param show_line Logical control for `show_line`.
+#' @param add_group_label Whether to label group centroids.
+#' @param add_sample_label Whether to label individual samples.
+#' @param label_size Text size for sample or group labels.
+#' @param point_size Point size used for samples or observations.
+#' @param show_legend Whether to display the plot legend.
+#' @param show_grid Whether to draw panel grid lines.
+#' @param show_variable Whether to draw significant constraining-variable arrows.
+#' @param show_line Whether to draw horizontal and vertical reference lines at zero.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
 #' @param theme Plot theme preset; supported values are shown in Usage.
 #' @param permutations Number of permutations used by the significance test.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param ... Additional arguments passed to distance calculation and `plot_dim()`.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
-plot_dbRDA <- function(
+plot_dbrda <- function(
   profile = NULL, group, distance = NULL,
   sample_col = "sample", group_col = "group",
   constraint_cols = group_col, group_level = NULL, group_color = NULL,

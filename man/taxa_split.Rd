@@ -18,7 +18,7 @@ taxa_split(
 \arguments{
 \item{taxonomy}{Feature taxonomy table used for annotation or aggregation.}
 
-\item{taxonomy_rename}{Display or identifier name for taxonomy rename.}
+\item{taxonomy_rename}{Optional replacement name for the parsed taxonomy column.}
 
 \item{sep}{Field separator used when reading or writing a text file.}
 
@@ -30,15 +30,11 @@ taxa_split(
 
 \item{rm_suffix}{Whether suffix text is removed from split taxonomy labels.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{stringr::str_split_fixed()}.}
 }
 \value{
-A result object described in the Details section.
+A data frame with parsed taxonomy ranks and the original taxonomy identifier.
 }
 \description{
-\code{taxa_split()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 将完整 taxonomy 字符串拆分为 domain 至 species 等分类列。
+将完整 taxonomy 字符串拆分为 domain 至 species 等分类列。
 }

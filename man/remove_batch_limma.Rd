@@ -27,11 +27,11 @@ remove_batch_limma(
 
 \item{covariate_cols}{Metadata columns whose effects should be retained during batch correction.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{limma::removeBatchEffect()}.}
 }
 \value{
-A result object described in the Details section.
+A feature-by-sample numeric data frame after limma batch-effect removal.
 }
 \description{
-Chinese summary: 使用 \code{limma::removeBatchEffect()} 校正批次并保留设计矩阵中的协变量。
+使用 \code{limma::removeBatchEffect()} 校正批次并保留设计矩阵中的协变量。
 }

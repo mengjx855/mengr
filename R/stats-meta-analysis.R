@@ -1,7 +1,8 @@
-#### Jinxin Meng, 202209014, 20260516, v0.1.1 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220914, 20260916 ####
 
 # 20250405: update some parameter.
 # 20260516: update some details.
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
 
 # methods:
 # For each case-control comparison, feature-level effect sizes were calculated
@@ -74,10 +75,8 @@
 
 #' Calcu Metafor utility
 #'
-#' `calcu_metafor()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 按项目计算 feature 效应量，并使用 metafor 合并多队列结果。
+#' 按项目计算 feature 效应量，并使用 metafor 合并多队列结果。
 #'
 #' @param data An input data frame or compatible object.
 #' @param sample_col Name of the sample-identifier column.
@@ -86,11 +85,11 @@
 #' @param comparison Two outcome levels ordered as case and control.
 #' @param measure Effect-size measure passed to `metafor::escalc()`.
 #' @param method Analysis or summary method; supported values are shown in the usage.
-#' @param simplify Logical control for `simplify`.
+#' @param simplify Whether to return the simplified tabular result instead of intermediate objects.
 #' @param quiet Whether to suppress progress messages.
 #' @param progress Whether progress information is printed during repeated analyses.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments passed to `metafor::rma()`.
+#' @return A feature-level meta-analysis data frame containing pooled effects, uncertainty, heterogeneity, and significance statistics.
 #' @export
 calcu_metafor <- function(data, sample_col = "sample", group_col = "group",
                           proj_col = "proj", comparison = c("Case", "Control"),

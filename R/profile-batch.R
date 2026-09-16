@@ -1,4 +1,8 @@
-#### Jin-Xin Meng, 20221102, 20260820, v0.2.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20221102, 20260916 ####
+
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
+
+#### .prepare_batch_data ####
 
 .prepare_batch_data <- function(
   profile, metadata, sample_col, batch_col,
@@ -36,9 +40,11 @@
   )
 }
 
+#### remove_batch_combat ####
+
 #' Remove batch effects with sva::ComBat
 #'
-#' Chinese summary: 使用 `sva::ComBat()` 校正一个或两个批次变量，可保留协变量效应。
+#' 使用 `sva::ComBat()` 校正一个或两个批次变量，可保留协变量效应。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param metadata A metadata or annotation data frame.
@@ -49,8 +55,8 @@
 #' @param prior_plots Whether ComBat diagnostic prior plots are produced.
 #' @param mean_only Whether ComBat adjusts batch-specific means without adjusting variances.
 #' @param ref_batch Optional reference-batch level passed to ComBat.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments passed to `sva::ComBat()`.
+#' @return A feature-by-sample numeric data frame after ComBat correction.
 #' @export
 remove_batch_combat <- function(
   profile, metadata, sample_col = "sample", batch_col = "batch",
@@ -78,9 +84,11 @@ remove_batch_combat <- function(
   data.frame(result_mat, check.names = FALSE)
 }
 
+#### remove_batch_limma ####
+
 #' Remove batch effects with limma::removeBatchEffect
 #'
-#' Chinese summary: 使用 `limma::removeBatchEffect()` 校正批次并保留设计矩阵中的协变量。
+#' 使用 `limma::removeBatchEffect()` 校正批次并保留设计矩阵中的协变量。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param metadata A metadata or annotation data frame.
@@ -88,8 +96,8 @@ remove_batch_combat <- function(
 #' @param batch_col Name of the `batch_col` input column.
 #' @param batch2_col Name of the `batch2_col` input column.
 #' @param covariate_cols Metadata columns whose effects should be retained during batch correction.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments passed to `limma::removeBatchEffect()`.
+#' @return A feature-by-sample numeric data frame after limma batch-effect removal.
 #' @export
 remove_batch_limma <- function(
   profile, metadata, sample_col = "sample", batch_col = "batch",

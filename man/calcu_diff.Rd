@@ -23,19 +23,15 @@ calcu_diff(
 
 \item{var_equal}{Whether two-sample t tests assume equal group variances.}
 
-\item{add_plab}{Logical control for \code{add_plab}.}
+\item{add_plab}{Whether to add formatted significance labels.}
 
 \item{plab_fmt}{Format string or function used to display significance labels.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to the selected rstatix test.}
 }
 \value{
-A result object described in the Details section.
+A data frame of pairwise comparisons, effect summaries, P values, and optional significance labels.
 }
 \description{
-\code{calcu_diff()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 对公式指定的数值与分组执行 Wilcoxon、ANOVA 或 t-test 两两比较。
+对公式指定的数值与分组执行 Wilcoxon、ANOVA 或 t-test 两两比较。
 }

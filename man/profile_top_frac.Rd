@@ -24,12 +24,8 @@ profile_top_frac(
 \item{sort_method}{Summary statistic or function used to rank features.}
 }
 \value{
-A result object described in the Details section.
+A feature-by-sample data frame retaining the requested top fraction and, optionally, an \code{Other} row.
 }
 \description{
-\code{profile_top_frac()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 按比例保留丰度最高的 feature，可把其余部分合并为 Other。
+按比例保留丰度最高的 feature，可把其余部分合并为 Other。
 }

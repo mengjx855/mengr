@@ -1,10 +1,11 @@
-#### Jinxin Meng, 20230816, 20260519, v0.1.1 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20230816, 20260916 ####
 
 # 20250820: update some function.
 # 20260519: simplify code, add helper functions, fix CI label and ribbon order.
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
 
 
-#### helper: ROC plot theme ####
+#### theme_roc ####
 # ROC 图主题
 # style:
 #   default : 黑框、无网格，适合常规论文图
@@ -15,13 +16,11 @@
 #   lancet  : 类 Lancet 风格，黑框较明显
 #' Theme Roc utility
 #'
-#' `theme_roc()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 提供 default、grid、classic、minimal、nature 和 lancet ROC 主题。
+#' 提供 default、grid、classic、minimal、nature 和 lancet ROC 主题。
 #'
-#' @param base_size Numeric setting for `base_size`.
-#' @param show_grid Logical control for `show_grid`.
+#' @param base_size Base font size for the plot theme.
+#' @param show_grid Whether to draw panel grid lines.
 #' @param style Visual style preset; supported values are shown in Usage.
 #' @return A ggplot2 theme object.
 #' @export
@@ -123,18 +122,16 @@ theme_roc <- function(base_size = 12, show_grid = NULL,
 }
 
 
-#### helper: AUC label ####
+#### roc_auc_label ####
 #' Roc Auc Label utility
 #'
-#' `roc_auc_label()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 从 pROC 对象生成包含 AUC 和置信区间的标签。
+#' 从 pROC 对象生成包含 AUC 和置信区间的标签。
 #'
 #' @param roc A single object returned by `pROC::roc()`.
 #' @param digits Optional number of decimal digits retained.
 #' @param prefix Prefix used when naming derived coordinates or labels.
-#' @return A result object described in the Details section.
+#' @return A single character label containing the AUC and its confidence interval.
 #' @export
 roc_auc_label <- function(roc, digits = 3, prefix = "AUC") {
   auc_value <- as.numeric(pROC::auc(roc))
@@ -152,18 +149,16 @@ roc_auc_label <- function(roc, digits = 3, prefix = "AUC") {
   )
 }
 
-#### helper: SE confidence ribbon data ####
+#### roc_se_data ####
 #' Roc Se Data utility
 #'
-#' `roc_se_data()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 提取 ROC sensitivity 置信区间并整理为 ribbon 数据。
+#' 提取 ROC sensitivity 置信区间并整理为 ribbon 数据。
 #'
 #' @param roc A single object returned by `pROC::roc()`.
 #' @param by Spacing between successive specificity values used to calculate the ROC confidence band.
-#' @param conf.level Numeric setting for `conf.level`.
-#' @return A result object described in the Details section.
+#' @param conf.level Confidence level used for ROC sensitivity intervals.
+#' @return A data frame with specificity, sensitivity, and lower and upper confidence limits.
 #' @export
 roc_se_data <- function(roc, by = 0.01, conf.level = 0.95) {
   roc_se <- tryCatch(
@@ -201,23 +196,21 @@ roc_se_data <- function(roc, by = 0.01, conf.level = 0.95) {
 
 #' Plot Roc utility
 #'
-#' `plot_roc()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 绘制单个 pROC ROC 曲线，可添加 sensitivity 置信 ribbon。
+#' 绘制单个 pROC ROC 曲线，可添加 sensitivity 置信 ribbon。
 #'
 #' @param roc A single object returned by `pROC::roc()`.
 #' @param color Color specification for `color`.
-#' @param plot_se Logical control for `plot_se`.
+#' @param plot_se Whether to draw the sensitivity confidence band.
 #' @param label_pos Length-two numeric vector giving the x and y position of a label.
 #' @param title Optional plot or result title.
 #' @param subtitle Optional plot subtitle.
-#' @param linewidth Numeric setting for `linewidth`.
-#' @param se_alpha Numeric setting for `se_alpha`.
+#' @param linewidth Width of the ROC curve.
+#' @param se_alpha Opacity of the confidence ribbon.
 #' @param theme_style ROC theme preset; supported values are shown in Usage.
-#' @param base_size Numeric setting for `base_size`.
-#' @param show_grid Logical control for `show_grid`.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param base_size Base font size for the plot theme.
+#' @param show_grid Whether to draw panel grid lines.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_roc <- function(roc, color = "#238443", plot_se = FALSE,
                      label_pos = c(0.75, 0.125), title = NULL,
@@ -297,22 +290,20 @@ plot_roc <- function(roc, color = "#238443", plot_se = FALSE,
 # plot_se: 是否添加 sensitivity 95% CI ribbon
 #' Plot Roc Multiple utility
 #'
-#' `plot_roc_multiple()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 在同一图中绘制多个 ROC 对象及各自 AUC 标签。
+#' 在同一图中绘制多个 ROC 对象及各自 AUC 标签。
 #'
 #' @param roc_list Named list of objects returned by `pROC::roc()`.
 #' @param colors Color specification for `colors`.
-#' @param plot_se Logical control for `plot_se`.
+#' @param plot_se Whether to draw the sensitivity confidence band.
 #' @param title Optional plot or result title.
 #' @param subtitle Optional plot subtitle.
-#' @param linewidth Numeric setting for `linewidth`.
-#' @param se_alpha Numeric setting for `se_alpha`.
+#' @param linewidth Width of the ROC curve.
+#' @param se_alpha Opacity of the confidence ribbon.
 #' @param theme_style ROC theme preset; supported values are shown in Usage.
-#' @param base_size Numeric setting for `base_size`.
-#' @param show_grid Logical control for `show_grid`.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param base_size Base font size for the plot theme.
+#' @param show_grid Whether to draw panel grid lines.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_roc_multiple <- function(roc_list, colors = NULL, plot_se = FALSE,
                               title = NULL, subtitle = NULL,

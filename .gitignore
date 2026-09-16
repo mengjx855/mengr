@@ -7,3 +7,5 @@ MIGRATION_NOTES.md
 STYLE_GUIDE.md
 mengR.Rproj
 mengR.code-workspace
+.codex/
+*.tar.gz

@@ -18,12 +18,8 @@ tidy_correlation(r_mat, p_mat, r = 0, pval = 0.05, only_signif = FALSE)
 \item{only_signif}{Whether only statistically significant correlations are retained.}
 }
 \value{
-A result object described in the Details section.
+A filtered long data frame containing feature pairs, correlations, P values, and adjusted P values.
 }
 \description{
-\code{tidy_correlation()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 将相关矩阵整理为 edge long table，并按相关性和显著性筛选。
+将相关矩阵整理为 edge long table，并按相关性和显著性筛选。
 }

@@ -1,4 +1,4 @@
-#### Jinxin Meng, jinxmeng@zju.edu.cn, 20230610, 20260527, v0.2.2 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20230610, 20260916 ####
 
 # 20231101: update function: get_freq
 # 20250223: undate functions with new grammar.
@@ -8,20 +8,43 @@
 #           update other functions.
 # 20260519: add function 'pairwise_cluster()'.
 # 20260527: add function 'set_calcu()'.
+# 20260902: add function 'log_message()'.
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
+
+## 日志记录函数，支持不同类型的日志信息
+#### log_message ####
+
+log_message <- function(
+    ..., type = c("info", "success", "warning", "error", "debug")
+) {
+  type <- match.arg(type)
+  time <- format(Sys.time(), "%Y-%m-%d %H:%M:%S")
+  text <- paste0(...)
+  label <- switch(
+    type,
+    info    = cli::col_blue("INFO"),
+    success = cli::col_green("SUCCESS"),
+    warning = cli::col_yellow("WARNING"),
+    error   = cli::col_red("ERROR"),
+    debug   = cli::col_magenta("DEBUG")
+  )
+
+  message(cli::col_grey(time), " | ", label, ": ", text)
+
+  invisible(NULL)
+}
 
 
-#### floor_n / ceiling_n ####
+#### floor_n ####
 #' Floor n utility
 #'
-#' `floor_n()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 按指定的十进制位数向下取整，例如按百位或千位取整。
+#' 按指定的十进制位数向下取整，例如按百位或千位取整。
 #'
 #' @param x Primary vector or object supplied to the utility.
 #' @param n Requested number of values, features, or results.
-#' @return A result object described in the Details section.
-#' @export
+#' @return A numeric vector rounded downward at the requested decimal position.
+#' @expor
 floor_n <- function(x, n = 2) {
   base <- 10^n
   floor(x / base) * base
@@ -29,15 +52,15 @@ floor_n <- function(x, n = 2) {
 
 #' Ceiling n utility
 #'
-#' `ceiling_n()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 按指定的十进制位数向上取整。
+#' 按指定的十进制位数向上取整。
 #'
 #' @param x Primary vector or object supplied to the utility.
 #' @param n Requested number of values, features, or results.
-#' @return A result object described in the Details section.
-#' @export
+#' @return A numeric vector rounded upward at the requested decimal position.
+#' @expor
+#### ceiling_n ####
+
 ceiling_n <- function(x, n = 2) {
   base <- 10^n
   ceiling(x / base) * base
@@ -45,7 +68,7 @@ ceiling_n <- function(x, n = 2) {
 
 #### set_calcu ####
 # 多个 vector 的集合运算
-# ...: 多个 vector，或者一个 list
+# ...: 多个 vector，或者一个 lis
 # method:
 #   intersect: 多个 vector 的交集
 #   union: 多个 vector 的并集
@@ -55,24 +78,22 @@ ceiling_n <- function(x, n = 2) {
 
 #' Set Calcu utility
 #'
-#' `set_calcu()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 对多个向量或一个向量列表计算交集、并集或集合差。
+#' 对多个向量或一个向量列表计算交集、并集或集合差。
 #'
-#' @param ... Additional arguments passed to the underlying function.
+#' @param ... Vectors to combine; a single list of vectors is also accepted.
 #' @param method Analysis or summary method; supported values are shown in the usage.
 #' @param unique_out Whether duplicate values are removed from the set-operation result.
 #' @param sort_out Whether the returned set-operation result is sorted.
-#' @return A result object described in the Details section.
-#' @export
+#' @return A vector containing the requested intersection, union, or sequential set difference.
+#' @expor
 set_calcu <- function(..., method = c("intersect", "union", "setdiff"),
                       unique_out = TRUE, sort_out = FALSE) {
   method <- match.arg(method)
 
   x <- list(...)
 
-  ## 支持直接输入一个 list
+  ## 支持直接输入一个 lis
   if (length(x) == 1 && is.list(x[[1]])) {
     x <- x[[1]]
   }
@@ -113,17 +134,15 @@ set_calcu <- function(..., method = c("intersect", "union", "setdiff"),
 # 计算亮度（Luminance）公式：0.299*R + 0.587*G + 0.114*B
 #' Get Text Color utility
 #'
-#' `get_text_color()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 根据背景色亮度选择深色或浅色文字，提高文字对比度。
+#' 根据背景色亮度选择深色或浅色文字，提高文字对比度。
 #'
 #' @param color Color specification for `color`.
-#' @param threshold Numeric setting for `threshold`.
+#' @param threshold Luminance threshold separating dark and light text.
 #' @param dark Text color returned for a sufficiently light background.
 #' @param light Text color returned for a sufficiently dark background.
-#' @return A result object described in the Details section.
-#' @export
+#' @return A character vector choosing `dark` or `light` for each input color.
+#' @expor
 get_text_color <- function(color, threshold = 0.5, dark = "black", light = "white") {
   rgb_mat <- grDevices::col2rgb(color) # 将颜色转换为 RGB 值
   luminance <- (0.299 * rgb_mat[1, ] + 0.587 * rgb_mat[2, ] + 0.114 * rgb_mat[3, ]) / 255
@@ -135,21 +154,19 @@ get_text_color <- function(color, threshold = 0.5, dark = "black", light = "whit
 #### write_xlsx_with_comment ####
 #' Write xlsx with Comment utility
 #'
-#' `write_xlsx_with_comment()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 将顶部说明和数据写入 Excel；支持追加、替换 worksheet。
+#' 将顶部说明和数据写入 Excel；支持追加、替换 worksheet。
 #'
 #' @param data An input data frame or compatible object.
 #' @param filename Path of the workbook or output file.
 #' @param comment Character marker written before comment rows in the worksheet.
 #' @param sheet Worksheet name used for Excel input or output.
 #' @param comment_color Color specification for `comment_color`.
-#' @param overwrite Logical control for `overwrite`.
-#' @param append Logical control for `append`.
+#' @param overwrite Whether an existing workbook may be replaced.
+#' @param append Whether to append a worksheet to an existing workbook.
 #' @param replace_sheet Whether an existing worksheet with the same name is replaced.
-#' @return A result object described in the Details section.
-#' @export
+#' @return The output workbook path, invisibly.
+#' @expor
 write_xlsx_with_comment <- function(data, filename, comment = "###", sheet = "Sheet1",
                                     comment_color = "red", overwrite = TRUE,
                                     append = TRUE, replace_sheet = FALSE) {
@@ -180,12 +197,12 @@ write_xlsx_with_comment <- function(data, filename, comment = "###", sheet = "Sh
     } else {
       stop(sprintf(
         "Sheet '%s' already exists. Use replace_sheet = TRUE if you want to overwrite it.",
-        sheet
+        shee
       ))
     }
   }
 
-  # 3. 新增 sheet
+  # 3. 新增 shee
   openxlsx::addWorksheet(wb, sheet)
 
   comment_style <- openxlsx::createStyle(fontColour = comment_color)
@@ -221,16 +238,14 @@ write_xlsx_with_comment <- function(data, filename, comment = "###", sheet = "Sh
 #### read_xlsx_multiple ####
 #' Read xlsx Multiple utility
 #'
-#' `read_xlsx_multiple()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 一次读取 Excel 文件中的多个 worksheet，返回命名列表。
+#' 一次读取 Excel 文件中的多个 worksheet，返回命名列表。
 #'
 #' @param file Path to an input file.
 #' @param sheets Worksheet names to read; `NULL` reads every worksheet.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
-#' @export
+#' @param ... Additional arguments passed to `openxlsx::read.xlsx()`.
+#' @return A named list of data frames, one for each selected worksheet.
+#' @expor
 read_xlsx_multiple <- function(file, sheets = NULL, ...) {
   if (!requireNamespace("openxlsx", quietly = TRUE)) {
     stop("Package 'openxlsx' is required.")
@@ -292,24 +307,22 @@ read_xlsx_multiple <- function(file, sheets = NULL, ...) {
 
 #' Pairwise Cluster utility
 #'
-#' `pairwise_cluster()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 将 feature1-feature2-value 长表转换为距离矩阵并进行层次聚类。
+#' 将 feature1-feature2-value 长表转换为距离矩阵并进行层次聚类。
 #'
 #' @param data An input data frame or compatible object.
 #' @param feature1_col Name of the `feature1_col` input column.
 #' @param feature2_col Name of the `feature2_col` input column.
 #' @param value_col Name of the `value_col` input column.
-#' @param cutoff Numeric setting for `cutoff`.
+#' @param cutoff Threshold used to form clusters or significance calls, depending on the function.
 #' @param one_minus Whether pairwise values are converted to `1 - value` before clustering.
 #' @param abs_value Whether to cluster using absolute pairwise values.
 #' @param linkage_method Hierarchical-clustering linkage method passed to `stats::hclust()`.
 #' @param fill_missing Distance assigned to feature pairs absent from a pairwise table.
 #' @param duplicate_fun Function used to combine duplicated feature-pair values.
-#' @param simplify Logical control for `simplify`.
-#' @return A result object described in the Details section.
-#' @export
+#' @param simplify Whether to return the simplified tabular result instead of intermediate objects.
+#' @return A cluster-membership vector or data frame with `hclust` and distance-matrix attributes.
+#' @expor
 pairwise_cluster <- function(data, feature1_col = NULL, feature2_col = NULL,
                              value_col = NULL, cutoff = 0.05, one_minus = FALSE,
                              abs_value = FALSE, linkage_method = "average",
@@ -437,23 +450,21 @@ pairwise_cluster <- function(data, feature1_col = NULL, feature2_col = NULL,
   }
 
   attr(out, "hclust") <- hc
-  attr(out, "dist_matrix") <- dist_mat
+  attr(out, "dist_matrix") <- dist_ma
 
   return(out)
 }
 
 
-#### ggplot_theme ####
+#### theme_bw_clean ####
 #' Theme Bw Clean utility
 #'
-#' `theme_bw_clean()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 返回简洁的黑白 ggplot2 theme，作为其他绘图的统一基础主题。
+#' 返回简洁的黑白 ggplot2 theme，作为其他绘图的统一基础主题。
 #'
-#' @param base_size Numeric setting for `base_size`.
+#' @param base_size Base font size for the plot theme.
 #' @return A ggplot2 theme object.
-#' @export
+#' @expor
 theme_bw_clean <- function(base_size = 12) {
   ## 返回可继续用“+”叠加修改的 ggplot2 theme 对象
   ggplot2::theme(

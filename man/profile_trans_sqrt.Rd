@@ -12,12 +12,8 @@ profile_trans_sqrt(profile, digits = NULL)
 \item{digits}{Optional number of decimal digits retained.}
 }
 \value{
-A result object described in the Details section.
+A feature-by-sample data frame after square-root transformation.
 }
 \description{
-\code{profile_trans_sqrt()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 对 profile 执行平方根转换。
+对 profile 执行平方根转换。
 }

@@ -37,9 +37,9 @@ plot_volcano(
 
 \item{group_color}{Optional colors aligned to \code{group_level}.}
 
-\item{p_cutoff}{Numeric setting for \code{p_cutoff}.}
+\item{p_cutoff}{P-value threshold used to classify significant features.}
 
-\item{effect_cutoff}{Numeric setting for \code{effect_cutoff}.}
+\item{effect_cutoff}{Absolute effect-size threshold used to classify features.}
 
 \item{x_limit}{Optional numeric limits for the x axis.}
 
@@ -54,8 +54,8 @@ plot_volcano(
 \item{subtitle_keywords}{Keywords whose occurrences are highlighted in the plot subtitle.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-Chinese summary: 根据 effect、P 值和富集方向绘制 volcano plot。
+根据 effect、P 值和富集方向绘制 volcano plot。
 }

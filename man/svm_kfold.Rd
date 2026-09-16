@@ -39,7 +39,7 @@ svm_kfold(
 
 \item{kernel}{SVM kernel; supported values are shown in Usage.}
 
-\item{scale}{Logical control for \code{scale}.}
+\item{scale}{Whether to scale values as described by the selected method.}
 
 \item{cost_grid}{Candidate SVM cost values used during tuning.}
 
@@ -48,8 +48,8 @@ svm_kfold(
 \item{tune_boot}{Number of bootstrap resamples used during SVM tuning.}
 }
 \value{
-A result object described in the Details section.
+A data frame of out-of-fold predictions, decision values, and fold identifiers.
 }
 \description{
-Chinese summary: 执行分层 SVM k-fold cross-validation。
+执行分层 SVM k-fold cross-validation。
 }

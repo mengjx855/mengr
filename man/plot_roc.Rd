@@ -23,7 +23,7 @@ plot_roc(
 
 \item{color}{Color specification for \code{color}.}
 
-\item{plot_se}{Logical control for \code{plot_se}.}
+\item{plot_se}{Whether to draw the sensitivity confidence band.}
 
 \item{label_pos}{Length-two numeric vector giving the x and y position of a label.}
 
@@ -31,23 +31,19 @@ plot_roc(
 
 \item{subtitle}{Optional plot subtitle.}
 
-\item{linewidth}{Numeric setting for \code{linewidth}.}
+\item{linewidth}{Width of the ROC curve.}
 
-\item{se_alpha}{Numeric setting for \code{se_alpha}.}
+\item{se_alpha}{Opacity of the confidence ribbon.}
 
 \item{theme_style}{ROC theme preset; supported values are shown in Usage.}
 
-\item{base_size}{Numeric setting for \code{base_size}.}
+\item{base_size}{Base font size for the plot theme.}
 
-\item{show_grid}{Logical control for \code{show_grid}.}
+\item{show_grid}{Whether to draw panel grid lines.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_roc()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 绘制单个 pROC ROC 曲线，可添加 sensitivity 置信 ribbon。
+绘制单个 pROC ROC 曲线，可添加 sensitivity 置信 ribbon。
 }

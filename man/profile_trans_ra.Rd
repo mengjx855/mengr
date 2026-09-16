@@ -9,19 +9,15 @@ profile_trans_ra(profile, base = 100, digits = 8, remove_empty = FALSE)
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{base}{Numeric setting for \code{base}.}
+\item{base}{Scaling constant used for relative-abundance output.}
 
 \item{digits}{Optional number of decimal digits retained.}
 
-\item{remove_empty}{Logical control for \code{remove_empty}.}
+\item{remove_empty}{Whether to remove samples whose total abundance is zero.}
 }
 \value{
-A result object described in the Details section.
+A feature-by-sample relative-abundance or percentage data frame.
 }
 \description{
-\code{profile_trans_ra()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 将每个样本转换为相对丰度或百分比，并处理空样本。
+将每个样本转换为相对丰度或百分比，并处理空样本。
 }

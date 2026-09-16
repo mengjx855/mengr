@@ -39,11 +39,11 @@ lasso_next_validate(
 
 \item{inner_folds}{Number of internal folds used to tune the regularization parameter.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{glmnet::cv.glmnet()}.}
 }
 \value{
-A result object described in the Details section.
+A list containing the fitted cross-validated model, shared features, validation predictions, and binary metrics when applicable.
 }
 \description{
-Chinese summary: 在独立数据集上应用已训练的 LASSO 模型并评估预测。
+在独立数据集上应用已训练的 LASSO 模型并评估预测。
 }

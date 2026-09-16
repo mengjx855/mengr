@@ -34,9 +34,9 @@ plot_ggradar_pair(
 
 \item{proj_col}{Name of the \code{proj_col} input column.}
 
-\item{cf_name}{Display or identifier name for cf name.}
+\item{cf_name}{Display label for the first comparison series.}
 
-\item{random_name}{Display or identifier name for random name.}
+\item{random_name}{Display label for the second comparison series.}
 
 \item{colors}{Color specification for \code{colors}.}
 
@@ -44,19 +44,15 @@ plot_ggradar_pair(
 
 \item{star_radius}{Inner radius used to position the radar-chart star polygons.}
 
-\item{axis.label.size}{Numeric setting for \code{axis.label.size}.}
+\item{axis.label.size}{Text size for radar-axis labels.}
 
-\item{grid.label.size}{Numeric setting for \code{grid.label.size}.}
+\item{grid.label.size}{Text size for radar-grid labels.}
 
 \item{legend.position}{Legend position passed to \code{ggplot2::theme()}.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_ggradar_pair()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 将成对比较数据整理为 ggradar 所需格式并绘制雷达图。
+将成对比较数据整理为 ggradar 所需格式并绘制雷达图。
 }

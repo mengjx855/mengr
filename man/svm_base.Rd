@@ -42,7 +42,7 @@ svm_base(
 
 \item{kernel}{SVM kernel; supported values are shown in Usage.}
 
-\item{scale}{Logical control for \code{scale}.}
+\item{scale}{Whether to scale values as described by the selected method.}
 
 \item{cost_grid}{Candidate SVM cost values used during tuning.}
 
@@ -51,8 +51,8 @@ svm_base(
 \item{tune_boot}{Number of bootstrap resamples used during SVM tuning.}
 }
 \value{
-A result object described in the Details section.
+A list containing tuned/fitted SVM objects, predictions, ROC objects and plots, model settings, and classification metrics.
 }
 \description{
-Chinese summary: 拟合带参数搜索的基础 SVM，并返回样本预测和性能。
+拟合带参数搜索的基础 SVM，并返回样本预测和性能。
 }

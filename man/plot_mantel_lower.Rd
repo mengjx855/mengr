@@ -68,7 +68,7 @@ plot_mantel_lower(
 
 \item{r_labels}{Labels corresponding to intervals defined by \code{r_breaks}.}
 
-\item{r_size}{Numeric setting for \code{r_size}.}
+\item{r_size}{Line widths assigned to the Mantel-correlation bins.}
 
 \item{r_cut_abs}{Whether absolute r values are used when assigning line-width categories.}
 
@@ -82,9 +82,9 @@ plot_mantel_lower(
 
 \item{grid_col}{Name of the \code{grid_col} input column.}
 
-\item{grid_linewidth}{Numeric setting for \code{grid_linewidth}.}
+\item{grid_linewidth}{Line width of the correlation-matrix grid.}
 
-\item{square_size_range}{Numeric setting for \code{square_size_range}.}
+\item{square_size_range}{Two-element range controlling correlation-square sizes.}
 
 \item{spec_range}{Relative range reserved for the species-label region.}
 
@@ -96,25 +96,21 @@ plot_mantel_lower(
 
 \item{curve_n}{Number of interpolation points used for each connection path.}
 
-\item{curve_reverse}{Logical control for \code{curve_reverse}.}
+\item{curve_reverse}{Whether to reverse the curvature direction of Mantel links.}
 
 \item{node_fill}{Color specification for node fill.}
 
-\item{node_size}{Numeric setting for \code{node_size}.}
+\item{node_size}{Size of the Mantel-link anchor nodes.}
 
 \item{title}{Optional plot or result title.}
 
-\item{env_label_size}{Numeric setting for \code{env_label_size}.}
+\item{env_label_size}{Text size of environmental-variable labels.}
 
-\item{spec_label_size}{Numeric setting for \code{spec_label_size}.}
+\item{spec_label_size}{Text size of feature-set labels.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_mantel_lower()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 在环境相关矩阵下三角区域叠加 Mantel 关联曲线。
+在环境相关矩阵下三角区域叠加 Mantel 关联曲线。
 }

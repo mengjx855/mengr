@@ -11,15 +11,11 @@ roc_se_data(roc, by = 0.01, conf.level = 0.95)
 
 \item{by}{Spacing between successive specificity values used to calculate the ROC confidence band.}
 
-\item{conf.level}{Numeric setting for \code{conf.level}.}
+\item{conf.level}{Confidence level used for ROC sensitivity intervals.}
 }
 \value{
-A result object described in the Details section.
+A data frame with specificity, sensitivity, and lower and upper confidence limits.
 }
 \description{
-\code{roc_se_data()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 提取 ROC sensitivity 置信区间并整理为 ribbon 数据。
+提取 ROC sensitivity 置信区间并整理为 ribbon 数据。
 }

@@ -25,17 +25,13 @@ plot_betadisper(
 
 \item{aspect_ratio}{Panel aspect ratio passed to \code{ggplot2::theme()}.}
 
-\item{show_grid}{Logical control for \code{show_grid}.}
+\item{show_grid}{Whether to draw panel grid lines.}
 
 \item{x_text_angle}{Rotation angle, in degrees, for x-axis text.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_betadisper()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 绘制组内离散度及组间比较结果。
+绘制组内离散度及组间比较结果。
 }

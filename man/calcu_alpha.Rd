@@ -20,17 +20,13 @@ calcu_alpha(
 
 \item{tree}{Phylogenetic tree required for UniFrac distances.}
 
-\item{base}{Numeric setting for \code{base}.}
+\item{base}{Scaling constant used for relative-abundance output.}
 
 \item{value_col}{Name of the \code{value_col} input column.}
 }
 \value{
-A result object described in the Details section.
+A sample-level data frame containing the requested alpha-diversity indices.
 }
 \description{
-\code{calcu_alpha()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 计算 richness、Shannon、Simpson、Chao1、ACE 等 alpha diversity 指标。
+计算 richness、Shannon、Simpson、Chao1、ACE 等 alpha diversity 指标。
 }

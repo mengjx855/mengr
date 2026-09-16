@@ -31,17 +31,13 @@ calcu_pairwise_adonis(
 
 \item{permutations}{Number of permutations used by the significance test.}
 
-\item{add_plab}{Logical control for \code{add_plab}.}
+\item{add_plab}{Whether to add formatted significance labels.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{vegan::adonis2()}.}
 }
 \value{
-A result object described in the Details section.
+A data frame containing pairwise PERMANOVA statistics, P values, adjusted P values, and optional labels.
 }
 \description{
-\code{calcu_pairwise_adonis()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 对各组组合执行 pairwise PERMANOVA，并校正 P 值。
+对各组组合执行 pairwise PERMANOVA，并校正 P 值。
 }

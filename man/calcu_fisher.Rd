@@ -36,27 +36,27 @@ calcu_fisher(
 
 \item{y_neg_col}{Name of the \code{y_neg_col} input column.}
 
-\item{add_plab}{Logical control for \code{add_plab}.}
+\item{add_plab}{Whether to add formatted significance labels.}
 
-\item{add_padj}{Logical control for \code{add_padj}.}
+\item{add_padj}{Whether to calculate multiplicity-adjusted P values.}
 
 \item{p_adjust_method}{Multiple-testing correction method passed to \code{stats::p.adjust()}.}
 
-\item{add_enriched}{Logical control for \code{add_enriched}.}
+\item{add_enriched}{Whether to report the group enriched for each feature.}
 
 \item{enriched_by}{Column used to identify which comparison group is enriched.}
 
-\item{cutoff}{Numeric setting for \code{cutoff}.}
+\item{cutoff}{Threshold used to form clusters or significance calls, depending on the function.}
 
-\item{x_name}{Display or identifier name for x name.}
+\item{x_name}{Display label for the first group.}
 
-\item{y_name}{Display or identifier name for y name.}
+\item{y_name}{Display label for the second group.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{stats::fisher.test()}.}
 }
 \value{
-A result object described in the Details section.
+A feature-level data frame of odds ratios, confidence intervals, P values, and optional adjusted/enrichment columns.
 }
 \description{
-Chinese summary: 对每个 feature 的 2×2 计数表执行 Fisher exact test。
+对每个 feature 的 2×2 计数表执行 Fisher exact test。
 }

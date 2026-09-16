@@ -39,12 +39,8 @@ profile_filter(
 \item{min_abundance}{Minimum abundance above which a feature is considered present.}
 }
 \value{
-A result object described in the Details section.
+A filtered feature-by-sample data frame.
 }
 \description{
-\code{profile_filter()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 按总体或组内 prevalence、出现样本数和最低丰度筛选 feature。
+按总体或组内 prevalence、出现样本数和最低丰度筛选 feature。
 }

@@ -9,19 +9,15 @@ get_text_color(color, threshold = 0.5, dark = "black", light = "white")
 \arguments{
 \item{color}{Color specification for \code{color}.}
 
-\item{threshold}{Numeric setting for \code{threshold}.}
+\item{threshold}{Luminance threshold separating dark and light text.}
 
 \item{dark}{Text color returned for a sufficiently light background.}
 
 \item{light}{Text color returned for a sufficiently dark background.}
 }
 \value{
-A result object described in the Details section.
+A character vector choosing \code{dark} or \code{light} for each input color.
 }
 \description{
-\code{get_text_color()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 根据背景色亮度选择深色或浅色文字，提高文字对比度。
+根据背景色亮度选择深色或浅色文字，提高文字对比度。
 }

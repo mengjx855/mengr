@@ -39,36 +39,24 @@ in columns.}
 \item{cellwidth, cellheight}{Cell dimensions passed to
 \code{ComplexHeatmap::pheatmap()}.}
 
-\item{cellheight}{Numeric setting for \code{cellheight}.}
-
 \item{cluster_rows, cluster_cols}{Whether to cluster rows or columns; an
 \code{hclust} object is also accepted by the underlying function.}
 
-\item{cluster_cols}{Logical value or clustering object controlling column clustering in the heatmap.}
-
 \item{treeheight_row, treeheight_col}{Dendrogram sizes.}
-
-\item{treeheight_col}{Name of the \code{treeheight_col} input column.}
 
 \item{show_rownames, show_colnames}{Whether to show matrix names.}
 
-\item{show_colnames}{Logical control for \code{show_colnames}.}
-
 \item{row_annotation, col_annotation}{Optional data frames whose \code{name} column
 contains row or column names.}
-
-\item{col_annotation}{Optional data frame supplying annotations for heatmap columns.}
 
 \item{annotation_legend}{Whether to show annotation legends.}
 
 \item{show_row_anno, show_col_anno}{Annotation columns to retain. \code{NULL} keeps
 all columns other than \code{name}.}
 
-\item{show_col_anno}{Logical control for \code{show_col_anno}.}
-
 \item{annotation_colors}{Optional named list of annotation color vectors.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{ComplexHeatmap::pheatmap()}.}
 }
 \value{
 A ComplexHeatmap heatmap object, invisibly drawn according to the

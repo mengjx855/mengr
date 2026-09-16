@@ -50,31 +50,27 @@ plot_alpha(
 
 \item{aspect_ratio}{Panel aspect ratio passed to \code{ggplot2::theme()}.}
 
-\item{show_grid}{Logical control for \code{show_grid}.}
+\item{show_grid}{Whether to draw panel grid lines.}
 
-\item{show_jitter}{Logical control for \code{show_jitter}.}
+\item{show_jitter}{Whether to overlay jittered sample points.}
 
-\item{rotate_x_text}{Whether to enable the rotate x text behavior.}
+\item{rotate_x_text}{Whether to rotate x-axis text by 45 degrees.}
 
 \item{coord_flip}{Whether to exchange the x and y axes with \code{ggplot2::coord_flip()}.}
 
-\item{show_diff}{Logical control for \code{show_diff}.}
+\item{show_diff}{Whether to add pairwise significance comparisons.}
 
 \item{method}{Analysis or summary method; supported values are shown in the usage.}
 
 \item{sort_value}{Optional ascending or descending ordering of plotted values.}
 
-\item{add_ref_line}{Logical control for \code{add_ref_line}.}
+\item{add_ref_line}{Whether to draw the reference line specified by \code{ref_line}.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to the boxplot layer or significance test.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_alpha()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 绘制 alpha diversity 分组图，并支持排序、显著性及参考线。
+绘制 alpha diversity 分组图，并支持排序、显著性及参考线。
 }

@@ -10,8 +10,8 @@ calcu_rankabund(profile)
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 }
 \value{
-A result object described in the Details section.
+A data frame containing sample-wise abundance ranks, abundances, and log abundances.
 }
 \description{
-Chinese summary: 计算每个样本的 rank-abundance 数据及 log abundance。
+计算每个样本的 rank-abundance 数据及 log abundance。
 }

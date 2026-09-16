@@ -21,8 +21,8 @@ plot_specaccum_by_depth(
 \item{richness_col}{Name of the \code{richness_col} input column.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-Chinese summary: 绘制测序深度与观测 feature 数量的关系。
+绘制测序深度与观测 feature 数量的关系。
 }

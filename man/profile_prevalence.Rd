@@ -30,15 +30,11 @@ profile_prevalence(
 
 \item{count}{Whether prevalence is returned as sample counts instead of proportions.}
 
-\item{base}{Numeric setting for \code{base}.}
+\item{base}{Scaling constant used for relative-abundance output.}
 }
 \value{
-A result object described in the Details section.
+A feature-level data frame of occurrence counts or prevalence, optionally stratified by group.
 }
 \description{
-\code{profile_prevalence()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 计算 feature 在总体或各组中的出现样本数或 prevalence。
+计算 feature 在总体或各组中的出现样本数或 prevalence。
 }

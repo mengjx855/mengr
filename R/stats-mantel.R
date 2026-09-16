@@ -1,7 +1,8 @@
-#### Jin-Xin Meng, 20260606, 20260607, 0.1.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260606, 20260916 ####
 
 # 20260606: add calcu_mantel()
 # 20260607: add make_curve_path(), plot_mantel_lower(), plot_mantel_upper(),
+# 20260916: standardize documentation and rename internal plotting data frames to the `*_df` style without changing plot attributes.
 
 #### calcu_mantel ####
 # 根据 feature 分组计算 Mantel test
@@ -18,10 +19,8 @@
 
 #' Calcu Mantel utility
 #'
-#' `calcu_mantel()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 在多个 profile 或环境变量之间批量执行 Mantel test。
+#' 在多个 profile 或环境变量之间批量执行 Mantel test。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param metadata A metadata or annotation data frame.
@@ -31,12 +30,12 @@
 #' @param sample_col Name of the sample-identifier column.
 #' @param category_keep Optional environmental categories retained for Mantel tests.
 #' @param trans_ra Whether abundances are converted to relative abundance before analysis.
-#' @param base Numeric setting for `base`.
-#' @param remove_empty Logical control for `remove_empty`.
+#' @param base Scaling constant used for relative-abundance output.
+#' @param remove_empty Whether to remove samples whose total abundance is zero.
 #' @param na_fill Value used to replace missing observations before analysis.
-#' @param parallel Whether to enable the parallel behavior.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param parallel Whether `linkET::mantel_test()` may use parallel execution.
+#' @param ... Additional arguments passed to `linkET::mantel_test()`.
+#' @return A Mantel-test data frame with aligned inputs and feature selections stored as attributes.
 #' @export
 calcu_mantel <- function(
   profile, metadata, envs,
@@ -214,10 +213,8 @@ calcu_mantel <- function(
 
 #' Make Curve Path utility
 #'
-#' `make_curve_path()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 为 Mantel 图中的节点连线生成平滑曲线路径坐标。
+#' 为 Mantel 图中的节点连线生成平滑曲线路径坐标。
 #'
 #' @param data An input data frame or compatible object.
 #' @param x Primary vector or object supplied to the utility.
@@ -225,11 +222,11 @@ calcu_mantel <- function(
 #' @param xend Ending x coordinate of the generated connection path.
 #' @param yend Ending y coordinate of the generated connection path.
 #' @param to Target taxonomy rank or identifier type produced by the conversion.
-#' @param to_levels Numeric setting for `to_levels`.
+#' @param to_levels Ordering of target-node levels used to assign curve directions.
 #' @param bend Signed curvature of the generated connection path.
 #' @param n Requested number of values, features, or results.
-#' @param reverse Logical control for `reverse`.
-#' @return A result object described in the Details section.
+#' @param reverse Whether to reverse the selected color sequence.
+#' @return A data frame of interpolated x/y coordinates and curve identifiers.
 #' @export
 make_curve_path <- function(
   data, x = "spec_x", y = "spec_y", xend = "anchor_x", yend = "anchor_y",
@@ -328,10 +325,8 @@ make_curve_path <- function(
 
 #' Plot Mantel Lower utility
 #'
-#' `plot_mantel_lower()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 在环境相关矩阵下三角区域叠加 Mantel 关联曲线。
+#' 在环境相关矩阵下三角区域叠加 Mantel 关联曲线。
 #'
 #' @param test Statistical-test result table used for plotting.
 #' @param envs Environmental or host-variable table used in Mantel analyses.
@@ -346,27 +341,27 @@ make_curve_path <- function(
 #' @param p_filter Maximum P value retained for plotting or downstream analysis.
 #' @param r_breaks Numeric breakpoints used to categorize correlation or Mantel r.
 #' @param r_labels Labels corresponding to intervals defined by `r_breaks`.
-#' @param r_size Numeric setting for `r_size`.
+#' @param r_size Line widths assigned to the Mantel-correlation bins.
 #' @param r_cut_abs Whether absolute r values are used when assigning line-width categories.
 #' @param p_breaks Numeric breakpoints used to categorize P values.
 #' @param p_labels Labels corresponding to intervals defined by `p_breaks`.
 #' @param p_color Color specification for `p_color`.
 #' @param fill_color Color specification for `fill_color`.
 #' @param grid_col Name of the `grid_col` input column.
-#' @param grid_linewidth Numeric setting for `grid_linewidth`.
-#' @param square_size_range Numeric setting for `square_size_range`.
+#' @param grid_linewidth Line width of the correlation-matrix grid.
+#' @param square_size_range Two-element range controlling correlation-square sizes.
 #' @param spec_range Relative range reserved for the species-label region.
 #' @param spec_offset Offset between species labels and the heatmap boundary.
 #' @param spec_hjust Horizontal justification applied to species-side labels.
 #' @param curve_bend Signed curvature used for Mantel connection paths.
 #' @param curve_n Number of interpolation points used for each connection path.
-#' @param curve_reverse Logical control for `curve_reverse`.
+#' @param curve_reverse Whether to reverse the curvature direction of Mantel links.
 #' @param node_fill Color specification for node fill.
-#' @param node_size Numeric setting for `node_size`.
+#' @param node_size Size of the Mantel-link anchor nodes.
 #' @param title Optional plot or result title.
-#' @param env_label_size Numeric setting for `env_label_size`.
-#' @param spec_label_size Numeric setting for `spec_label_size`.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param env_label_size Text size of environmental-variable labels.
+#' @param spec_label_size Text size of feature-set labels.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_mantel_lower <- function(
   test, envs, sample_col = "sample", env_cols = NULL,
@@ -477,24 +472,24 @@ plot_mantel_lower <- function(
 
   cor_long_df <- as.data.frame(as.table(cor_mat), stringsAsFactors = FALSE)
 
-  cor_data <- data.frame(
+  cor_df <- data.frame(
     env_y = cor_long_df$Var1,
     env_x = cor_long_df$Var2,
     cor = cor_long_df$Freq,
     check.names = FALSE
   )
 
-  cor_data$row_id <- match(cor_data$env_y, env_names)
-  cor_data$col_id <- match(cor_data$env_x, env_names)
+  cor_df$row_id <- match(cor_df$env_y, env_names)
+  cor_df$col_id <- match(cor_df$env_x, env_names)
 
   ## lower triangle，不画对角线
-  cor_data <- cor_data[
-    cor_data$col_id < cor_data$row_id, ,
+  cor_df <- cor_df[
+    cor_df$col_id < cor_df$row_id, ,
     drop = FALSE
   ]
 
-  cor_data$x <- n_env - cor_data$row_id + 1
-  cor_data$y <- cor_data$col_id
+  cor_df$x <- n_env - cor_df$row_id + 1
+  cor_df$y <- cor_df$col_id
 
   ## 3. 整理 Mantel 结果
   plot_df <- data.frame(
@@ -569,7 +564,7 @@ plot_mantel_lower <- function(
   spec_x_max <- k - spec_y_max
   spec_x_min <- k - spec_y_min
 
-  spec_data <- data.frame(
+  spec_df <- data.frame(
     spec = spec_names,
     spec_x = seq(spec_x_max, spec_x_min, length.out = n_spec),
     spec_y = seq(spec_y_max, spec_y_min, length.out = n_spec),
@@ -578,7 +573,7 @@ plot_mantel_lower <- function(
   )
 
   ## 6. 环境变量对角线锚点
-  anchor_data <- data.frame(
+  anchor_df <- data.frame(
     env = env_names,
     anchor_x = seq_len(n_env),
     anchor_y = n_env - seq_len(n_env) + 1,
@@ -588,8 +583,8 @@ plot_mantel_lower <- function(
 
   ## 7. 生成 Mantel 曲线路径
   curve_df <- plot_df |>
-    dplyr::left_join(spec_data, by = "spec") |>
-    dplyr::left_join(anchor_data, by = "env") |>
+    dplyr::left_join(spec_df, by = "spec") |>
+    dplyr::left_join(anchor_df, by = "env") |>
     make_curve_path(
       x = "spec_x",
       y = "spec_y",
@@ -618,10 +613,10 @@ plot_mantel_lower <- function(
   )
 
   ## 9. 坐标范围
-  x_min <- min(c(0, spec_data$spec_x - 1.8), na.rm = TRUE)
-  x_max <- max(c(n_env + 0.5, spec_data$spec_x + 3), na.rm = TRUE)
-  y_min <- min(c(0, spec_data$spec_y - 1), na.rm = TRUE)
-  y_max <- max(c(n_env + 0.5, spec_data$spec_y + 0.5), na.rm = TRUE)
+  x_min <- min(c(0, spec_df$spec_x - 1.8), na.rm = TRUE)
+  x_max <- max(c(n_env + 0.5, spec_df$spec_x + 3), na.rm = TRUE)
+  y_min <- min(c(0, spec_df$spec_y - 1), na.rm = TRUE)
+  y_max <- max(c(n_env + 0.5, spec_df$spec_y + 0.5), na.rm = TRUE)
 
   ## 10. 绘图
   p <- ggplot2::ggplot() +
@@ -642,31 +637,31 @@ plot_mantel_lower <- function(
     ) +
     ## 固定外框格子
     ggplot2::geom_tile(
-      data = cor_data, ggplot2::aes(x = x, y = y),
+      data = cor_df, ggplot2::aes(x = x, y = y),
       width = 1, height = 1, fill = "white", colour = grid_col,
       linewidth = grid_linewidth
     ) +
     ## 对角线锚点
     ggplot2::geom_point(
-      data = anchor_data, ggplot2::aes(x = anchor_x, y = anchor_y),
+      data = anchor_df, ggplot2::aes(x = anchor_x, y = anchor_y),
       shape = 21, fill = node_fill, colour = "black",
       size = node_size, stroke = 0.35
     ) +
     ## spec 分类节点
     ggplot2::geom_point(
-      data = spec_data, ggplot2::aes(x = spec_x, y = spec_y),
+      data = spec_df, ggplot2::aes(x = spec_x, y = spec_y),
       shape = 21, fill = node_fill, colour = "black",
       size = node_size, stroke = 0.35
     ) +
     ## spec 标签
     ggplot2::geom_text(
-      data = spec_data,
+      data = spec_df,
       ggplot2::aes(x = spec_x, y = spec_y, label = spec, hjust = spec_hjust),
       nudge_x = 0.5, size = spec_label_size
     ) +
     ## 内部相关方块
     ggplot2::geom_point(
-      data = cor_data,
+      data = cor_df,
       ggplot2::aes(
         x = x, y = y, fill = cor, size = abs(cor)
       ),
@@ -712,10 +707,10 @@ plot_mantel_lower <- function(
       )
     )
 
-  attr(p, "cor_data") <- cor_data
+  attr(p, "cor_data") <- cor_df
   attr(p, "plot_df") <- plot_df
-  attr(p, "spec_data") <- spec_data
-  attr(p, "anchor_data") <- anchor_data
+  attr(p, "spec_data") <- spec_df
+  attr(p, "anchor_data") <- anchor_df
   attr(p, "curve_df") <- curve_df
 
   return(p)
@@ -736,10 +731,8 @@ plot_mantel_lower <- function(
 
 #' Plot Mantel Upper utility
 #'
-#' `plot_mantel_upper()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 在环境相关矩阵上三角区域叠加 Mantel 关联曲线。
+#' 在环境相关矩阵上三角区域叠加 Mantel 关联曲线。
 #'
 #' @param test Statistical-test result table used for plotting.
 #' @param envs Environmental or host-variable table used in Mantel analyses.
@@ -754,27 +747,27 @@ plot_mantel_lower <- function(
 #' @param p_filter Maximum P value retained for plotting or downstream analysis.
 #' @param r_breaks Numeric breakpoints used to categorize correlation or Mantel r.
 #' @param r_labels Labels corresponding to intervals defined by `r_breaks`.
-#' @param r_size Numeric setting for `r_size`.
+#' @param r_size Line widths assigned to the Mantel-correlation bins.
 #' @param r_cut_abs Whether absolute r values are used when assigning line-width categories.
 #' @param p_breaks Numeric breakpoints used to categorize P values.
 #' @param p_labels Labels corresponding to intervals defined by `p_breaks`.
 #' @param p_color Color specification for `p_color`.
 #' @param fill_color Color specification for `fill_color`.
 #' @param grid_col Name of the `grid_col` input column.
-#' @param grid_linewidth Numeric setting for `grid_linewidth`.
-#' @param square_size_range Numeric setting for `square_size_range`.
+#' @param grid_linewidth Line width of the correlation-matrix grid.
+#' @param square_size_range Two-element range controlling correlation-square sizes.
 #' @param spec_range Relative range reserved for the species-label region.
 #' @param spec_offset Offset between species labels and the heatmap boundary.
 #' @param spec_hjust Horizontal justification applied to species-side labels.
 #' @param curve_bend Signed curvature used for Mantel connection paths.
 #' @param curve_n Number of interpolation points used for each connection path.
-#' @param curve_reverse Logical control for `curve_reverse`.
+#' @param curve_reverse Whether to reverse the curvature direction of Mantel links.
 #' @param node_fill Color specification for node fill.
-#' @param node_size Numeric setting for `node_size`.
+#' @param node_size Size of the Mantel-link anchor nodes.
 #' @param title Optional plot or result title.
-#' @param env_label_size Numeric setting for `env_label_size`.
-#' @param spec_label_size Numeric setting for `spec_label_size`.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param env_label_size Text size of environmental-variable labels.
+#' @param spec_label_size Text size of feature-set labels.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_mantel_upper <- function(
   test, envs, sample_col = "sample", env_cols = NULL,
@@ -885,24 +878,24 @@ plot_mantel_upper <- function(
 
   cor_long_df <- as.data.frame(as.table(cor_mat), stringsAsFactors = FALSE)
 
-  cor_data <- data.frame(
+  cor_df <- data.frame(
     env_y = cor_long_df$Var1,
     env_x = cor_long_df$Var2,
     cor = cor_long_df$Freq,
     check.names = FALSE
   )
 
-  cor_data$row_id <- match(cor_data$env_y, env_names)
-  cor_data$col_id <- match(cor_data$env_x, env_names)
+  cor_df$row_id <- match(cor_df$env_y, env_names)
+  cor_df$col_id <- match(cor_df$env_x, env_names)
 
   ## upper triangle，不画对角线
-  cor_data <- cor_data[
-    cor_data$col_id > cor_data$row_id, ,
+  cor_df <- cor_df[
+    cor_df$col_id > cor_df$row_id, ,
     drop = FALSE
   ]
 
-  cor_data$x <- cor_data$col_id
-  cor_data$y <- n_env - cor_data$row_id + 1
+  cor_df$x <- cor_df$col_id
+  cor_df$y <- n_env - cor_df$row_id + 1
 
   ## 3. 整理 Mantel 结果
   plot_df <- data.frame(
@@ -977,7 +970,7 @@ plot_mantel_upper <- function(
   spec_x_min <- k - spec_y_max
   spec_x_max <- k - spec_y_min
 
-  spec_data <- data.frame(
+  spec_df <- data.frame(
     spec = spec_names,
     spec_x = seq(spec_x_min, spec_x_max, length.out = n_spec),
     spec_y = seq(spec_y_max, spec_y_min, length.out = n_spec),
@@ -986,7 +979,7 @@ plot_mantel_upper <- function(
   )
 
   ## 6. 环境变量对角线锚点
-  anchor_data <- data.frame(
+  anchor_df <- data.frame(
     env = env_names,
     anchor_x = seq_len(n_env),
     anchor_y = n_env - seq_len(n_env) + 1,
@@ -996,8 +989,8 @@ plot_mantel_upper <- function(
 
   ## 7. 生成 Mantel 曲线路径
   curve_df <- plot_df |>
-    dplyr::left_join(spec_data, by = "spec") |>
-    dplyr::left_join(anchor_data, by = "env") |>
+    dplyr::left_join(spec_df, by = "spec") |>
+    dplyr::left_join(anchor_df, by = "env") |>
     make_curve_path(
       x = "spec_x",
       y = "spec_y",
@@ -1026,10 +1019,10 @@ plot_mantel_upper <- function(
   )
 
   ## 9. 坐标范围
-  x_min <- min(c(0.2, spec_data$spec_x - 1.8), na.rm = TRUE)
-  x_max <- max(c(n_env + 1.2, spec_data$spec_x + 1), na.rm = TRUE)
-  y_min <- min(c(0.4, spec_data$spec_y - 1), na.rm = TRUE)
-  y_max <- max(c(n_env + 1.5, spec_data$spec_y + 0.5), na.rm = TRUE)
+  x_min <- min(c(0.2, spec_df$spec_x - 1.8), na.rm = TRUE)
+  x_max <- max(c(n_env + 1.2, spec_df$spec_x + 1), na.rm = TRUE)
+  y_min <- min(c(0.4, spec_df$spec_y - 1), na.rm = TRUE)
+  y_max <- max(c(n_env + 1.5, spec_df$spec_y + 0.5), na.rm = TRUE)
 
   ## 10. 绘图
   p <- ggplot2::ggplot() +
@@ -1063,7 +1056,7 @@ plot_mantel_upper <- function(
 
     ## 固定外框格子
     ggplot2::geom_tile(
-      data = cor_data,
+      data = cor_df,
       ggplot2::aes(x = x, y = y),
       width = 1,
       height = 1,
@@ -1074,7 +1067,7 @@ plot_mantel_upper <- function(
 
     ## 对角线锚点
     ggplot2::geom_point(
-      data = anchor_data,
+      data = anchor_df,
       ggplot2::aes(x = anchor_x, y = anchor_y),
       shape = 21,
       fill = node_fill,
@@ -1085,7 +1078,7 @@ plot_mantel_upper <- function(
 
     ## spec 分类节点
     ggplot2::geom_point(
-      data = spec_data,
+      data = spec_df,
       ggplot2::aes(x = spec_x, y = spec_y),
       shape = 21,
       fill = node_fill,
@@ -1096,7 +1089,7 @@ plot_mantel_upper <- function(
 
     ## spec 标签
     ggplot2::geom_text(
-      data = spec_data,
+      data = spec_df,
       ggplot2::aes(
         x = spec_x,
         y = spec_y,
@@ -1109,7 +1102,7 @@ plot_mantel_upper <- function(
 
     ## 内部相关方块
     ggplot2::geom_point(
-      data = cor_data,
+      data = cor_df,
       ggplot2::aes(
         x = x,
         y = y,
@@ -1180,10 +1173,10 @@ plot_mantel_upper <- function(
       )
     )
 
-  attr(p, "cor_data") <- cor_data
+  attr(p, "cor_data") <- cor_df
   attr(p, "plot_df") <- plot_df
-  attr(p, "spec_data") <- spec_data
-  attr(p, "anchor_data") <- anchor_data
+  attr(p, "spec_data") <- spec_df
+  attr(p, "anchor_data") <- anchor_df
   attr(p, "curve_df") <- curve_df
 
   return(p)

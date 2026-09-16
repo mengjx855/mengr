@@ -34,18 +34,14 @@ calcu_pairwise_anosim(
 
 \item{permutations}{Number of permutations used by the significance test.}
 
-\item{add_plab}{Logical control for \code{add_plab}.}
+\item{add_plab}{Whether to add formatted significance labels.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{vegan::anosim()}.}
 }
 \value{
-A result object described in the Details section.
+A data frame containing each group comparison, ANOSIM statistic, P value, adjusted P value, and optional significance label.
 #importFrom rlang .data
 }
 \description{
-\code{calcu_pairwise_anosim()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 对各分组组合执行 pairwise ANOSIM。
+对各分组组合执行 pairwise ANOSIM。
 }

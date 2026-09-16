@@ -16,8 +16,8 @@ rc2tpm(profile, gene_length, feature_col = "name", length_col = "length")
 \item{length_col}{Name of the \code{length_col} input column.}
 }
 \value{
-A result object described in the Details section.
+A feature-by-sample numeric matrix of transcripts per million.
 }
 \description{
-Chinese summary: 根据 feature 长度把 read counts 转换为 TPM。
+根据 feature 长度把 read counts 转换为 TPM。
 }

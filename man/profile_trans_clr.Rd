@@ -21,12 +21,8 @@ profile_trans_clr(
 \item{digits}{Optional number of decimal digits retained.}
 }
 \value{
-A result object described in the Details section.
+A feature-by-sample data frame after sample-wise CLR transformation.
 }
 \description{
-\code{profile_trans_clr()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 对每个样本执行 CLR 转换，保持 feature × sample 方向。
+对每个样本执行 CLR 转换，保持 feature × sample 方向。
 }

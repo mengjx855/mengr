@@ -30,21 +30,17 @@ make_curve_path(
 
 \item{to}{Target taxonomy rank or identifier type produced by the conversion.}
 
-\item{to_levels}{Numeric setting for \code{to_levels}.}
+\item{to_levels}{Ordering of target-node levels used to assign curve directions.}
 
 \item{bend}{Signed curvature of the generated connection path.}
 
 \item{n}{Requested number of values, features, or results.}
 
-\item{reverse}{Logical control for \code{reverse}.}
+\item{reverse}{Whether to reverse the selected color sequence.}
 }
 \value{
-A result object described in the Details section.
+A data frame of interpolated x/y coordinates and curve identifiers.
 }
 \description{
-\code{make_curve_path()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 为 Mantel 图中的节点连线生成平滑曲线路径坐标。
+为 Mantel 图中的节点连线生成平滑曲线路径坐标。
 }

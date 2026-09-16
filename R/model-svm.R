@@ -1,4 +1,8 @@
-#### Jin-Xin Meng, 20241024, 20260820, v0.2.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241024, 20260916 ####
+
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
+
+#### .prepare_svm_data ####
 
 .prepare_svm_data <- function(
   profile, group, sample_col = "sample", group_col = "group",
@@ -20,6 +24,8 @@
     profile_df = aligned$profile_df
   )
 }
+
+#### .fit_tuned_svm ####
 
 .fit_tuned_svm <- function(
   x_mat, y, kernel, scale, cost_grid, gamma_grid,
@@ -49,6 +55,8 @@
   )
 }
 
+#### .svm_prediction_df ####
+
 .svm_prediction_df <- function(model_obj, x_mat, sample_vec, positive_class) {
   class_vec <- stats::predict(model_obj, x_mat, probability = TRUE)
   prob_mat <- attr(class_vec, "probabilities")
@@ -62,6 +70,8 @@
     check.names = FALSE
   )
 }
+
+#### .binary_metrics ####
 
 .binary_metrics <- function(actual, predicted, positive_class) {
   level_vec <- levels(actual)
@@ -80,9 +90,11 @@
   )
 }
 
+#### svm_base ####
+
 #' Repeated holdout validation for a binary SVM
 #'
-#' Chinese summary: 拟合带参数搜索的基础 SVM，并返回样本预测和性能。
+#' 拟合带参数搜索的基础 SVM，并返回样本预测和性能。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -94,11 +106,11 @@
 #' @param seed Optional random seed for reproducibility.
 #' @param train_prop Proportion of matched samples assigned to the training split.
 #' @param kernel SVM kernel; supported values are shown in Usage.
-#' @param scale Logical control for `scale`.
+#' @param scale Whether to scale values as described by the selected method.
 #' @param cost_grid Candidate SVM cost values used during tuning.
 #' @param gamma_grid Candidate SVM gamma values used during tuning.
 #' @param tune_boot Number of bootstrap resamples used during SVM tuning.
-#' @return A result object described in the Details section.
+#' @return A list containing tuned/fitted SVM objects, predictions, ROC objects and plots, model settings, and classification metrics.
 #' @export
 svm_base <- function(
   profile, group, sample_col = "sample", group_col = "group",
@@ -169,9 +181,11 @@ svm_base <- function(
   out
 }
 
+#### svm_kfold ####
+
 #' K-fold cross-validated predictions for a binary SVM
 #'
-#' Chinese summary: 执行分层 SVM k-fold cross-validation。
+#' 执行分层 SVM k-fold cross-validation。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -182,11 +196,11 @@ svm_base <- function(
 #' @param positive_class Outcome level treated as the positive class for binary metrics.
 #' @param seed Optional random seed for reproducibility.
 #' @param kernel SVM kernel; supported values are shown in Usage.
-#' @param scale Logical control for `scale`.
+#' @param scale Whether to scale values as described by the selected method.
 #' @param cost_grid Candidate SVM cost values used during tuning.
 #' @param gamma_grid Candidate SVM gamma values used during tuning.
 #' @param tune_boot Number of bootstrap resamples used during SVM tuning.
-#' @return A result object described in the Details section.
+#' @return A data frame of out-of-fold predictions, decision values, and fold identifiers.
 #' @export
 svm_kfold <- function(
   profile, group, k = 5, sample_col = "sample", group_col = "group",
@@ -233,9 +247,11 @@ svm_kfold <- function(
   dplyr::bind_rows(result_list)
 }
 
+#### svm_next_validate ####
+
 #' Train an SVM in one dataset and validate it in another
 #'
-#' Chinese summary: 在训练集调参拟合 SVM，并在独立数据中验证。
+#' 在训练集调参拟合 SVM，并在独立数据中验证。
 #'
 #' @param profile_x Feature-by-sample profile used for model training or the first data space.
 #' @param profile_y Feature-by-sample profile used for validation or the second data space.
@@ -247,11 +263,11 @@ svm_kfold <- function(
 #' @param positive_class Outcome level treated as the positive class for binary metrics.
 #' @param seed Optional random seed for reproducibility.
 #' @param kernel SVM kernel; supported values are shown in Usage.
-#' @param scale Logical control for `scale`.
+#' @param scale Whether to scale values as described by the selected method.
 #' @param cost_grid Candidate SVM cost values used during tuning.
 #' @param gamma_grid Candidate SVM gamma values used during tuning.
 #' @param tune_boot Number of bootstrap resamples used during SVM tuning.
-#' @return A result object described in the Details section.
+#' @return A list containing tuned/fitted SVM objects, validation predictions, ROC results, shared features, and classification metrics.
 #' @export
 svm_next_validate <- function(
   profile_x, profile_y, group_x, group_y,

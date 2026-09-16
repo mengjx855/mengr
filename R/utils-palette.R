@@ -1,10 +1,13 @@
-#### Jin-Xin Meng, mengjx855@163.com, 20240304, 20260407, v.2.2.1 ####
-# 20250418: update function
-# 20250727: update function
-# 20260407: add some palette
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20240304, 20260916 ####
+
+# 20250418: update function.
+# 20250727: update function.
+# 20260407: add some palette.
+# 20260905: add some new continuous palette.
+# 20260916: integrate additional gradients into `palc()`, remove top-level package attachment, and standardize documentation.
 
 
-#### pal_sets ####
+#### palette data ####
 .pal_sets <- list(
   npg = c(
     "#e64b35", "#4dbbd5", "#00a087", "#3c5488", "#f39b7f",
@@ -177,20 +180,19 @@
 # colors <- c('#9DB8D7','#F9C78E','#EFB1B2','#B6D7D5','#ACCB9D',
 #             '#F5E19A','#D1B2C8','#FFC9CF','#C9B3A7','#DED8D6')
 
-#### paette_discrete ####
+#### pald ####
 # name: 预设的颜色集, n: 输出颜色的数量, 不指定参数默认输出颜色集的名称
 #' Pald utility
 #'
-#' `pald()` provides a reusable mengR workflow with input validation and standardized output.
 #'
-#' Chinese summary: 按名称取得离散配色，可指定数量、反转顺序或输出可复制文本。
+#' 按名称取得离散配色，可指定数量、反转顺序或输出可复制文本。
 #'
-#' @param name Display or identifier name for name.
-#' @param reverse Logical control for `reverse`.
+#' @param name Name of a discrete palette; `NULL` lists available palettes.
+#' @param reverse Whether to reverse the selected color sequence.
 #' @param n Requested number of values, features, or results.
 #' @param paste Whether palette colors are returned as copy-ready quoted text.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments used by the selected discrete-palette provider.
+#' @return A character vector of discrete colors, or a copyable `c(...)` string when `paste = TRUE`.
 #' @export
 pald <- function(name = NULL, reverse = FALSE, n = NULL, paste = FALSE, ...) {
   if (is.null(name) & is.null(n)) {
@@ -222,17 +224,15 @@ pald <- function(name = NULL, reverse = FALSE, n = NULL, paste = FALSE, ...) {
   }
 }
 
-#### paette_discrete_show ####
+#### pald_show ####
 #' Pald Show utility
 #'
-#' `pald_show()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 预览一个离散调色板，或列出可用离散调色板名称。
+#' 预览一个离散调色板，或列出可用离散调色板名称。
 #'
-#' @param name Display or identifier name for name.
+#' @param name Name of a discrete palette; `NULL` lists available palettes.
 #' @param n Requested number of values, features, or results.
-#' @param ... Additional arguments passed to the underlying function.
+#' @param ... Additional arguments forwarded to `pald()`.
 #' @return A palette preview or a character summary of available palettes.
 #' @export
 pald_show <- function(name = NULL, n = NULL, ...) {
@@ -248,33 +248,33 @@ pald_show <- function(name = NULL, n = NULL, ...) {
   }
 }
 
-#### palette_continuous ####
+#### palc ####
 # palc
 # name: 预设的颜色集
 # n: 输出颜色的数量
 # 不指定参数默认输出颜色集的名称
 #' Palc utility
 #'
-#' `palc()` provides a reusable mengR workflow with input validation and standardized output.
 #'
-#' Chinese summary: 根据预设名称生成指定数量的连续渐变颜色。
+#' 根据预设名称生成指定数量的连续渐变颜色。
 #'
-#' @param name Display or identifier name for name.
+#' @param name Name of a continuous palette; `NULL` lists available palettes.
 #' @param n Requested number of values, features, or results.
 #' @param paste Whether palette colors are returned as copy-ready quoted text.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments passed to `grDevices::colorRampPalette()`.
+#' @return A character vector of interpolated colors, or a copyable `c(...)` string when `paste = TRUE`.
 #' @export
 palc <- function(name = NULL, n = NULL, paste = FALSE, ...) {
   palette_names <- c(
     "hue", "YeBr", "BlWhRe", "BrWhCy", "YeWhBl", "ReWhBl", "ReYeBl",
     "ReWhGr", "Rainbow1", "Rainbow2", "Rainbow3", "PiWhCy",
-    "Rainbow4", "Rainbow5", "Spectral", "Spectral-light"
+    "Rainbow4", "Rainbow5", "Spectral", "Spectral-light",
+    names(.palc_additional_sets)
   )
 
   if (is.null(name) & is.null(n)) {
     return(paste0(
-      "😊 Palette name as following: ",
+      "\U0001f60a Palette name as following: ",
       paste(palette_names, collapse = ", ")
     ))
   }
@@ -377,21 +377,22 @@ palc <- function(name = NULL, n = NULL, paste = FALSE, ...) {
       "#ABDDA4", "#66C2A5", "#3288BD"
     ))(n)
   }
+  if (name %in% names(.palc_additional_sets)) {
+    x <- grDevices::colorRampPalette(.palc_additional_sets[[name]])(n)
+  }
 
   return(x)
 }
 
-#### palette_continuous_show ####
+#### palc_show ####
 #' Palc Show utility
 #'
-#' `palc_show()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 预览指定的连续调色板。
+#' 预览指定的连续调色板。
 #'
-#' @param name Display or identifier name for name.
+#' @param name Name of a continuous palette.
 #' @param n Requested number of values, features, or results.
-#' @param ... Additional arguments passed to the underlying function.
+#' @param ... Additional arguments forwarded to `palc()`.
 #' @return A palette preview or a character summary of available palettes.
 #' @export
 palc_show <- function(name = NULL, n = 2, ...) {
@@ -400,3 +401,40 @@ palc_show <- function(name = NULL, n = 2, ...) {
     return(scales::show_col(color_vec))
   }
 }
+
+
+# 新增连续渐变色。保存锚点而不是在 source 时创建多个顶层函数。
+.palc_additional_sets <- list(
+  rubl_1 = c("#7A4723", "#D9C7B8", "#B4E3EF", "#24A8D8"),
+  rbgs_1 = c("#A8154C", "#F9C9B1", "#B7E0C8", "#36B17F"),
+  rubl_2 = c("#222222", "#C4C4C4", "#FFF1CC", "#FFB017"),
+  rbgs_2 = c("#1F4E79", "#A6C2DA", "#FFE5BC", "#FF9A36"),
+  rubl_3 = c("#991A1A", "#E5C3C3", "#C7D9BC", "#678A5C"),
+  rbgs_3 = c("#560FB8", "#C9A4ED", "#FFE3B0", "#FFA02B"),
+  rubl_4 = c("#0F5F83", "#9DD3E7", "#F7BABA", "#EE6464"),
+  rbgs_4 = c("#470C7A", "#B087CF", "#D3EAA2", "#72C136"),
+  rubl_5 = c("#99281B", "#D9C4BB", "#B3D2CB", "#529890"),
+  rbgs_5 = c("#097C8E", "#97C9CC", "#FFE3BC", "#FFA52F"),
+  rubl_6 = c("#5F1563", "#D4B1D6", "#E8F2C9", "#83C647"),
+  rbgs_6 = c("#103B73", "#A1B9D8", "#FFE2B0", "#FF5C22"),
+  rubl_7 = c("#07613A", "#88B29A", "#F7B4BB", "#D93A56"),
+  rbgs_7 = c("#0C3572", "#859CC0", "#FFE1B1", "#FF5B2B"),
+  rubl_8 = c("#661F30", "#C3A8A8", "#B2E1D0", "#3B9970"),
+  rbgs_8 = c("#550EA7", "#C9A7EC", "#FFE4A7", "#FFAB00"),
+  rubl_9 = c("#7A4722", "#E2D2C2", "#A3E0EF", "#22A7D9"),
+  rbgs_9 = c("#A7144B", "#F8C8B0", "#70C8B1", "#35B07E"),
+  rubl_10 = c("#212121", "#C3C3C3", "#FFF0CB", "#FFAF16"),
+  rbgs_10 = c("#1E4D78", "#A5C1D2", "#FFE4BB", "#FF9935"),
+  rubl_11 = c("#981919", "#E4C2C2", "#C6D8BB", "#66895B"),
+  rbgs_11 = c("#550EA7", "#C8A3EC", "#FFE2AF", "#FF9F2A"),
+  rubl_12 = c("#0E5E82", "#9CD2E6", "#F6B9BA", "#ED6363"),
+  rbgs_12 = c("#460B79", "#9158D6", "#D2E9A1", "#A3D865"),
+  rubl_13 = c("#98271A", "#D8C3BA", "#B2D1CA", "#51978F"),
+  rbgs_13 = c("#087B8D", "#96C8CB", "#FFE2BB", "#FFA42E"),
+  rubl_14 = c("#5E1462", "#D3B0D5", "#E7F1C8", "#82C546"),
+  rbgs_14 = c("#0F3A72", "#5175A9", "#FFA64E", "#FF5B21"),
+  rubl_15 = c("#066039", "#87B199", "#F6B3BA", "#D83955"),
+  rbgs_15 = c("#0B3471", "#849BBF", "#FFE0B0", "#FF5A2A"),
+  rubl_16 = c("#651E2F", "#C2A7A7", "#B1E0CF", "#3A986F"),
+  rbgs_16 = c("#540DA6", "#C8A6EB", "#FFE3A6", "#FFAA00")
+)

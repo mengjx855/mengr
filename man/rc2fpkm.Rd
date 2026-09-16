@@ -16,8 +16,8 @@ rc2fpkm(profile, gene_length, feature_col = "name", length_col = "length")
 \item{length_col}{Name of the \code{length_col} input column.}
 }
 \value{
-A result object described in the Details section.
+A feature-by-sample numeric matrix of FPKM/RPKM values.
 }
 \description{
-Chinese summary: 根据 feature 长度和样本文库大小计算 FPKM/RPKM。
+根据 feature 长度和样本文库大小计算 FPKM/RPKM。
 }

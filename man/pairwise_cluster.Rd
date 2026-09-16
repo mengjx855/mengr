@@ -27,7 +27,7 @@ pairwise_cluster(
 
 \item{value_col}{Name of the \code{value_col} input column.}
 
-\item{cutoff}{Numeric setting for \code{cutoff}.}
+\item{cutoff}{Threshold used to form clusters or significance calls, depending on the function.}
 
 \item{one_minus}{Whether pairwise values are converted to \code{1 - value} before clustering.}
 
@@ -39,15 +39,11 @@ pairwise_cluster(
 
 \item{duplicate_fun}{Function used to combine duplicated feature-pair values.}
 
-\item{simplify}{Logical control for \code{simplify}.}
+\item{simplify}{Whether to return the simplified tabular result instead of intermediate objects.}
 }
 \value{
-A result object described in the Details section.
+A cluster-membership vector or data frame with \code{hclust} and distance-matrix attributes.
 }
 \description{
-\code{pairwise_cluster()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 将 feature1-feature2-value 长表转换为距离矩阵并进行层次聚类。
+将 feature1-feature2-value 长表转换为距离矩阵并进行层次聚类。
 }

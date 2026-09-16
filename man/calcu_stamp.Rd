@@ -39,15 +39,11 @@ calcu_stamp(
 
 \item{pvalue}{Maximum raw P value retained in the result.}
 
-\item{add_enriched}{Logical control for \code{add_enriched}.}
+\item{add_enriched}{Whether to report the group enriched for each feature.}
 }
 \value{
-A result object described in the Details section.
+A feature-level data frame with group means, mean difference, confidence interval, P and adjusted P values, and optional enrichment calls.
 }
 \description{
-\code{calcu_stamp()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 计算两组 STAMP 风格均值差、置信区间和显著性结果。
+计算两组 STAMP 风格均值差、置信区间和显著性结果。
 }

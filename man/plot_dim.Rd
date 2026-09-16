@@ -64,35 +64,31 @@ plot_dim(
 
 \item{legend_title}{Legend title; \code{NULL} uses a context-dependent default.}
 
-\item{add_group_label}{Logical control for \code{add_group_label}.}
+\item{add_group_label}{Whether to label group centroids.}
 
-\item{add_sample_label}{Logical control for \code{add_sample_label}.}
+\item{add_sample_label}{Whether to label individual samples.}
 
-\item{label_size}{Numeric setting for \code{label_size}.}
+\item{label_size}{Text size for sample or group labels.}
 
-\item{point_size}{Numeric setting for \code{point_size}.}
+\item{point_size}{Point size used for samples or observations.}
 
-\item{line_width}{Numeric setting for \code{line_width}.}
+\item{line_width}{Line width used for plotted paths.}
 
-\item{show_legend}{Logical control for \code{show_legend}.}
+\item{show_legend}{Whether to display the plot legend.}
 
-\item{show_grid}{Logical control for \code{show_grid}.}
+\item{show_grid}{Whether to draw panel grid lines.}
 
-\item{show_line}{Logical control for \code{show_line}.}
+\item{show_line}{Whether to draw horizontal and vertical reference lines at zero.}
 
 \item{aspect_ratio}{Panel aspect ratio passed to \code{ggplot2::theme()}.}
 
 \item{theme}{Plot theme preset; supported values are shown in Usage.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{ggplot2::stat_ellipse()} when confidence regions are drawn.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_dim()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 统一绘制二维降维结果，支持 point/line、置信区域、标签和主题。
+统一绘制二维降维结果，支持 point/line、置信区域、标签和主题。
 }

@@ -14,12 +14,8 @@ profile_adjacency(profile, logical = FALSE, min_abundance = 0)
 \item{min_abundance}{Minimum abundance above which a feature is considered present.}
 }
 \value{
-A result object described in the Details section.
+A feature-by-sample presence/absence data frame, logical or numeric as requested.
 }
 \description{
-\code{profile_adjacency()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 将丰度表转换为 feature × sample 的存在/缺失矩阵。
+将丰度表转换为 feature × sample 的存在/缺失矩阵。
 }

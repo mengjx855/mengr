@@ -12,12 +12,8 @@ profile_trans_hellinger(profile, digits = NULL)
 \item{digits}{Optional number of decimal digits retained.}
 }
 \value{
-A result object described in the Details section.
+A feature-by-sample Hellinger-transformed data frame.
 }
 \description{
-\code{profile_trans_hellinger()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 对 profile 执行 Hellinger 转换，适合部分生态距离分析。
+对 profile 执行 Hellinger 转换，适合部分生态距离分析。
 }

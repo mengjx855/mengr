@@ -1,6 +1,7 @@
-#### Jinxin Meng, 20231215, 20260522, v0.1.1 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20231215, 20260916 ####
 
 # 20260522 v0.1.1: update functions.
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
 
 
 #### plot_procrustes ####
@@ -33,17 +34,15 @@
 
 #' Plot Procrustes utility
 #'
-#' `plot_procrustes()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 比较两个 profile 或距离空间，执行 Procrustes 和 permutation test。
+#' 比较两个 profile 或距离空间，执行 Procrustes 和 permutation test。
 #'
 #' @param profile_x Feature-by-sample profile used for model training or the first data space.
 #' @param profile_y Feature-by-sample profile used for validation or the second data space.
 #' @param dist_x Distance object for the first data space.
 #' @param dist_y Distance object for the second data space.
 #' @param dist_method Distance method; available values are validated with `match.arg()`.
-#' @param symmetric Whether to enable the symmetric behavior.
+#' @param symmetric Whether to use symmetric Procrustes scaling.
 #' @param permutations Number of permutations used by the significance test.
 #' @param seed Optional random seed for reproducibility.
 #' @param colors Color specification for `colors`.
@@ -51,13 +50,13 @@
 #' @param ylab Optional y-axis label.
 #' @param title Optional plot or result title.
 #' @param subtitle Optional plot subtitle.
-#' @param show_grid Logical control for `show_grid`.
-#' @param show_line Logical control for `show_line`.
-#' @param show_rotation_axis Logical control for `show_rotation_axis`.
+#' @param show_grid Whether to draw panel grid lines.
+#' @param show_line Whether to draw horizontal and vertical reference lines at zero.
+#' @param show_rotation_axis Whether to draw the Procrustes rotation axes.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
 #' @param theme Plot theme preset; supported values are shown in Usage.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param ... Additional arguments passed to distance calculation.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_procrustes <- function(profile_x = NULL, profile_y = NULL,
                             dist_x = NULL, dist_y = NULL,

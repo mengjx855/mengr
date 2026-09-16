@@ -21,12 +21,8 @@ profile_trans_log10(
 \item{digits}{Optional number of decimal digits retained.}
 }
 \value{
-A result object described in the Details section.
+A feature-by-sample data frame after log10 transformation.
 }
 \description{
-\code{profile_trans_log10()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 对 feature × sample profile 按 feature 执行 log10 转换。
+对 feature × sample profile 按 feature 执行 log10 转换。
 }

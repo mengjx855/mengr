@@ -1,7 +1,7 @@
 Package: mengR
 Type: Package
 Title: Personal Bioinformatics Analysis and Visualization Utilities
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: person(
     given = "Jin-Xin",
     family = "Meng",
@@ -9,6 +9,8 @@ Authors@R: person(
     role = c("aut", "cre"),
     comment = c("Alternative email" = "mengjx855@163.com")
   )
+Author: Jin-Xin Meng [aut, cre]
+Maintainer: Jin-Xin Meng <jinxmeng@zju.edu.cn>
 Description: A personal collection of reusable functions for bioinformatics,
     omics data processing, statistical analysis, machine learning, and
     publication-oriented visualization.
@@ -18,22 +20,29 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 Depends:
     R (>= 4.1.0)
+Imports:
+    rlang
 Suggests:
     BiodiversityR,
     Biostrings,
     caret,
     CellChat,
+    cli,
     cluster,
     clusterProfiler,
     ComplexHeatmap,
     cowplot,
+    data.table,
+    DESeq2,
     dplyr,
+    edgeR,
     e1071,
     ggalt,
     ggClusterNet,
     ggnewscale,
     ggplot2,
     ggpubr,
+    ggrastr,
     ggradar,
     ggrepel,
     ggsignif,
@@ -56,14 +65,15 @@ Suggests:
     purrr,
     randomForest,
     RColorBrewer,
-    rlang,
     ropls,
     roxygen2,
     rstatix,
     Rtsne,
     scales,
     Seurat,
+    SeuratObject,
     stringr,
+    SummarizedExperiment,
     sva,
     testthat (>= 3.0.0),
     tibble,

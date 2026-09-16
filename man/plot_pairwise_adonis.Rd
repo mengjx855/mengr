@@ -12,12 +12,8 @@ plot_pairwise_adonis(data, group_level = NULL)
 \item{group_level}{Optional order of group levels.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_pairwise_adonis()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 将 pairwise PERMANOVA 结果绘制为矩阵或热图式结果图。
+将 pairwise PERMANOVA 结果绘制为矩阵或热图式结果图。
 }

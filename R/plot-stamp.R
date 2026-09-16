@@ -1,4 +1,4 @@
-#### Jinxin Meng, 20250308, 20260502 v0.2.1 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250308, 20260916 ####
 
 # 20250327: update some parameter.
 # 20250327: add mean abundance of feature as output in calcu_stamp() with option 'method=wilcox'.
@@ -6,8 +6,9 @@
 # 20260301: update some parameter. rename padj as qval.
 # 20260301: add new function with 'multiple' suffix for multivariable analysis.
 # 20260502: update functions.
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
 
-#### help function ####
+#### .check_group ####
 .check_group <- function(
   group, sample_col = "sample", group_col = "group",
   comparison = NULL, two_group = FALSE
@@ -32,6 +33,8 @@
 }
 
 #' @importFrom rlang .data
+#### .add_p_q_label ####
+
 .add_p_q_label <- function(data) {
   data |>
     dplyr::rename(pval = p) |>
@@ -58,10 +61,8 @@
 #### calcu_stamp ####
 #' Calcu Stamp utility
 #'
-#' `calcu_stamp()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 计算两组 STAMP 风格均值差、置信区间和显著性结果。
+#' 计算两组 STAMP 风格均值差、置信区间和显著性结果。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -73,8 +74,8 @@
 #' @param exact Whether an exact test is requested when supported by the selected method.
 #' @param qvalue Maximum adjusted P value retained in the result.
 #' @param pvalue Maximum raw P value retained in the result.
-#' @param add_enriched Logical control for `add_enriched`.
-#' @return A result object described in the Details section.
+#' @param add_enriched Whether to report the group enriched for each feature.
+#' @return A feature-level data frame with group means, mean difference, confidence interval, P and adjusted P values, and optional enrichment calls.
 #' @importFrom rlang .data
 #' @export
 calcu_stamp <- function(
@@ -174,10 +175,8 @@ calcu_stamp <- function(
 #### plot_stamp ####
 #' Plot Stamp utility
 #'
-#' `plot_stamp()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 将 `calcu_stamp()` 结果绘制为 STAMP 风格多面板图。
+#' 将 `calcu_stamp()` 结果绘制为 STAMP 风格多面板图。
 #'
 #' @param data An input data frame or compatible object.
 #' @param top_n Number of highest-ranking features or categories retained.
@@ -189,8 +188,8 @@ calcu_stamp <- function(
 #' @param mid_title Optional label used for mid title.
 #' @param right_xlab Optional label used for right xlab.
 #' @param right_title Optional label used for right title.
-#' @param show_label Logical control for `show_label`.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param show_label Whether to label the displayed features.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @importFrom rlang .data
 #' @export
 plot_stamp <- function(
@@ -375,10 +374,8 @@ plot_stamp <- function(
 #### calcu_stamp_multiple ####
 #' Calcu Stamp Multiple utility
 #'
-#' `calcu_stamp_multiple()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 对多组数据计算 STAMP 风格的整体差异统计。
+#' 对多组数据计算 STAMP 风格的整体差异统计。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -386,7 +383,7 @@ plot_stamp <- function(
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
 #' @param method Analysis or summary method; supported values are shown in the usage.
-#' @return A result object described in the Details section.
+#' @return A feature-level data frame containing group summaries and the omnibus Kruskal-Wallis or ANOVA result.
 #' @importFrom rlang .data
 #' @export
 calcu_stamp_multiple <- function(

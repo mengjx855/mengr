@@ -1,4 +1,4 @@
-#### Jinxin Meng, 20220101, 20260624, v0.8.4 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220101, 20260916 ####
 
 # 20220601: 可选择'wilcox rank-sum','one-way anova','student's t test'三种方法做差异分析；
 # 20230117: diff_test_profile函数对feature进行差异分析，输入的是标准otu表和group表
@@ -13,9 +13,10 @@
 # 20251105: 修改一些BUG
 # 20260523: add new function 'calcu_empirical_p()'
 # 20260624: 更新difference_analysis
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
 
 
-#### add_plab ####
+#### .add_plab ####
 # 根据 p 值生成显著性标签
 # format:
 #   1: '***', '**', '*', 'ns'
@@ -64,6 +65,8 @@
 
 
 ## 将非正值和非有限值替换为按 feature 计算的伪计数
+#### .replace_nonpositive ####
+
 .replace_nonpositive <- function(x, pseudo_factor = 0.5) {
   x <- as.matrix(x)
   storage.mode(x) <- "numeric"
@@ -104,16 +107,14 @@
 
 #' Calcu Empirical p utility
 #'
-#' `calcu_empirical_p()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 根据置换或背景分布计算双侧、左侧或右侧 empirical P 值。
+#' 根据置换或背景分布计算双侧、左侧或右侧 empirical P 值。
 #'
 #' @param obs Observed statistic compared with the randomization distribution.
 #' @param random Randomized statistics forming the empirical null distribution.
 #' @param alternative Alternative hypothesis used to calculate the empirical P value.
-#' @param simplify Logical control for `simplify`.
-#' @return A result object described in the Details section.
+#' @param simplify Whether to return the simplified tabular result instead of intermediate objects.
+#' @return A numeric empirical P value, or a data frame of observed values and empirical P values when `simplify = FALSE`.
 #' @export
 calcu_empirical_p <- function(
   obs, random, alternative = c("auto", "greater", "less", "two.sided"),
@@ -191,19 +192,17 @@ calcu_empirical_p <- function(
 
 #' Calcu Diff utility
 #'
-#' `calcu_diff()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 对公式指定的数值与分组执行 Wilcoxon、ANOVA 或 t-test 两两比较。
+#' 对公式指定的数值与分组执行 Wilcoxon、ANOVA 或 t-test 两两比较。
 #'
 #' @param data An input data frame or compatible object.
 #' @param formula Model formula defining the response and grouping variables.
 #' @param method Analysis or summary method; supported values are shown in the usage.
 #' @param var_equal Whether two-sample t tests assume equal group variances.
-#' @param add_plab Logical control for `add_plab`.
+#' @param add_plab Whether to add formatted significance labels.
 #' @param plab_fmt Format string or function used to display significance labels.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments passed to the selected rstatix test.
+#' @return A data frame of pairwise comparisons, effect summaries, P values, and optional significance labels.
 #' @export
 calcu_diff <- function(data, formula, method = c("wilcox", "anova", "t"),
                        var_equal = FALSE, add_plab = FALSE,
@@ -299,24 +298,22 @@ calcu_diff <- function(data, formula, method = c("wilcox", "anova", "t"),
 
 #' Calcu Diff Profile utility
 #'
-#' `calcu_diff_profile()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 对 profile 中的每个 feature 批量执行分组差异检验。
+#' 对 profile 中的每个 feature 批量执行分组差异检验。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
 #' @param group_by Metadata column or grouping definition used for aggregation.
 #' @param comparison Two outcome levels ordered as case and control.
 #' @param method Analysis or summary method; supported values are shown in the usage.
-#' @param add_plab Logical control for `add_plab`.
+#' @param add_plab Whether to add formatted significance labels.
 #' @param plab_fmt Format string or function used to display significance labels.
 #' @param var_equal Whether two-sample t tests assume equal group variances.
 #' @param progress Whether progress information is printed during repeated analyses.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments forwarded to `calcu_diff()`.
+#' @return A feature-by-comparison data frame of test results, adjusted P values, and optional significance labels.
 #' @export
 calcu_diff_profile <- function(
   profile, group, group_by = NULL, comparison = NULL,
@@ -562,17 +559,15 @@ calcu_diff_profile <- function(
 
 #' Difference Analysis utility
 #'
-#' `difference_analysis()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 汇总差异检验、fold change、均值和 prevalence 的完整 feature 分析流程。
+#' 汇总差异检验、fold change、均值和 prevalence 的完整 feature 分析流程。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param comparison Two outcome levels ordered as case and control.
-#' @param input_scale Logical control for `input_scale`.
+#' @param input_scale Scale of the supplied abundances: raw, log10, or log2.
 #' @param test_trans Transformation applied to feature values before statistical testing.
 #' @param fc_method Method used to calculate fold change; supported values are shown in Usage.
 #' @param method Analysis or summary method; supported values are shown in the usage.
@@ -583,8 +578,8 @@ calcu_diff_profile <- function(
 #' @param log_pseudo_factor Multiplier used to derive a log-scale pseudocount from the minimum positive value.
 #' @param progress Whether progress information is printed during repeated analyses.
 #' @param digits Optional number of decimal digits retained.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments forwarded to `calcu_diff_profile()`.
+#' @return A feature-level data frame combining abundance, prevalence, fold-change, and hypothesis-test results.
 #' @export
 difference_analysis <- function(
   profile, group, sample_col = "sample", group_col = "group", comparison = NULL,

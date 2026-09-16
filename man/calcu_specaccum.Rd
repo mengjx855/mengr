@@ -18,8 +18,8 @@ calcu_specaccum(
 \item{method}{Analysis or summary method; supported values are shown in the usage.}
 }
 \value{
-A result object described in the Details section.
+A data frame containing accumulation effort, richness, standard error, and confidence limits.
 }
 \description{
-Chinese summary: 计算总体 species/feature accumulation curve。
+计算总体 species/feature accumulation curve。
 }

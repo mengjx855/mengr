@@ -36,11 +36,11 @@ remove_batch_combat(
 
 \item{ref_batch}{Optional reference-batch level passed to ComBat.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{sva::ComBat()}.}
 }
 \value{
-A result object described in the Details section.
+A feature-by-sample numeric data frame after ComBat correction.
 }
 \description{
-Chinese summary: 使用 \code{sva::ComBat()} 校正一个或两个批次变量，可保留协变量效应。
+使用 \code{sva::ComBat()} 校正一个或两个批次变量，可保留协变量效应。
 }

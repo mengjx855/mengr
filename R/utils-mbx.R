@@ -1,5 +1,9 @@
-##### Jinxin Meng, 20241121, 20241121, v0.1 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241121, 20260916 ####
 
+# 20260916: rename exported functions to lowercase and standardize their documentation.
+
+
+#### parse_mchromatograms ####
 
 #' Summarize chromatograms in an MChromatograms object
 #'
@@ -17,7 +21,7 @@
 #' @return A data frame with one row per chromatogram, sorted by the retention
 #'   time of maximum intensity.
 #' @export
-parse_MChromatograms <- function(data, label = "MChromatograms object") {
+parse_mchromatograms <- function(data, label = "MChromatograms object") {
   if (length(data) == 0) stop(label, " is empty.")
 
   # 1. 将每条色谱整理为独立数据框
@@ -58,21 +62,19 @@ parse_MChromatograms <- function(data, label = "MChromatograms object") {
   dplyr::arrange(result_df, .data$rt_intensity_max)
 }
 
-#### MBT_eKEGG ####
+#### mbt_ekegg ####
 #' MBT eKEGG utility
 #'
-#' `MBT_eKEGG()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 将代谢物列表与本地 eKEGG 注释关联并整理 pathway 结果。
+#' 将代谢物列表与本地 eKEGG 注释关联并整理 pathway 结果。
 #'
 #' @param cpd_list Metabolite or compound identifiers to annotate.
-#' @param database Numeric setting for `database`.
-#' @return A result object described in the Details section.
+#' @param database Path to the local annotation database file.
+#' @return A data frame containing compound-set enrichment results.
 #' @export
-MBT_eKEGG <- function(
+mbt_ekegg <- function(
   cpd_list,
-  database = .mengR_db_file(
+  database = .mengr_db_file(
     "KEGG", "enrichment_analysis", "cpd2path_enrichment.tsv"
   )
 ) {

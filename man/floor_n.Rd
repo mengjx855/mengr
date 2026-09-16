@@ -12,12 +12,8 @@ floor_n(x, n = 2)
 \item{n}{Requested number of values, features, or results.}
 }
 \value{
-A result object described in the Details section.
+A numeric vector rounded downward at the requested decimal position.
 }
 \description{
-\code{floor_n()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 按指定的十进制位数向下取整，例如按百位或千位取整。
+按指定的十进制位数向下取整，例如按百位或千位取整。
 }

@@ -53,7 +53,7 @@ plot_compos_manual(
 
 \item{taxa_color}{Color specification for \code{taxa_color}.}
 
-\item{width}{Numeric setting for \code{width}.}
+\item{width}{Bar width for composition plots; in \code{plot_msa()}, the number of alignment positions per block.}
 
 \item{title}{Optional plot or result title.}
 
@@ -67,23 +67,19 @@ plot_compos_manual(
 
 \item{method}{Analysis or summary method; supported values are shown in the usage.}
 
-\item{remove_unknown}{Logical control for \code{remove_unknown}.}
+\item{remove_unknown}{Whether to discard unknown or unclassified entries.}
 
 \item{unknown_pattern}{Regular expression identifying unknown or unclassified annotations.}
 
-\item{base}{Numeric setting for \code{base}.}
+\item{base}{Scaling constant used for relative-abundance output.}
 
 \item{digits}{Optional number of decimal digits retained.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to the selected profile summary operation.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_compos_manual()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 对已经整理好的组成数据绘制可精细控制的堆叠柱状图。
+对已经整理好的组成数据绘制可精细控制的堆叠柱状图。
 }

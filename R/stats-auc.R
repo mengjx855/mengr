@@ -1,6 +1,7 @@
-#### Jinxin Meng, 20260520, 20260520, v0.0.1 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260520, 20260916 ####
 
 # 20260520 v0.0.1: add functions 'calcu_feature_auc()'
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
 
 #### calcu_feature_auc ####
 # 计算每个 feature 的单特征 AUC，只用一个 feature 的数值作为 predictor，
@@ -27,20 +28,18 @@
 
 #' Calcu Feature Auc utility
 #'
-#' `calcu_feature_auc()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 逐 feature 计算二分类 ROC AUC、置信区间、方向和区分强度。
+#' 逐 feature 计算二分类 ROC AUC、置信区间、方向和区分强度。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param label Outcome labels corresponding to the profile samples.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
-#' @param levels Numeric setting for `levels`.
+#' @param levels Two class labels ordered as negative and positive.
 #' @param direction Direction used for prediction, ROC calculation, or network extraction.
 #' @param ci Whether to calculate confidence intervals for AUC estimates.
 #' @param quiet Whether to suppress progress messages.
-#' @return A result object described in the Details section.
+#' @return A feature-level data frame containing AUC, confidence limits, ROC direction, and discrimination strength.
 #' @export
 calcu_feature_auc <- function(profile, label, sample_col = "sample",
                               group_col = "group", levels = NULL,

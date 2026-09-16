@@ -35,7 +35,7 @@ difference_analysis(
 
 \item{comparison}{Two outcome levels ordered as case and control.}
 
-\item{input_scale}{Logical control for \code{input_scale}.}
+\item{input_scale}{Scale of the supplied abundances: raw, log10, or log2.}
 
 \item{test_trans}{Transformation applied to feature values before statistical testing.}
 
@@ -57,15 +57,11 @@ difference_analysis(
 
 \item{digits}{Optional number of decimal digits retained.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments forwarded to \code{calcu_diff_profile()}.}
 }
 \value{
-A result object described in the Details section.
+A feature-level data frame combining abundance, prevalence, fold-change, and hypothesis-test results.
 }
 \description{
-\code{difference_analysis()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 汇总差异检验、fold change、均值和 prevalence 的完整 feature 分析流程。
+汇总差异检验、fold change、均值和 prevalence 的完整 feature 分析流程。
 }

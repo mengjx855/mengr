@@ -1,14 +1,15 @@
-#### Jinxin Meng, 20230915, 20250526, v0.4.2 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20230915, 20260916 ####
 
 # 20250107: add parameter add_group_label, show_legend, lab_size, show_grid in plot_PCoA function
 # 20250115: add sample labels and update group-label parameters.
 # 20250317: update function.
 # 20250417: plot function pass to plot_dim()
-# 20250419: add options sub_sample, sub_group for plot_PCA()
+# 20250419: add options sub_sample and sub_group for plot_pca().
 # 20250526: update functions.
+# 20260916: rename PCA functions to lowercase and standardize documentation and naming.
 
 
-#### calcu_PCA ####
+#### calcu_pca ####
 # 计算 PCA 坐标和解释度
 # profile: 行为 feature，列为 sample 的丰度表
 # dim: 输出前几个 PCA 轴
@@ -18,21 +19,19 @@
 
 #' Calcu PCA utility
 #'
-#' `calcu_PCA()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 对 feature × sample profile 执行 PCA 并返回坐标和解释方差。
+#' 对 feature × sample profile 执行 PCA 并返回坐标和解释方差。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param dim Number of ordination dimensions retained in the returned coordinate table.
 #' @param cumulative_eig Cumulative explained-variance threshold used to retain ordination axes.
 #' @param prefix Prefix used when naming derived coordinates or labels.
-#' @param add_eig Logical control for `add_eig`.
-#' @param remove_zero_var Logical control for `remove_zero_var`.
+#' @param add_eig Whether to append explained-variance percentages to coordinate names.
+#' @param remove_zero_var Whether to remove zero-variance features before analysis.
 #' @param na_fill Value used to replace missing observations before analysis.
-#' @return A result object described in the Details section.
+#' @return A list containing the `prcomp` object, sample scores, feature loadings, and explained variance.
 #' @export
-calcu_PCA <- function(
+calcu_pca <- function(
   profile, dim = 2, cumulative_eig = NULL, prefix = NULL, add_eig = FALSE,
   remove_zero_var = TRUE, na_fill = 0
 ) {
@@ -106,7 +105,7 @@ calcu_PCA <- function(
   return(out)
 }
 
-#### plot_PCA ####
+#### plot_pca ####
 # 绘制 PCA 散点图
 # profile: 行为 feature，列为 sample 的丰度表
 # group: 样本分组信息表
@@ -118,10 +117,8 @@ calcu_PCA <- function(
 
 #' Plot PCA utility
 #'
-#' `plot_PCA()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 对齐 profile 与分组后执行并绘制 PCA。
+#' 对齐 profile 与分组后执行并绘制 PCA。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -139,21 +136,21 @@ calcu_PCA <- function(
 #' @param xlab Optional x-axis label.
 #' @param ylab Optional y-axis label.
 #' @param legend_title Legend title; `NULL` uses a context-dependent default.
-#' @param add_group_label Logical control for `add_group_label`.
-#' @param add_sample_label Logical control for `add_sample_label`.
-#' @param label_size Numeric setting for `label_size`.
-#' @param point_size Numeric setting for `point_size`.
-#' @param show_legend Logical control for `show_legend`.
-#' @param show_grid Logical control for `show_grid`.
-#' @param show_line Logical control for `show_line`.
+#' @param add_group_label Whether to label group centroids.
+#' @param add_sample_label Whether to label individual samples.
+#' @param label_size Text size for sample or group labels.
+#' @param point_size Point size used for samples or observations.
+#' @param show_legend Whether to display the plot legend.
+#' @param show_grid Whether to draw panel grid lines.
+#' @param show_line Whether to draw horizontal and vertical reference lines at zero.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
 #' @param theme Plot theme preset; supported values are shown in Usage.
-#' @param remove_zero_var Logical control for `remove_zero_var`.
+#' @param remove_zero_var Whether to remove zero-variance features before analysis.
 #' @param na_fill Value used to replace missing observations before analysis.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param ... Additional arguments passed to `plot_dim()`.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
-plot_PCA <- function(
+plot_pca <- function(
   profile, group, sample_col = "sample", group_col = "group",
   group_level = NULL, group_color = NULL,
   sub_sample = NULL, sub_group = NULL,

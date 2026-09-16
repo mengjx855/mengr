@@ -19,17 +19,13 @@ plot_maaslin3_both(
 
 \item{title}{Optional plot or result title.}
 
-\item{point_size}{Numeric setting for \code{point_size}.}
+\item{point_size}{Point size used for samples or observations.}
 
 \item{aspect_ratio}{Panel aspect ratio passed to \code{ggplot2::theme()}.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_maaslin3_both()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 联合展示 MaAsLin3 abundance 和 prevalence 模型结果。
+联合展示 MaAsLin3 abundance 和 prevalence 模型结果。
 }

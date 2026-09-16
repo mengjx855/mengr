@@ -14,8 +14,8 @@ calcu_specaccum_by_depth(profile, step = 1000, seed = NULL)
 \item{seed}{Optional random seed for reproducibility.}
 }
 \value{
-A result object described in the Details section.
+A data frame of sample, subsampling depth, and observed feature richness.
 }
 \description{
-Chinese summary: 逐步增加测序深度，计算随机稀释后的 feature 数量。
+逐步增加测序深度，计算随机稀释后的 feature 数量。
 }

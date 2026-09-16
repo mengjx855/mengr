@@ -31,9 +31,9 @@ plot_specaccum(
 
 \item{color}{Color specification for \code{color}.}
 
-\item{add_errorbar}{Logical control for \code{add_errorbar}.}
+\item{add_errorbar}{Whether to draw pointwise error bars.}
 
-\item{add_ribbon}{Logical control for \code{add_ribbon}.}
+\item{add_ribbon}{Whether to draw an uncertainty ribbon.}
 
 \item{fill}{Color specification for fill.}
 
@@ -48,8 +48,8 @@ plot_specaccum(
 \item{title}{Optional plot or result title.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-Chinese summary: 绘制总体累积曲线，可添加误差线或置信 ribbon。
+绘制总体累积曲线，可添加误差线或置信 ribbon。
 }

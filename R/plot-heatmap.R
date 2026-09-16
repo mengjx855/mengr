@@ -1,3 +1,9 @@
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260820, 20260916 ####
+
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
+
+#### .heatmap_annotation_palette ####
+
 .heatmap_annotation_palette <- function(n) {
   if (n <= 8) {
     return(pald("Set2", n = n))
@@ -10,6 +16,8 @@
   }
   scales::hue_pal()(n)
 }
+
+#### .prepare_heatmap_annotation ####
 
 .prepare_heatmap_annotation <- function(
   annotation, target_names, show_cols, annotation_name
@@ -44,6 +52,8 @@
   annotation_df
 }
 
+#### plot_heatmap ####
+
 #' Draw a heatmap with aligned row and column annotations
 #'
 #' Draw a `ComplexHeatmap::pheatmap()` heatmap from a numeric matrix. Annotation
@@ -77,13 +87,6 @@
 #' @return A ComplexHeatmap heatmap object, invisibly drawn according to the
 #'   behavior of `ComplexHeatmap::pheatmap()`.
 #' @export
-#' @param cellheight Numeric setting for `cellheight`.
-#' @param cluster_cols Logical value or clustering object controlling column clustering in the heatmap.
-#' @param treeheight_col Name of the `treeheight_col` input column.
-#' @param show_colnames Logical control for `show_colnames`.
-#' @param col_annotation Optional data frame supplying annotations for heatmap columns.
-#' @param show_col_anno Logical control for `show_col_anno`.
-#' @param ... Additional arguments passed to the underlying function.
 plot_heatmap <- function(
   profile, scale = c("row", "none", "column"), border_color = NA,
   title = "Scaled value", cellwidth = 3, cellheight = 3,

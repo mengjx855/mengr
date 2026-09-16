@@ -28,17 +28,13 @@ calcu_distance(
 
 \item{transform}{Optional transformation applied before analysis.}
 
-\item{remove_empty}{Logical control for \code{remove_empty}.}
+\item{remove_empty}{Whether to remove samples whose total abundance is zero.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to the selected distance function.}
 }
 \value{
-A result object described in the Details section.
+A \code{dist} object containing pairwise sample distances.
 }
 \description{
-\code{calcu_distance()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 计算 Bray、Jaccard、Euclidean、UniFrac 等样本距离，可先转换 profile。
+计算 Bray、Jaccard、Euclidean、UniFrac 等样本距离，可先转换 profile。
 }

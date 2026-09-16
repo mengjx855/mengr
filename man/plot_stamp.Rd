@@ -39,15 +39,11 @@ plot_stamp(
 
 \item{right_title}{Optional label used for right title.}
 
-\item{show_label}{Logical control for \code{show_label}.}
+\item{show_label}{Whether to label the displayed features.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_stamp()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 将 \code{calcu_stamp()} 结果绘制为 STAMP 风格多面板图。
+将 \code{calcu_stamp()} 结果绘制为 STAMP 风格多面板图。
 }

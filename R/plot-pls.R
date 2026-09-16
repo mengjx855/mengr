@@ -1,12 +1,13 @@
-#### Jinxin Meng, 20250328, 20260622, v0.3.1 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250328, 20260916 ####
 
 # 20250416: update function.
 # 20250417: plot function pass to plot_dim()
-# 20250419: add options sub_sample, sub_group for plot_PLS()
+# 20250419: add options sub_sample, sub_group for plot_pls().
 # 20260622: update functional style.
+# 20260916: rename PLS/OPLS functions to lowercase and standardize documentation and naming.
 
 
-#### plot_PLS ####
+#### plot_pls ####
 # 绘制 PLS-DA 散点图
 # profile: 行为 feature，列为 sample 的丰度表
 # group: 样本分组信息表
@@ -19,10 +20,8 @@
 
 #' Plot PLS utility
 #'
-#' `plot_PLS()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 使用 ropls 执行 PLS-DA，并绘制前两个 predictive components。
+#' 使用 ropls 执行 PLS-DA，并绘制前两个 predictive components。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -40,22 +39,22 @@
 #' @param xlab Optional x-axis label.
 #' @param ylab Optional y-axis label.
 #' @param legend_title Legend title; `NULL` uses a context-dependent default.
-#' @param add_group_label Logical control for `add_group_label`.
-#' @param add_sample_label Logical control for `add_sample_label`.
-#' @param label_size Numeric setting for `label_size`.
-#' @param point_size Numeric setting for `point_size`.
-#' @param show_legend Logical control for `show_legend`.
-#' @param show_grid Logical control for `show_grid`.
-#' @param show_line Logical control for `show_line`.
+#' @param add_group_label Whether to label group centroids.
+#' @param add_sample_label Whether to label individual samples.
+#' @param label_size Text size for sample or group labels.
+#' @param point_size Point size used for samples or observations.
+#' @param show_legend Whether to display the plot legend.
+#' @param show_grid Whether to draw panel grid lines.
+#' @param show_line Whether to draw horizontal and vertical reference lines at zero.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
 #' @param theme Plot theme preset; supported values are shown in Usage.
-#' @param remove_zero_var Logical control for `remove_zero_var`.
+#' @param remove_zero_var Whether to remove zero-variance features before analysis.
 #' @param na_fill Value used to replace missing observations before analysis.
 #' @param predI Number of predictive components fitted by ropls.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param ... Additional arguments passed to `ropls::opls()` and `plot_dim()`.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
-plot_PLS <- function(
+plot_pls <- function(
   profile, group,
   sample_col = "sample", group_col = "group",
   group_level = NULL, group_color = NULL,
@@ -295,7 +294,7 @@ plot_PLS <- function(
   return(p)
 }
 
-#### plot_OPLS ####
+#### plot_opls ####
 # 绘制 OPLS-DA 散点图
 # profile: 行为 feature，列为 sample 的丰度表
 # group: 样本分组信息表
@@ -304,10 +303,8 @@ plot_PLS <- function(
 
 #' Plot OPLS utility
 #'
-#' `plot_OPLS()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 对二分类数据执行 OPLS-DA 并绘制 predictive/orthogonal components。
+#' 对二分类数据执行 OPLS-DA 并绘制 predictive/orthogonal components。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -326,23 +323,23 @@ plot_PLS <- function(
 #' @param xlab Optional x-axis label.
 #' @param ylab Optional y-axis label.
 #' @param legend_title Legend title; `NULL` uses a context-dependent default.
-#' @param add_group_label Logical control for `add_group_label`.
-#' @param add_sample_label Logical control for `add_sample_label`.
-#' @param label_size Numeric setting for `label_size`.
-#' @param point_size Numeric setting for `point_size`.
-#' @param show_legend Logical control for `show_legend`.
-#' @param show_grid Logical control for `show_grid`.
-#' @param show_line Logical control for `show_line`.
+#' @param add_group_label Whether to label group centroids.
+#' @param add_sample_label Whether to label individual samples.
+#' @param label_size Text size for sample or group labels.
+#' @param point_size Point size used for samples or observations.
+#' @param show_legend Whether to display the plot legend.
+#' @param show_grid Whether to draw panel grid lines.
+#' @param show_line Whether to draw horizontal and vertical reference lines at zero.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
 #' @param theme Plot theme preset; supported values are shown in Usage.
-#' @param remove_zero_var Logical control for `remove_zero_var`.
+#' @param remove_zero_var Whether to remove zero-variance features before analysis.
 #' @param na_fill Value used to replace missing observations before analysis.
 #' @param predI Number of predictive components fitted by ropls.
 #' @param orthoI Number of orthogonal components fitted by OPLS-DA.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param ... Additional arguments passed to `ropls::opls()` and `plot_dim()`.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
-plot_OPLS <- function(
+plot_opls <- function(
   profile, group,
   sample_col = "sample", group_col = "group",
   group_level = NULL, group_color = NULL,
@@ -408,7 +405,7 @@ plot_OPLS <- function(
     stop(
       "OPLS-DA only supports binary classification. ",
       "Current number of groups: ", group_n,
-      ". Use plot_PLS() for multiple classes."
+      ". Use plot_pls() for multiple classes."
     )
   }
 

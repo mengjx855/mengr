@@ -7,15 +7,11 @@
 theme_bw_clean(base_size = 12)
 }
 \arguments{
-\item{base_size}{Numeric setting for \code{base_size}.}
+\item{base_size}{Base font size for the plot theme.}
 }
 \value{
 A ggplot2 theme object.
 }
 \description{
-\code{theme_bw_clean()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 返回简洁的黑白 ggplot2 theme，作为其他绘图的统一基础主题。
+返回简洁的黑白 ggplot2 theme，作为其他绘图的统一基础主题。
 }

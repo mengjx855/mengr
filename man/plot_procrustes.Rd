@@ -37,7 +37,7 @@ plot_procrustes(
 
 \item{dist_method}{Distance method; available values are validated with \code{match.arg()}.}
 
-\item{symmetric}{Whether to enable the symmetric behavior.}
+\item{symmetric}{Whether to use symmetric Procrustes scaling.}
 
 \item{permutations}{Number of permutations used by the significance test.}
 
@@ -53,25 +53,21 @@ plot_procrustes(
 
 \item{subtitle}{Optional plot subtitle.}
 
-\item{show_grid}{Logical control for \code{show_grid}.}
+\item{show_grid}{Whether to draw panel grid lines.}
 
-\item{show_line}{Logical control for \code{show_line}.}
+\item{show_line}{Whether to draw horizontal and vertical reference lines at zero.}
 
-\item{show_rotation_axis}{Logical control for \code{show_rotation_axis}.}
+\item{show_rotation_axis}{Whether to draw the Procrustes rotation axes.}
 
 \item{aspect_ratio}{Panel aspect ratio passed to \code{ggplot2::theme()}.}
 
 \item{theme}{Plot theme preset; supported values are shown in Usage.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to distance calculation.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_procrustes()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 比较两个 profile 或距离空间，执行 Procrustes 和 permutation test。
+比较两个 profile 或距离空间，执行 Procrustes 和 permutation test。
 }

@@ -39,11 +39,11 @@ rf_next_validate(
 
 \item{na_fill}{Value used to replace missing observations before analysis.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{randomForest::randomForest()}.}
 }
 \value{
-A result object described in the Details section.
+A validation prediction data frame with the fitted model stored in the \code{model} attribute.
 }
 \description{
-Chinese summary: 用训练数据拟合 random forest，并在独立数据中验证。
+用训练数据拟合 random forest，并在独立数据中验证。
 }

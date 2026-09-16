@@ -11,15 +11,11 @@ read_xlsx_multiple(file, sheets = NULL, ...)
 
 \item{sheets}{Worksheet names to read; \code{NULL} reads every worksheet.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{openxlsx::read.xlsx()}.}
 }
 \value{
-A result object described in the Details section.
+A named list of data frames, one for each selected worksheet.
 }
 \description{
-\code{read_xlsx_multiple()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 一次读取 Excel 文件中的多个 worksheet，返回命名列表。
+一次读取 Excel 文件中的多个 worksheet，返回命名列表。
 }

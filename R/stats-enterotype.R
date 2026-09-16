@@ -1,13 +1,17 @@
-#### Jin-Xin Meng, 20250617, 20260820, v0.1.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250617, 20260916 ####
+
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
+
+#### calcu_jsd_dist ####
 
 #' Calculate Jensen-Shannon distances between samples
 #'
-#' Chinese summary: 对组成型 profile 计算 Jensen-Shannon divergence 距离。
+#' 对组成型 profile 计算 Jensen-Shannon divergence 距离。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param pseudocount Positive value used to replace or offset zeros before logarithmic operations.
-#' @param normalize Whether to enable the normalize behavior.
-#' @return A result object described in the Details section.
+#' @param normalize Whether to normalize each sample to unit sum before calculation.
+#' @return A `dist` object containing pairwise Jensen-Shannon distances.
 #' @export
 calcu_jsd_dist <- function(profile, pseudocount = 1e-6, normalize = TRUE) {
   ## 1. 整理 feature × sample 矩阵
@@ -53,13 +57,15 @@ calcu_jsd_dist <- function(profile, pseudocount = 1e-6, normalize = TRUE) {
   distance
 }
 
+#### pam_clustering ####
+
 #' Partition samples around medoids
 #'
-#' Chinese summary: 对距离对象执行 partitioning around medoids 聚类。
+#' 对距离对象执行 partitioning around medoids 聚类。
 #'
 #' @param distance A precomputed distance object; when supplied, it takes precedence over `profile`.
 #' @param k Number of folds or clusters, according to the analysis performed.
-#' @return A result object described in the Details section.
+#' @return A `pam` clustering object from `cluster::pam()`.
 #' @export
 pam_clustering <- function(distance, k) {
   ## cluster::pam() 在 diss = TRUE 时直接接收距离对象

@@ -7,20 +7,17 @@
 palc(name = NULL, n = NULL, paste = FALSE, ...)
 }
 \arguments{
-\item{name}{Display or identifier name for name.}
+\item{name}{Name of a continuous palette; \code{NULL} lists available palettes.}
 
 \item{n}{Requested number of values, features, or results.}
 
 \item{paste}{Whether palette colors are returned as copy-ready quoted text.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{grDevices::colorRampPalette()}.}
 }
 \value{
-A result object described in the Details section.
+A character vector of interpolated colors, or a copyable \code{c(...)} string when \code{paste = TRUE}.
 }
 \description{
-\code{palc()} provides a reusable mengR workflow with input validation and standardized output.
-}
-\details{
-Chinese summary: 根据预设名称生成指定数量的连续渐变颜色。
+根据预设名称生成指定数量的连续渐变颜色。
 }

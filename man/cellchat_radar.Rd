@@ -34,11 +34,7 @@ cellchat_radar(
 \item{grid_min, grid_max}{Radar-grid limits. \code{grid_max = NULL} derives a limit
 from the data.}
 
-\item{grid_max}{Upper limit of the radar grid; \code{NULL} derives it from the data.}
-
 \item{axis_label_size, grid_label_size}{Text sizes passed to \code{ggradar}.}
-
-\item{grid_label_size}{Numeric setting for \code{grid_label_size}.}
 }
 \value{
 A ggplot object returned by \code{ggradar::ggradar()}.

@@ -7,19 +7,15 @@
 pald_show(name = NULL, n = NULL, ...)
 }
 \arguments{
-\item{name}{Display or identifier name for name.}
+\item{name}{Name of a discrete palette; \code{NULL} lists available palettes.}
 
 \item{n}{Requested number of values, features, or results.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments forwarded to \code{pald()}.}
 }
 \value{
 A palette preview or a character summary of available palettes.
 }
 \description{
-\code{pald_show()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 预览一个离散调色板，或列出可用离散调色板名称。
+预览一个离散调色板，或列出可用离散调色板名称。
 }

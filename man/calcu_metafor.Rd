@@ -33,21 +33,17 @@ calcu_metafor(
 
 \item{method}{Analysis or summary method; supported values are shown in the usage.}
 
-\item{simplify}{Logical control for \code{simplify}.}
+\item{simplify}{Whether to return the simplified tabular result instead of intermediate objects.}
 
 \item{quiet}{Whether to suppress progress messages.}
 
 \item{progress}{Whether progress information is printed during repeated analyses.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{metafor::rma()}.}
 }
 \value{
-A result object described in the Details section.
+A feature-level meta-analysis data frame containing pooled effects, uncertainty, heterogeneity, and significance statistics.
 }
 \description{
-\code{calcu_metafor()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 按项目计算 feature 效应量，并使用 metafor 合并多队列结果。
+按项目计算 feature 效应量，并使用 metafor 合并多队列结果。
 }

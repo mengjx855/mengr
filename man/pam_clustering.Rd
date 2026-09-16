@@ -12,8 +12,8 @@ pam_clustering(distance, k)
 \item{k}{Number of folds or clusters, according to the analysis performed.}
 }
 \value{
-A result object described in the Details section.
+A \code{pam} clustering object from \code{cluster::pam()}.
 }
 \description{
-Chinese summary: 对距离对象执行 partitioning around medoids 聚类。
+对距离对象执行 partitioning around medoids 聚类。
 }

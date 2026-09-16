@@ -1,10 +1,10 @@
-#### Jinxin Meng, 20240308, 20260718, v0.4.3 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20240308, 20260916 ####
 
 # 20231101: add all_group parameter in profile_filter().
 # 20231219: add function profile_replace().
 # 20250227: add function profile_top_n/frac().
 # 20250605: add function profile_aggregate().
-# 20250729: add function CLR() and the CLR profile transformation.
+# 20250729: add a CLR vector transformation and the CLR profile transformation.
 # 20250823: add digits parameter in profile_trans* functions
 # 20260419: rename profile_smp2grp() as profile_collapse(), add updated for improving performance
 #           remove profile_smp2grp_1(), update profile_replace(), add Hellinger transformation.
@@ -12,25 +12,26 @@
 # 20260526 v0.4.2: add parameter 'remove_unknown' in profile_aggregate().
 #                   update function with removing *_rename() parameters.
 # 20260718 v0.4.3: add zero-variance feature filtering.
+# 20260916: rename vector transformations to `transform_log2()`, `transform_log10()`, and `transform_clr()`; standardize documentation.
 
 
-#### LOG ####
+#### transform_log2 ####
 # LOG transformation method in MaAsLin2
 # use_half_minimum = TRUE: 0 替换为最小正值的一半
 # use_half_minimum = FALSE: 0 替换为 pseudocount
 
-#' LOG2 utility
+#' Log2 vector transformation
 #'
-#' `LOG2()` provides a reusable mengR workflow with input validation and standardized output.
+#' `transform_log2()` replaces non-positive values when requested and applies a log2 transformation.
 #'
-#' Chinese summary: 对一个数值向量进行 log2 转换，并处理零值和缺失值。
+#' 对一个数值向量进行 log2 转换，并处理零值和缺失值。
 #'
 #' @param x Primary vector or object supplied to the utility.
 #' @param pseudocount Positive value used to replace or offset zeros before logarithmic operations.
 #' @param use_half_minimum Whether non-positive values are replaced by half the smallest positive value.
-#' @return A result object described in the Details section.
+#' @return A numeric vector of log2-transformed values.
 #' @export
-LOG2 <- function(x, pseudocount = 1e-6, use_half_minimum = TRUE) {
+transform_log2 <- function(x, pseudocount = 1e-6, use_half_minimum = TRUE) {
   x <- as.numeric(x)
 
   if (isTRUE(use_half_minimum)) {
@@ -44,18 +45,20 @@ LOG2 <- function(x, pseudocount = 1e-6, use_half_minimum = TRUE) {
   log2(x)
 }
 
-#' LOG10 utility
+#' Log10 vector transformation
 #'
-#' `LOG10()` provides a reusable mengR workflow with input validation and standardized output.
+#' `transform_log10()` replaces non-positive values when requested and applies a log10 transformation.
 #'
-#' Chinese summary: 对一个数值向量进行 log10 转换，并处理零值和缺失值。
+#' 对一个数值向量进行 log10 转换，并处理零值和缺失值。
 #'
 #' @param x Primary vector or object supplied to the utility.
 #' @param pseudocount Positive value used to replace or offset zeros before logarithmic operations.
 #' @param use_half_minimum Whether non-positive values are replaced by half the smallest positive value.
-#' @return A result object described in the Details section.
+#' @return A numeric vector of log10-transformed values.
 #' @export
-LOG10 <- function(x, pseudocount = 1e-6, use_half_minimum = TRUE) {
+#### transform_log10 ####
+
+transform_log10 <- function(x, pseudocount = 1e-6, use_half_minimum = TRUE) {
   x <- as.numeric(x)
 
   if (isTRUE(use_half_minimum)) {
@@ -69,18 +72,20 @@ LOG10 <- function(x, pseudocount = 1e-6, use_half_minimum = TRUE) {
   log10(x)
 }
 
-#' CLR utility
+#' Centered log-ratio vector transformation
 #'
-#' `CLR()` provides a reusable mengR workflow with input validation and standardized output.
+#' `transform_clr()` applies a centered log-ratio transformation to one composition.
 #'
-#' Chinese summary: 对组成型数值向量执行 centered log-ratio 转换。
+#' 对组成型数值向量执行 centered log-ratio 转换。
 #'
 #' @param x Primary vector or object supplied to the utility.
 #' @param pseudocount Positive value used to replace or offset zeros before logarithmic operations.
 #' @param use_half_minimum Whether non-positive values are replaced by half the smallest positive value.
-#' @return A result object described in the Details section.
+#' @return A numeric vector of centered log-ratio values.
 #' @export
-CLR <- function(x, pseudocount = 1e-6, use_half_minimum = FALSE) {
+#### transform_clr ####
+
+transform_clr <- function(x, pseudocount = 1e-6, use_half_minimum = FALSE) {
   x <- as.numeric(x)
 
   if (isTRUE(use_half_minimum)) {
@@ -95,27 +100,25 @@ CLR <- function(x, pseudocount = 1e-6, use_half_minimum = FALSE) {
   log(x) - log(gm) # 执行CLR转换：log(x) - log(几何均值)
 }
 
-#### profile transformations ####
+#### profile_trans_log2 ####
 # profile: 行为 feature，列为 sample 的丰度表
 
 #' Profile Trans Log2 utility
 #'
-#' `profile_trans_log2()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 对 feature × sample profile 按 feature 执行 log2 转换。
+#' 对 feature × sample profile 按 feature 执行 log2 转换。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param pseudocount Positive value used to replace or offset zeros before logarithmic operations.
 #' @param use_half_minimum Whether non-positive values are replaced by half the smallest positive value.
 #' @param digits Optional number of decimal digits retained.
-#' @return A result object described in the Details section.
+#' @return A feature-by-sample data frame after log2 transformation.
 #' @export
 profile_trans_log2 <- function(profile, pseudocount = 1e-6,
                                use_half_minimum = FALSE, digits = NULL) {
   profile <- data.frame(profile, check.names = FALSE)
   profile <- apply(profile, 1, \(x) {
-    LOG2(x, pseudocount = pseudocount, use_half_minimum = use_half_minimum)
+    transform_log2(x, pseudocount = pseudocount, use_half_minimum = use_half_minimum)
   }) |>
     t() |>
     data.frame(check.names = FALSE)
@@ -129,22 +132,22 @@ profile_trans_log2 <- function(profile, pseudocount = 1e-6,
 
 #' Profile Trans Log10 utility
 #'
-#' `profile_trans_log10()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 对 feature × sample profile 按 feature 执行 log10 转换。
+#' 对 feature × sample profile 按 feature 执行 log10 转换。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param pseudocount Positive value used to replace or offset zeros before logarithmic operations.
 #' @param use_half_minimum Whether non-positive values are replaced by half the smallest positive value.
 #' @param digits Optional number of decimal digits retained.
-#' @return A result object described in the Details section.
+#' @return A feature-by-sample data frame after log10 transformation.
 #' @export
+#### profile_trans_log10 ####
+
 profile_trans_log10 <- function(profile, pseudocount = 1e-6,
                                 use_half_minimum = FALSE, digits = NULL) {
   profile <- data.frame(profile, check.names = FALSE)
   profile <- apply(profile, 1, \(x) {
-    LOG10(x, pseudocount = pseudocount, use_half_minimum = use_half_minimum)
+    transform_log10(x, pseudocount = pseudocount, use_half_minimum = use_half_minimum)
   }) |>
     t() |>
     data.frame(check.names = FALSE)
@@ -158,22 +161,22 @@ profile_trans_log10 <- function(profile, pseudocount = 1e-6,
 
 #' Profile Trans Clr utility
 #'
-#' `profile_trans_clr()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 对每个样本执行 CLR 转换，保持 feature × sample 方向。
+#' 对每个样本执行 CLR 转换，保持 feature × sample 方向。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param pseudocount Positive value used to replace or offset zeros before logarithmic operations.
 #' @param use_half_minimum Whether non-positive values are replaced by half the smallest positive value.
 #' @param digits Optional number of decimal digits retained.
-#' @return A result object described in the Details section.
+#' @return A feature-by-sample data frame after sample-wise CLR transformation.
 #' @export
+#### profile_trans_clr ####
+
 profile_trans_clr <- function(profile, pseudocount = 1e-6,
                               use_half_minimum = FALSE, digits = NULL) {
   profile <- data.frame(profile, check.names = FALSE)
   profile <- apply(profile, 2, \(x) {
-    CLR(x, pseudocount = pseudocount, use_half_minimum = use_half_minimum)
+    transform_clr(x, pseudocount = pseudocount, use_half_minimum = use_half_minimum)
   }) |>
     data.frame(check.names = FALSE)
 
@@ -186,15 +189,15 @@ profile_trans_clr <- function(profile, pseudocount = 1e-6,
 
 #' Profile Trans Sqrt utility
 #'
-#' `profile_trans_sqrt()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 对 profile 执行平方根转换。
+#' 对 profile 执行平方根转换。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param digits Optional number of decimal digits retained.
-#' @return A result object described in the Details section.
+#' @return A feature-by-sample data frame after square-root transformation.
 #' @export
+#### profile_trans_sqrt ####
+
 profile_trans_sqrt <- function(profile, digits = NULL) {
   profile <- data.frame(profile, check.names = FALSE)
   profile <- sqrt(profile)
@@ -206,7 +209,7 @@ profile_trans_sqrt <- function(profile, digits = NULL) {
   return(profile)
 }
 
-#### relative abundance ####
+#### profile_trans_ra ####
 # 将 profile 转换为百分比或相对丰度
 # profile: 行为 feature，列为 sample 的丰度表
 # base: 转换基数；base = 100 为百分比，base = 1 为相对丰度
@@ -215,16 +218,14 @@ profile_trans_sqrt <- function(profile, digits = NULL) {
 
 #' Profile Trans Ra utility
 #'
-#' `profile_trans_ra()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 将每个样本转换为相对丰度或百分比，并处理空样本。
+#' 将每个样本转换为相对丰度或百分比，并处理空样本。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param base Numeric setting for `base`.
+#' @param base Scaling constant used for relative-abundance output.
 #' @param digits Optional number of decimal digits retained.
-#' @param remove_empty Logical control for `remove_empty`.
-#' @return A result object described in the Details section.
+#' @param remove_empty Whether to remove samples whose total abundance is zero.
+#' @return A feature-by-sample relative-abundance or percentage data frame.
 #' @export
 profile_trans_ra <- function(
   profile, base = 100, digits = 8, remove_empty = FALSE
@@ -256,19 +257,17 @@ profile_trans_ra <- function(
   return(profile)
 }
 
-#### Hellinger transformation ####
+#### profile_trans_hellinger ####
 # Hellinger 转换，返回方向仍然是 feature × sample
 
 #' Profile Trans Hellinger utility
 #'
-#' `profile_trans_hellinger()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 对 profile 执行 Hellinger 转换，适合部分生态距离分析。
+#' 对 profile 执行 Hellinger 转换，适合部分生态距离分析。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param digits Optional number of decimal digits retained.
-#' @return A result object described in the Details section.
+#' @return A feature-by-sample Hellinger-transformed data frame.
 #' @export
 profile_trans_hellinger <- function(profile, digits = NULL) {
   profile <- data.frame(profile, check.names = FALSE)
@@ -294,10 +293,8 @@ profile_trans_hellinger <- function(profile, digits = NULL) {
 
 #' Profile Collapse utility
 #'
-#' `profile_collapse()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 按样本分组对 profile 求 mean、median、sum 或自定义统计量。
+#' 按样本分组对 profile 求 mean、median、sum 或自定义统计量。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -306,7 +303,7 @@ profile_trans_hellinger <- function(profile, digits = NULL) {
 #' @param method Analysis or summary method; supported values are shown in the usage.
 #' @param na_fill Value used to replace missing observations before analysis.
 #' @param group_level Optional order of group levels.
-#' @return A result object described in the Details section.
+#' @return A feature-by-group data frame produced by the requested summary function.
 #' @export
 profile_collapse <- function(
   profile, group, sample_col = "sample", group_col = "group",
@@ -383,10 +380,8 @@ profile_collapse <- function(
 
 #' Profile Filter utility
 #'
-#' `profile_filter()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 按总体或组内 prevalence、出现样本数和最低丰度筛选 feature。
+#' 按总体或组内 prevalence、出现样本数和最低丰度筛选 feature。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -398,7 +393,7 @@ profile_collapse <- function(
 #' @param min_prevalence Minimum fraction of samples in which a feature must be present.
 #' @param min_n Minimum number of samples in which a feature must be present.
 #' @param min_abundance Minimum abundance above which a feature is considered present.
-#' @return A result object described in the Details section.
+#' @return A filtered feature-by-sample data frame.
 #' @export
 profile_filter <- function(
   profile, group = NULL, sample_col = "sample", group_col = "group",
@@ -494,17 +489,15 @@ profile_filter <- function(
 
 #' Profile Top n utility
 #'
-#' `profile_top_n()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 保留总体丰度最高的 n 个 feature，可把其余 feature 合并为 Other。
+#' 保留总体丰度最高的 n 个 feature，可把其余 feature 合并为 Other。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param n Requested number of values, features, or results.
 #' @param out_other Whether discarded features are combined into an `Other` category.
 #' @param other_name Label assigned to features combined into the residual category.
 #' @param sort_method Summary statistic or function used to rank features.
-#' @return A result object described in the Details section.
+#' @return A feature-by-sample data frame retaining the top-ranked features and, optionally, an `Other` row.
 #' @export
 profile_top_n <- function(profile, n = 12, out_other = FALSE,
                           other_name = "Other",
@@ -563,17 +556,15 @@ profile_top_n <- function(profile, n = 12, out_other = FALSE,
 
 #' Profile Top Frac utility
 #'
-#' `profile_top_frac()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 按比例保留丰度最高的 feature，可把其余部分合并为 Other。
+#' 按比例保留丰度最高的 feature，可把其余部分合并为 Other。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param frac Fraction of the highest-ranking features retained.
 #' @param out_other Whether discarded features are combined into an `Other` category.
 #' @param other_name Label assigned to features combined into the residual category.
 #' @param sort_method Summary statistic or function used to rank features.
-#' @return A result object described in the Details section.
+#' @return A feature-by-sample data frame retaining the requested top fraction and, optionally, an `Other` row.
 #' @export
 profile_top_frac <- function(profile, frac = 0.1, out_other = FALSE,
                              other_name = "Other",
@@ -607,18 +598,16 @@ profile_top_frac <- function(profile, frac = 0.1, out_other = FALSE,
 
 #' Profile Replace utility
 #'
-#' `profile_replace()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 按阈值替换低丰度值，并可在替换前转换为相对丰度。
+#' 按阈值替换低丰度值，并可在替换前转换为相对丰度。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param min_value Numeric limit controlling min value.
+#' @param min_value Minimum abundance threshold; smaller values are replaced.
 #' @param fill_value Value assigned to observations that fail the replacement threshold.
 #' @param trans_ra Whether abundances are converted to relative abundance before analysis.
-#' @param base Numeric setting for `base`.
-#' @param remove_empty Logical control for `remove_empty`.
-#' @return A result object described in the Details section.
+#' @param base Scaling constant used for relative-abundance output.
+#' @param remove_empty Whether to remove samples whose total abundance is zero.
+#' @return A feature-by-sample data frame with values below the threshold replaced.
 #' @export
 profile_replace <- function(profile, min_value = 1, fill_value = 0,
                             trans_ra = FALSE, base = 100,
@@ -655,15 +644,13 @@ profile_replace <- function(profile, min_value = 1, fill_value = 0,
 
 #' Profile Adjacency utility
 #'
-#' `profile_adjacency()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 将丰度表转换为 feature × sample 的存在/缺失矩阵。
+#' 将丰度表转换为 feature × sample 的存在/缺失矩阵。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param logical Whether the adjacency matrix contains logical presence/absence values.
 #' @param min_abundance Minimum abundance above which a feature is considered present.
-#' @return A result object described in the Details section.
+#' @return A feature-by-sample presence/absence data frame, logical or numeric as requested.
 #' @export
 profile_adjacency <- function(profile, logical = FALSE, min_abundance = 0) {
   profile <- data.frame(profile, check.names = FALSE)
@@ -692,10 +679,8 @@ profile_adjacency <- function(profile, logical = FALSE, min_abundance = 0) {
 
 #' Profile Prevalence utility
 #'
-#' `profile_prevalence()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 计算 feature 在总体或各组中的出现样本数或 prevalence。
+#' 计算 feature 在总体或各组中的出现样本数或 prevalence。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -704,8 +689,8 @@ profile_adjacency <- function(profile, logical = FALSE, min_abundance = 0) {
 #' @param group_col Name of the grouping column.
 #' @param min_abundance Minimum abundance above which a feature is considered present.
 #' @param count Whether prevalence is returned as sample counts instead of proportions.
-#' @param base Numeric setting for `base`.
-#' @return A result object described in the Details section.
+#' @param base Scaling constant used for relative-abundance output.
+#' @return A feature-level data frame of occurrence counts or prevalence, optionally stratified by group.
 #' @export
 profile_prevalence <- function(profile, group = NULL, by_group = TRUE,
                                sample_col = "sample", group_col = "group",
@@ -785,10 +770,8 @@ profile_prevalence <- function(profile, group = NULL, by_group = TRUE,
 
 #' Profile Statistics utility
 #'
-#' `profile_statistics()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 计算 feature 的 mean、SD、median 和 prevalence，可按组汇总。
+#' 计算 feature 的 mean、SD、median 和 prevalence，可按组汇总。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -796,8 +779,8 @@ profile_prevalence <- function(profile, group = NULL, by_group = TRUE,
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param min_abundance Minimum abundance above which a feature is considered present.
-#' @param base Numeric setting for `base`.
-#' @return A result object described in the Details section.
+#' @param base Scaling constant used for relative-abundance output.
+#' @return A feature-level data frame of abundance and prevalence summaries, optionally stratified by group.
 #' @export
 profile_statistics <- function(profile, group = NULL, by_group = TRUE,
                                sample_col = "sample", group_col = "group",
@@ -875,10 +858,8 @@ profile_statistics <- function(profile, group = NULL, by_group = TRUE,
 # remove_unknown: 是否删除 unknown 分组的 feature
 #' Profile Aggregate utility
 #'
-#' `profile_aggregate()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 根据 feature metadata 聚合 profile，并处理未知分类。
+#' 根据 feature metadata 聚合 profile，并处理未知分类。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param metadata A metadata or annotation data frame.
@@ -886,10 +867,10 @@ profile_statistics <- function(profile, group = NULL, by_group = TRUE,
 #' @param group_col Name of the grouping column.
 #' @param method Analysis or summary method; supported values are shown in the usage.
 #' @param unknown Label assigned to unknown or unclassified taxonomy entries.
-#' @param remove_unknown Logical control for `remove_unknown`.
+#' @param remove_unknown Whether to discard unknown or unclassified entries.
 #' @param unknown_pattern Regular expression identifying unknown or unclassified annotations.
 #' @param sep Field separator used when reading or writing a text file.
-#' @return A result object described in the Details section.
+#' @return A profile aggregated by the selected metadata columns.
 #' @export
 profile_aggregate <- function(
   profile, metadata, feature_col = NULL, group_col = NULL,
@@ -1002,7 +983,7 @@ profile_aggregate <- function(
   return(out)
 }
 
-#### remove zero-variance features ####
+#### profile_remove_zero_var ####
 # 删除丰度表中在所有样本间无变异的 feature
 # profile: 行为 feature、列为 sample 的丰度表或数值矩阵
 # 判定方法: 按行计算标准差，仅保留标准差有限且大于 0 的 feature
@@ -1010,13 +991,11 @@ profile_aggregate <- function(
 # 返回值: 删除零方差及无法计算方差的 feature 后的丰度表
 #' Profile Remove Zero Var utility
 #'
-#' `profile_remove_zero_var()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 删除跨样本零方差的 feature，避免降维或模型拟合失败。
+#' 删除跨样本零方差的 feature，避免降维或模型拟合失败。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @return A result object described in the Details section.
+#' @return A feature-by-sample data frame with zero-variance features removed.
 #' @export
 profile_remove_zero_var <- function(profile) {
   row_sd <- apply(profile, 1, stats::sd, na.rm = TRUE)

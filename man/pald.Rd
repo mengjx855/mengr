@@ -7,22 +7,19 @@
 pald(name = NULL, reverse = FALSE, n = NULL, paste = FALSE, ...)
 }
 \arguments{
-\item{name}{Display or identifier name for name.}
+\item{name}{Name of a discrete palette; \code{NULL} lists available palettes.}
 
-\item{reverse}{Logical control for \code{reverse}.}
+\item{reverse}{Whether to reverse the selected color sequence.}
 
 \item{n}{Requested number of values, features, or results.}
 
 \item{paste}{Whether palette colors are returned as copy-ready quoted text.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments used by the selected discrete-palette provider.}
 }
 \value{
-A result object described in the Details section.
+A character vector of discrete colors, or a copyable \code{c(...)} string when \code{paste = TRUE}.
 }
 \description{
-\code{pald()} provides a reusable mengR workflow with input validation and standardized output.
-}
-\details{
-Chinese summary: 按名称取得离散配色，可指定数量、反转顺序或输出可复制文本。
+按名称取得离散配色，可指定数量、反转顺序或输出可复制文本。
 }

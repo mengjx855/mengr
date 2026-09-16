@@ -39,17 +39,17 @@ rf_repeated_kfold(
 
 \item{group_level}{Optional order of group levels.}
 
-\item{remove_zero_var}{Logical control for \code{remove_zero_var}.}
+\item{remove_zero_var}{Whether to remove zero-variance features before analysis.}
 
 \item{na_fill}{Value used to replace missing observations before analysis.}
 
 \item{progress}{Whether progress information is printed during repeated analyses.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{rf_kfold()}.}
 }
 \value{
-A result object described in the Details section.
+A data frame combining predictions from every repeat and fold.
 }
 \description{
-Chinese summary: 多次重复 random-forest k-fold，并标记每次重复和 fold。
+多次重复 random-forest k-fold，并标记每次重复和 fold。
 }

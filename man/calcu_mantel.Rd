@@ -37,23 +37,19 @@ calcu_mantel(
 
 \item{trans_ra}{Whether abundances are converted to relative abundance before analysis.}
 
-\item{base}{Numeric setting for \code{base}.}
+\item{base}{Scaling constant used for relative-abundance output.}
 
-\item{remove_empty}{Logical control for \code{remove_empty}.}
+\item{remove_empty}{Whether to remove samples whose total abundance is zero.}
 
 \item{na_fill}{Value used to replace missing observations before analysis.}
 
-\item{parallel}{Whether to enable the parallel behavior.}
+\item{parallel}{Whether \code{linkET::mantel_test()} may use parallel execution.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{linkET::mantel_test()}.}
 }
 \value{
-A result object described in the Details section.
+A Mantel-test data frame with aligned inputs and feature selections stored as attributes.
 }
 \description{
-\code{calcu_mantel()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 在多个 profile 或环境变量之间批量执行 Mantel test。
+在多个 profile 或环境变量之间批量执行 Mantel test。
 }

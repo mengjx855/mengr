@@ -11,9 +11,9 @@ theme_roc(
 )
 }
 \arguments{
-\item{base_size}{Numeric setting for \code{base_size}.}
+\item{base_size}{Base font size for the plot theme.}
 
-\item{show_grid}{Logical control for \code{show_grid}.}
+\item{show_grid}{Whether to draw panel grid lines.}
 
 \item{style}{Visual style preset; supported values are shown in Usage.}
 }
@@ -21,9 +21,5 @@ theme_roc(
 A ggplot2 theme object.
 }
 \description{
-\code{theme_roc()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 提供 default、grid、classic、minimal、nature 和 lancet ROC 主题。
+提供 default、grid、classic、minimal、nature 和 lancet ROC 主题。
 }

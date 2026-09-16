@@ -1,14 +1,16 @@
-#### ggradar pair plot ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260820, 20260916 ####
+
+# 20260916: standardize documentation and rename plotting data-frame variables to the `*_df` style.
+
+#### plot_ggradar_pair ####
 # data: 需要包含 proj、cf_col、random_col 和 p_col
 # cf_col/random_col: 两组要比较的数值列
 # p_col: 用于标记显著性的 p 值列
 # star_radius: 星号离中心的距离；如果星号太靠内或太靠外，可以调这个值
 #' Plot Ggradar Pair utility
 #'
-#' `plot_ggradar_pair()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 将成对比较数据整理为 ggradar 所需格式并绘制雷达图。
+#' 将成对比较数据整理为 ggradar 所需格式并绘制雷达图。
 #'
 #' @param data An input data frame or compatible object.
 #' @param cf_col Name of the `cf_col` input column.
@@ -16,15 +18,15 @@
 #' @param p_col Name of the `p_col` input column.
 #' @param title Optional plot or result title.
 #' @param proj_col Name of the `proj_col` input column.
-#' @param cf_name Display or identifier name for cf name.
-#' @param random_name Display or identifier name for random name.
+#' @param cf_name Display label for the first comparison series.
+#' @param random_name Display label for the second comparison series.
 #' @param colors Color specification for `colors`.
 #' @param grid_max Upper limit of the radar grid; `NULL` derives it from the data.
 #' @param star_radius Inner radius used to position the radar-chart star polygons.
-#' @param axis.label.size Numeric setting for `axis.label.size`.
-#' @param grid.label.size Numeric setting for `grid.label.size`.
+#' @param axis.label.size Text size for radar-axis labels.
+#' @param grid.label.size Text size for radar-grid labels.
 #' @param legend.position Legend position passed to `ggplot2::theme()`.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_ggradar_pair <- function(data, cf_col, random_col, p_col,
                               title = NULL,
@@ -42,7 +44,7 @@ plot_ggradar_pair <- function(data, cf_col, random_col, p_col,
 
   ## 1. 整理成 ggradar 需要的格式：
   ##    第一列是 group，后面每一列是一个雷达轴
-  radar_data <- data |>
+  radar_df <- data |>
     dplyr::select(
       proj = dplyr::all_of(proj_col),
       CF = dplyr::all_of(cf_col),
@@ -61,7 +63,7 @@ plot_ggradar_pair <- function(data, cf_col, random_col, p_col,
     data.frame(check.names = FALSE)
 
   ## 2. 自动设置雷达图最大刻度
-  value_mat <- as.matrix(radar_data[, -1])
+  value_mat <- as.matrix(radar_df[, -1])
 
   if (is.null(grid_max)) {
     grid_max <- max(value_mat, na.rm = TRUE) * 1.15
@@ -71,9 +73,9 @@ plot_ggradar_pair <- function(data, cf_col, random_col, p_col,
   grid_mid <- grid_max / 2
 
   ## 3. p 值星号位置
-  axis_names <- colnames(radar_data)[-1]
+  axis_names <- colnames(radar_df)[-1]
 
-  p_data <- data |>
+  p_df <- data |>
     dplyr::transmute(
       proj = .data[[proj_col]],
       plab = .add_plab(.data[[p_col]], format = 2)
@@ -89,7 +91,7 @@ plot_ggradar_pair <- function(data, cf_col, random_col, p_col,
 
   ## 4. ggradar 作图
   p <- ggradar::ggradar(
-    radar_data,
+    radar_df,
     grid.min = 0,
     grid.mid = grid_mid,
     grid.max = grid_max,
@@ -112,10 +114,10 @@ plot_ggradar_pair <- function(data, cf_col, random_col, p_col,
     )
 
   ## 5. 加显著性星号
-  if (nrow(p_data) > 0) {
+  if (nrow(p_df) > 0) {
     p <- p +
       ggplot2::geom_text(
-        data = p_data,
+        data = p_df,
         ggplot2::aes(x = x, y = y, label = plab),
         inherit.aes = FALSE,
         size = 5,
@@ -127,29 +129,27 @@ plot_ggradar_pair <- function(data, cf_col, random_col, p_col,
   return(p)
 }
 
-#### radar plot ####
+#### plot_pair_radar ####
 #' Plot Pair Radar utility
 #'
-#' `plot_pair_radar()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 使用 ggplot2 绘制成对比较的极坐标雷达图。
+#' 使用 ggplot2 绘制成对比较的极坐标雷达图。
 #'
 #' @param data An input data frame or compatible object.
 #' @param cf_col Name of the `cf_col` input column.
 #' @param random_col Name of the `random_col` input column.
 #' @param p_col Name of the `p_col` input column.
 #' @param title Optional plot or result title.
-#' @param cf_name Display or identifier name for cf name.
-#' @param random_name Display or identifier name for random name.
+#' @param cf_name Display label for the first comparison series.
+#' @param random_name Display label for the second comparison series.
 #' @param colors Color specification for `colors`.
-#' @param fill_alpha Numeric setting for `fill_alpha`.
-#' @param line_width Numeric setting for `line_width`.
-#' @param point_size Numeric setting for `point_size`.
-#' @param label_size Numeric setting for `label_size`.
-#' @param star_size Numeric setting for `star_size`.
+#' @param fill_alpha Opacity of the radar polygon fill.
+#' @param line_width Line width used for plotted paths.
+#' @param point_size Point size used for samples or observations.
+#' @param label_size Text size for sample or group labels.
+#' @param star_size Text size of significance-star labels.
 #' @param grid_n Number of grid intervals.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_pair_radar <- function(data, cf_col, random_col, p_col,
                             title = NULL,
@@ -185,7 +185,7 @@ plot_pair_radar <- function(data, cf_col, random_col, p_col,
   y_breaks <- pretty(c(min_y, max_y), n = grid_n)
   y_max <- max(y_breaks) * 1.18
 
-  p_data <- data |>
+  p_df <- data |>
     dplyr::transmute(
       proj,
       pval = .data[[p_col]],
@@ -201,7 +201,7 @@ plot_pair_radar <- function(data, cf_col, random_col, p_col,
     ggplot2::geom_line(linewidth = line_width) +
     ggplot2::geom_point(size = point_size, stroke = 0.3) +
     ggplot2::geom_text(
-      data = p_data,
+      data = p_df,
       ggplot2::aes(x = proj, y = y, label = plab),
       inherit.aes = FALSE,
       size = star_size,

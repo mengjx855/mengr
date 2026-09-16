@@ -12,12 +12,8 @@ calcu_adonis_r2(dist, group_labels)
 \item{group_labels}{Labels corresponding to group labels.}
 }
 \value{
-A result object described in the Details section.
+A numeric PERMANOVA R-squared value.
 }
 \description{
-\code{calcu_adonis_r2()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 根据距离对象和分组标签计算 PERMANOVA R-squared。
+根据距离对象和分组标签计算 PERMANOVA R-squared。
 }

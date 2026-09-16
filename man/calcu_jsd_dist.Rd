@@ -11,11 +11,11 @@ calcu_jsd_dist(profile, pseudocount = 1e-06, normalize = TRUE)
 
 \item{pseudocount}{Positive value used to replace or offset zeros before logarithmic operations.}
 
-\item{normalize}{Whether to enable the normalize behavior.}
+\item{normalize}{Whether to normalize each sample to unit sum before calculation.}
 }
 \value{
-A result object described in the Details section.
+A \code{dist} object containing pairwise Jensen-Shannon distances.
 }
 \description{
-Chinese summary: 对组成型 profile 计算 Jensen-Shannon divergence 距离。
+对组成型 profile 计算 Jensen-Shannon divergence 距离。
 }

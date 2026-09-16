@@ -42,15 +42,11 @@ calcu_pcoa(
 
 \item{permutations}{Number of permutations used by the significance test.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to distance calculation or \code{vegan::adonis2()}.}
 }
 \value{
-A result object described in the Details section.
+A list containing the PCoA object, sample coordinates, eigenvalues, and explained variance.
 }
 \description{
-\code{calcu_pcoa()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 从 profile 或距离对象计算 pcoa 坐标和特征值。
+从 profile 或距离对象计算 pcoa 坐标和特征值。
 }

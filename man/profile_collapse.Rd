@@ -30,12 +30,8 @@ profile_collapse(
 \item{group_level}{Optional order of group levels.}
 }
 \value{
-A result object described in the Details section.
+A feature-by-group data frame produced by the requested summary function.
 }
 \description{
-\code{profile_collapse()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 按样本分组对 profile 求 mean、median、sum 或自定义统计量。
+按样本分组对 profile 求 mean、median、sum 或自定义统计量。
 }

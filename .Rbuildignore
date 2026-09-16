@@ -3,3 +3,10 @@
 ^README\.Rmd$
 ^cran-comments\.md$
 ^tools$
+^\.git$
+^\.gitignore$
+^\.lintr$
+^check$
+^build$
+^\.Rhistory$
+^\.codex$

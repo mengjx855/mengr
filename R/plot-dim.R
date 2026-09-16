@@ -1,8 +1,9 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250417, 20260526, v0.1.3 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250417, 20260916 ####
 
 # 20250417: 创建函数 plot_dim, 嵌套所有降维分析的可视化，以统一画图格式；
 # 20250617: 升级函数，默认输入的文件第二列和第三列为坐标位置
 # 20260526: update some function.
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
 
 
 #### plot_dim ####
@@ -20,10 +21,8 @@
 
 #' Plot Dim utility
 #'
-#' `plot_dim()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 统一绘制二维降维结果，支持 point/line、置信区域、标签和主题。
+#' 统一绘制二维降维结果，支持 point/line、置信区域、标签和主题。
 #'
 #' @param data An input data frame or compatible object.
 #' @param group_level Optional order of group levels.
@@ -40,18 +39,18 @@
 #' @param xlab Optional x-axis label.
 #' @param ylab Optional y-axis label.
 #' @param legend_title Legend title; `NULL` uses a context-dependent default.
-#' @param add_group_label Logical control for `add_group_label`.
-#' @param add_sample_label Logical control for `add_sample_label`.
-#' @param label_size Numeric setting for `label_size`.
-#' @param point_size Numeric setting for `point_size`.
-#' @param line_width Numeric setting for `line_width`.
-#' @param show_legend Logical control for `show_legend`.
-#' @param show_grid Logical control for `show_grid`.
-#' @param show_line Logical control for `show_line`.
+#' @param add_group_label Whether to label group centroids.
+#' @param add_sample_label Whether to label individual samples.
+#' @param label_size Text size for sample or group labels.
+#' @param point_size Point size used for samples or observations.
+#' @param line_width Line width used for plotted paths.
+#' @param show_legend Whether to display the plot legend.
+#' @param show_grid Whether to draw panel grid lines.
+#' @param show_line Whether to draw horizontal and vertical reference lines at zero.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
 #' @param theme Plot theme preset; supported values are shown in Usage.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param ... Additional arguments passed to `ggplot2::stat_ellipse()` when confidence regions are drawn.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_dim <- function(
   data, group_level = NULL, group_color = NULL,

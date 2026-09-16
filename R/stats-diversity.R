@@ -1,4 +1,4 @@
-#### Jin-Xin Meng, 20211029, 20260527, v0.2.3 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20211029, 20260916 ####
 
 # 20230101: update function 'calcu_alpha()'.
 # 20231204: update function 'check_file_name()' was deprecated.
@@ -6,6 +6,7 @@
 # 20250404: 修改函数的某些参数名称，plot_alpha() 函数中 添加 add_ref_line 参数
 # 20260527: update function.
 # 20260819: add functions about beta-diversity from the plot_PCoA.R script.
+# 20260916: standardize documentation and rename internal data-frame variables to the `*_df` style without changing returned component names.
 
 
 #### calcu_alpha ####
@@ -18,17 +19,15 @@
 
 #' Calcu Alpha utility
 #'
-#' `calcu_alpha()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 计算 richness、Shannon、Simpson、Chao1、ACE 等 alpha diversity 指标。
+#' 计算 richness、Shannon、Simpson、Chao1、ACE 等 alpha diversity 指标。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param method Analysis or summary method; supported values are shown in the usage.
 #' @param tree Phylogenetic tree required for UniFrac distances.
-#' @param base Numeric setting for `base`.
+#' @param base Scaling constant used for relative-abundance output.
 #' @param value_col Name of the `value_col` input column.
-#' @return A result object described in the Details section.
+#' @return A sample-level data frame containing the requested alpha-diversity indices.
 #' @export
 calcu_alpha <- function(
   profile, method = c(
@@ -104,10 +103,8 @@ calcu_alpha <- function(
 
 #' Plot Alpha utility
 #'
-#' `plot_alpha()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 绘制 alpha diversity 分组图，并支持排序、显著性及参考线。
+#' 绘制 alpha diversity 分组图，并支持排序、显著性及参考线。
 #'
 #' @param data An input data frame or compatible object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -120,16 +117,16 @@ calcu_alpha <- function(
 #' @param ylab Optional y-axis label.
 #' @param title Optional plot or result title.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
-#' @param show_grid Logical control for `show_grid`.
-#' @param show_jitter Logical control for `show_jitter`.
-#' @param rotate_x_text Whether to enable the rotate x text behavior.
+#' @param show_grid Whether to draw panel grid lines.
+#' @param show_jitter Whether to overlay jittered sample points.
+#' @param rotate_x_text Whether to rotate x-axis text by 45 degrees.
 #' @param coord_flip Whether to exchange the x and y axes with `ggplot2::coord_flip()`.
-#' @param show_diff Logical control for `show_diff`.
+#' @param show_diff Whether to add pairwise significance comparisons.
 #' @param method Analysis or summary method; supported values are shown in the usage.
 #' @param sort_value Optional ascending or descending ordering of plotted values.
-#' @param add_ref_line Logical control for `add_ref_line`.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param add_ref_line Whether to draw the reference line specified by `ref_line`.
+#' @param ... Additional arguments passed to the boxplot layer or significance test.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_alpha <- function(
   data, group, sample_col = "sample", value_col = "value",
@@ -318,19 +315,17 @@ plot_alpha <- function(
 
 #' Calcu Distance utility
 #'
-#' `calcu_distance()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 计算 Bray、Jaccard、Euclidean、UniFrac 等样本距离，可先转换 profile。
+#' 计算 Bray、Jaccard、Euclidean、UniFrac 等样本距离，可先转换 profile。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param dist_method Distance method; available values are validated with `match.arg()`.
 #' @param tree Phylogenetic tree required for UniFrac distances.
 #' @param weighted Whether to calculate weighted rather than unweighted UniFrac.
 #' @param transform Optional transformation applied before analysis.
-#' @param remove_empty Logical control for `remove_empty`.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param remove_empty Whether to remove samples whose total abundance is zero.
+#' @param ... Additional arguments passed to the selected distance function.
+#' @return A `dist` object containing pairwise sample distances.
 #' @export
 calcu_distance <- function(
   profile,
@@ -427,17 +422,15 @@ calcu_distance <- function(
 
 #' Calcu Beta utility
 #'
-#' `calcu_beta()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 基于距离矩阵执行整体 beta-diversity 组间检验。
+#' 基于距离矩阵执行整体 beta-diversity 组间检验。
 #'
 #' @param distance A precomputed distance object; when supplied, it takes precedence over `profile`.
 #' @param metadata A metadata or annotation data frame.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
-#' @param drop_na_group Whether to enable the drop na group behavior.
-#' @return A result object described in the Details section.
+#' @param drop_na_group Whether to remove samples with missing or empty group labels.
+#' @return A data frame of within-group sample pairs and their distances.
 #' @export
 calcu_beta <- function(
   distance, metadata, sample_col = "sample",
@@ -498,13 +491,11 @@ calcu_beta <- function(
 
 #' Calcu Adjusted R2 utility
 #'
-#' `calcu_adjusted_r2()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 从 adonis 类结果中计算或提取 adjusted R-squared。
+#' 从 adonis 类结果中计算或提取 adjusted R-squared。
 #'
 #' @param adonis_object Object returned by a PERMANOVA/adonis calculation.
-#' @return A result object described in the Details section.
+#' @return A numeric adjusted R-squared value.
 #' @export
 calcu_adjusted_r2 <- function(adonis_object) {
   n_observations <- adonis_object$Df[nrow(adonis_object)] + 1
@@ -527,10 +518,8 @@ calcu_adjusted_r2 <- function(adonis_object) {
 
 #' Calcu Pairwise Adonis utility
 #'
-#' `calcu_pairwise_adonis()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 对各组组合执行 pairwise PERMANOVA，并校正 P 值。
+#' 对各组组合执行 pairwise PERMANOVA，并校正 P 值。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -539,9 +528,9 @@ calcu_adjusted_r2 <- function(adonis_object) {
 #' @param group_level Optional order of group levels.
 #' @param dist_method Distance method; available values are validated with `match.arg()`.
 #' @param permutations Number of permutations used by the significance test.
-#' @param add_plab Logical control for `add_plab`.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param add_plab Whether to add formatted significance labels.
+#' @param ... Additional arguments passed to `vegan::adonis2()`.
+#' @return A data frame containing pairwise PERMANOVA statistics, P values, adjusted P values, and optional labels.
 #' @export
 calcu_pairwise_adonis <- function(
   profile, group, sample_col = "sample", group_col = "group",
@@ -636,14 +625,12 @@ calcu_pairwise_adonis <- function(
 
 #' Plot Pairwise Adonis utility
 #'
-#' `plot_pairwise_adonis()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 将 pairwise PERMANOVA 结果绘制为矩阵或热图式结果图。
+#' 将 pairwise PERMANOVA 结果绘制为矩阵或热图式结果图。
 #'
 #' @param data An input data frame or compatible object.
 #' @param group_level Optional order of group levels.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_pairwise_adonis <- function(data, group_level = NULL) {
   data <- data.frame(data, check.names = FALSE)
@@ -669,14 +656,14 @@ plot_pairwise_adonis <- function(data, group_level = NULL) {
       x = factor(x, levels = group_level),
       y = factor(y, levels = rev(group_level)),
       plab = dplyr::case_when(
-        pval <= 0.001 ~ "p≤0.001",
+        pval <= 0.001 ~ "p\u22640.001",
         pval < 0.01 ~ "p<0.01",
         pval < 0.05 ~ "p<0.05",
-        TRUE ~ "p≥0.05"
+        TRUE ~ "p\u22650.05"
       ),
       plab = factor(
         plab,
-        levels = c("p≤0.001", "p<0.01", "p<0.05", "p≥0.05")
+        levels = c("p\u22640.001", "p<0.01", "p<0.05", "p\u22650.05")
       )
     )
 
@@ -696,12 +683,12 @@ plot_pairwise_adonis <- function(data, group_level = NULL) {
     ) +
     ggplot2::scale_fill_manual(
       values = c(
-        "p≤0.001" = "#f46d43",
+        "p\u22640.001" = "#f46d43",
         "p<0.01"  = "#fee08b",
         "p<0.05"  = "#abdda4",
-        "p≥0.05"  = "#3288bd"
+        "p\u22650.05"  = "#3288bd"
       ),
-      breaks = c("p≤0.001", "p<0.01", "p<0.05", "p≥0.05")
+      breaks = c("p\u22640.001", "p<0.01", "p<0.05", "p\u22650.05")
     ) +
     ggplot2::scale_size_continuous(range = c(6, 12)) +
     ggplot2::labs(x = "", y = "") +
@@ -738,10 +725,8 @@ plot_pairwise_adonis <- function(data, group_level = NULL) {
 
 #' Calcu Betadisper utility
 #'
-#' `calcu_betadisper()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 检验各组到中心或中位数中心的 multivariate dispersion。
+#' 检验各组到中心或中位数中心的 multivariate dispersion。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -753,8 +738,8 @@ plot_pairwise_adonis <- function(data, group_level = NULL) {
 #' @param permutations Number of permutations used by the significance test.
 #' @param type Analysis or value type; supported values are shown in Usage.
 #' @param bias_adjust Whether to apply the small-sample bias correction in `vegan::betadisper()`.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments forwarded to `calcu_distance()`.
+#' @return A list containing the betadisper object, group metadata, permutation/ANOVA/Tukey tests, and sample distances to group centers.
 #' @export
 calcu_betadisper <- function(
   profile = NULL, group, distance = NULL, sample_col = "sample",
@@ -831,7 +816,7 @@ calcu_betadisper <- function(
   tukey_test <- stats::TukeyHSD(betadisper)
 
   # Distance of each sample to its group center
-  dist_data <- data.frame(
+  dist_df <- data.frame(
     sample = names(betadisper$distances),
     value = as.numeric(betadisper$distances),
     check.names = FALSE
@@ -848,7 +833,7 @@ calcu_betadisper <- function(
     permutest = permutest,
     anova = anova_test,
     tukey = tukey_test,
-    dist_data = dist_data,
+    dist_data = dist_df,
     type = type,
     bias_adjust = bias_adjust
   )
@@ -873,26 +858,24 @@ calcu_betadisper <- function(
 
 #' Plot Betadisper utility
 #'
-#' `plot_betadisper()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 绘制组内离散度及组间比较结果。
+#' 绘制组内离散度及组间比较结果。
 #'
 #' @param result Result object or table to summarize.
 #' @param group_color Optional colors aligned to `group_level`.
 #' @param title Optional plot or result title.
 #' @param subtitle Optional plot subtitle.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
-#' @param show_grid Logical control for `show_grid`.
+#' @param show_grid Whether to draw panel grid lines.
 #' @param x_text_angle Rotation angle, in degrees, for x-axis text.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_betadisper <- function(
   result, group_color = NULL, title = NULL, subtitle = NULL,
   aspect_ratio = NULL, show_grid = FALSE, x_text_angle = 0
 ) {
-  dist_data <- result$dist_data
-  group_level <- levels(dist_data$group)
+  dist_df <- result$dist_data
+  group_level <- levels(dist_df$group)
 
   # Set group colors
   if (is.null(group_color)) {
@@ -940,7 +923,7 @@ plot_betadisper <- function(
   }
 
   plt <- ggpubr::ggboxplot(
-    dist_data,
+    dist_df,
     x = "group", y = "value", fill = "group", legend = "none",
     palette = group_color, xlab = "", ylab = ylab, outlier.shape = NA,
     x.text.angle = x_text_angle, title = title, subtitle = subtitle
@@ -978,14 +961,12 @@ plot_betadisper <- function(
 
 #' Calcu Adonis R2 utility
 #'
-#' `calcu_adonis_r2()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 根据距离对象和分组标签计算 PERMANOVA R-squared。
+#' 根据距离对象和分组标签计算 PERMANOVA R-squared。
 #'
 #' @param dist A distance object used by the analysis.
 #' @param group_labels Labels corresponding to group labels.
-#' @return A result object described in the Details section.
+#' @return A numeric PERMANOVA R-squared value.
 #' @export
 calcu_adonis_r2 <- function(dist, group_labels) {
   dist <- as.matrix(dist)

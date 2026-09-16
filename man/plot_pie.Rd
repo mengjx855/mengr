@@ -43,13 +43,13 @@ plot_pie(
 
 \item{other_last}{Whether the residual \code{Other} category is placed last.}
 
-\item{add_count}{Logical control for \code{add_count}.}
+\item{add_count}{Whether to include counts in slice labels.}
 
-\item{add_percent}{Logical control for \code{add_percent}.}
+\item{add_percent}{Whether to include percentages in slice labels.}
 
 \item{circular_label}{Whether category labels should follow the circular plotting direction.}
 
-\item{flip_label}{Whether to enable the flip label behavior.}
+\item{flip_label}{Whether to reverse labels on the left half of the pie for readability.}
 
 \item{title}{Optional plot or result title.}
 
@@ -57,7 +57,7 @@ plot_pie(
 
 \item{fill}{Color specification for fill.}
 
-\item{font_size}{Numeric setting for \code{font_size}.}
+\item{font_size}{Base text size used in the plot.}
 
 \item{hemisphere}{Portion of the circle used for the pie layout; supported values are shown in Usage.}
 
@@ -66,8 +66,8 @@ plot_pie(
 \item{percent_digits}{Number of decimal places shown in percentage labels.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-Chinese summary: 从指定名称列和值列绘制饼图或环形图。
+从指定名称列和值列绘制饼图或环形图。
 }

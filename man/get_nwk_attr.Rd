@@ -33,12 +33,8 @@ get_nwk_attr(
 \item{output_dir}{Existing directory used for optional file export.}
 }
 \value{
-A result object described in the Details section.
+A list containing the igraph object, edge and node attribute data frames, and paths of any exported files.
 }
 \description{
-\code{get_nwk_attr()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 从相关 edge table 构建 igraph 网络，整理 edge/node 属性并可选导出。
+从相关 edge table 构建 igraph 网络，整理 edge/node 属性并可选导出。
 }

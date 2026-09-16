@@ -51,27 +51,23 @@ plot_compos(
 
 \item{sample_level}{Optional order for \code{sample_level}.}
 
-\item{width}{Numeric setting for \code{width}.}
+\item{width}{Bar width for composition plots; in \code{plot_msa()}, the number of alignment positions per block.}
 
 \item{taxa_level}{Optional order for \code{taxa_level}.}
 
 \item{taxa_color}{Color specification for \code{taxa_color}.}
 
-\item{plot_title}{Logical control for \code{plot_title}.}
+\item{plot_title}{Whether to display the supplied plot title.}
 
 \item{x_text_angle}{Rotation angle, in degrees, for x-axis text.}
 
-\item{remove_unknown}{Logical control for \code{remove_unknown}.}
+\item{remove_unknown}{Whether to discard unknown or unclassified entries.}
 
 \item{unknown_pattern}{Regular expression identifying unknown or unclassified annotations.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_compos()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 绘制单个分类层级的样本或分组组成堆叠柱状图。
+绘制单个分类层级的样本或分组组成堆叠柱状图。
 }

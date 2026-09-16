@@ -1,23 +1,25 @@
-# Jinxin Meng, 20241023, 20241023 -------------
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241023, 20260916 ####
+
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
 
 # 由于reactome没有对应的层级结构，获取某个ID的上级关系需要用此函数进行确定
+#### reactome_longest_path ####
+
 #' Reactome Longest Path utility
 #'
-#' `reactome_longest_path()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 根据本地 Reactome 父子关系表提取目标通路的最长层级路径。
+#' 根据本地 Reactome 父子关系表提取目标通路的最长层级路径。
 #'
 #' @param path_ID Reactome pathway identifier used as the starting node.
 #' @param organism Reactome organism name used to restrict pathway records.
 #' @param path_file Path to the Reactome parent-child relation file.
 #' @param path_info_file Path to the Reactome pathway-information file.
-#' @return A result object described in the Details section.
+#' @return A data frame describing the longest root-to-target Reactome path for each requested pathway.
 #' @export
 reactome_longest_path <- function(
   path_ID, organism = NULL,
-  path_file = .mengR_db_file("Reactome", "ReactomePathwaysRelation.txt"),
-  path_info_file = .mengR_db_file("Reactome", "ReactomePathways.txt")
+  path_file = .mengr_db_file("Reactome", "ReactomePathwaysRelation.txt"),
+  path_info_file = .mengr_db_file("Reactome", "ReactomePathways.txt")
 ) {
   org <- list(
     "BTA" = "Bos taurus", "GGA" = "Gallus gallus", "HSA" = "Homo sapiens",

@@ -33,11 +33,11 @@ rf_importance(
 
 \item{na_fill}{Value used to replace missing observations before analysis.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{randomForest::randomForest()}.}
 }
 \value{
-A result object described in the Details section.
+A feature-importance data frame with the fitted random-forest model stored in the \code{model} attribute.
 }
 \description{
-Chinese summary: 提取并整理 random-forest feature importance。
+提取并整理 random-forest feature importance。
 }

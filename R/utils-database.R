@@ -1,29 +1,32 @@
-#### Jin-Xin Meng, 20260501, 20260501, v0.0.1 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260501, 20260916 ####
 
 # 20260501: create this scripts to parse a variety of database.
+# 20260916: rename `extract_HMDB_xrefs()` to `extract_hmdb_xrefs()`, repair its progress bar, and standardize documentation.
 
 
-#### get_HMDB2KEGG ####
+#### extract_hmdb_xrefs ####
 #' Extract HMDB Xrefs utility
 #'
-#' `extract_HMDB_xrefs()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 流式解析 HMDB XML，提取代谢物名称、标识符和外部数据库交叉引用。
+#' 流式解析 HMDB XML，提取代谢物名称、标识符和外部数据库交叉引用。
 #'
 #' @param xml_file Path to the HMDB XML file.
-#' @param ids Identifiers to query or retain.
-#' @param relation Relationship table or relation type used to connect database identifiers.
-#' @param output Requested output representation or output path.
-#' @param remove_empty Logical control for `remove_empty`.
-#' @param progresults Whether XML parsing progress is reported.
-#' @param write_file Whether to enable the write file behavior.
-#' @return A result object described in the Details section.
+#' @param ids HMDB XML fields to extract, or `"common"` for the predefined
+#'   cross-reference fields.
+#' @param relation Optional two-field character vector defining the source and
+#'   target columns of a relation table.
+#' @param output Output layout: wide metabolite records, a field/value long
+#'   table, or a two-column relation table.
+#' @param remove_empty Whether to omit records whose requested external-ID
+#'   fields are all missing.
+#' @param progress Whether to display XML parsing progress.
+#' @param write_file Optional path for a tab-separated copy of the result.
+#' @return A data frame with one row per HMDB metabolite and the requested cross-reference columns.
 #' @export
-extract_HMDB_xrefs <- function(
+extract_hmdb_xrefs <- function(
   xml_file, ids = c("hmdb_id", "name", "kegg_id"),
   relation = NULL, output = c("wide", "long", "relation"),
-  remove_empty = TRUE, progresults = TRUE,
+  remove_empty = TRUE, progress = TRUE,
   write_file = NULL
 ) {
   output <- match.arg(output)
@@ -99,8 +102,8 @@ extract_HMDB_xrefs <- function(
 
   result_list <- vector("list", n)
 
-  if (isTRUE(progresults)) {
-    pb <- utils::txtProgresultsBar(min = 0, max = n, style = 3)
+  if (isTRUE(progress)) {
+    pb <- utils::txtProgressBar(min = 0, max = n, style = 3)
     on.exit(close(pb), add = TRUE)
   }
 
@@ -113,8 +116,8 @@ extract_HMDB_xrefs <- function(
       check.names = FALSE
     )
 
-    if (isTRUE(progresults) && (i %% 100 == 0 || i == n)) {
-      utils::setTxtProgresultsBar(pb, i)
+    if (isTRUE(progress) && (i %% 100 == 0 || i == n)) {
+      utils::setTxtProgressBar(pb, i)
     }
   }
 

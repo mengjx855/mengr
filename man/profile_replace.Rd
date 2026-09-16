@@ -16,23 +16,19 @@ profile_replace(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{min_value}{Numeric limit controlling min value.}
+\item{min_value}{Minimum abundance threshold; smaller values are replaced.}
 
 \item{fill_value}{Value assigned to observations that fail the replacement threshold.}
 
 \item{trans_ra}{Whether abundances are converted to relative abundance before analysis.}
 
-\item{base}{Numeric setting for \code{base}.}
+\item{base}{Scaling constant used for relative-abundance output.}
 
-\item{remove_empty}{Logical control for \code{remove_empty}.}
+\item{remove_empty}{Whether to remove samples whose total abundance is zero.}
 }
 \value{
-A result object described in the Details section.
+A feature-by-sample data frame with values below the threshold replaced.
 }
 \description{
-\code{profile_replace()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 按阈值替换低丰度值，并可在替换前转换为相对丰度。
+按阈值替换低丰度值，并可在替换前转换为相对丰度。
 }

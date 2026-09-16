@@ -36,11 +36,11 @@ lasso_kfold(
 
 \item{inner_folds}{Number of internal folds used to tune the regularization parameter.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{glmnet::cv.glmnet()}.}
 }
 \value{
-A result object described in the Details section.
+A data frame with sample IDs, observed outcomes, predictions, and predicted classes for binomial models.
 }
 \description{
-Chinese summary: 使用 glmnet 和分层 folds 执行 LASSO k-fold cross-validation。
+使用 glmnet 和分层 folds 执行 LASSO k-fold cross-validation。
 }

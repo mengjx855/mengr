@@ -18,15 +18,11 @@ calcu_empirical_p(
 
 \item{alternative}{Alternative hypothesis used to calculate the empirical P value.}
 
-\item{simplify}{Logical control for \code{simplify}.}
+\item{simplify}{Whether to return the simplified tabular result instead of intermediate objects.}
 }
 \value{
-A result object described in the Details section.
+A numeric empirical P value, or a data frame of observed values and empirical P values when \code{simplify = FALSE}.
 }
 \description{
-\code{calcu_empirical_p()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 根据置换或背景分布计算双侧、左侧或右侧 empirical P 值。
+根据置换或背景分布计算双侧、左侧或右侧 empirical P 值。
 }

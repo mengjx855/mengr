@@ -12,7 +12,7 @@ set_calcu(
 )
 }
 \arguments{
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Vectors to combine; a single list of vectors is also accepted.}
 
 \item{method}{Analysis or summary method; supported values are shown in the usage.}
 
@@ -21,12 +21,8 @@ set_calcu(
 \item{sort_out}{Whether the returned set-operation result is sorted.}
 }
 \value{
-A result object described in the Details section.
+A vector containing the requested intersection, union, or sequential set difference.
 }
 \description{
-\code{set_calcu()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 对多个向量或一个向量列表计算交集、并集或集合差。
+对多个向量或一个向量列表计算交集、并集或集合差。
 }

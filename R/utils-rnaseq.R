@@ -1,10 +1,11 @@
-#### Jinxin Meng, 20251229, 20260822 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20251229, 20260916 ####
 
 # time-stamp:
 # 20251229: create script, add function 'plot_gsea_barcode()'.
-# 20260527: add function 'plot_GO_bar()', 'plot_GO_circular_bar()'.
+# 20260527: add functions `plot_go_bar()` and `plot_go_circular_bar()`.
 # 20260822: add function 'run_limma_diff()', 'run_voom_diff()', 'run_deseq2_diff()'
 #           for RNA-seq differential analysis in different scenarios.
+# 20260916: rename GO plotting functions to lowercase, standardize documentation, and adopt `*_df` data-frame names.
 
 #### run_limma_diff ####
 # 使用 limma 对连续型 profile 数据进行组间差异分析
@@ -547,18 +548,16 @@ run_deseq2_diff <- function(
 #### plot_gsea_barcode ####
 #' Plot Gsea Barcode utility
 #'
-#' `plot_gsea_barcode()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 绘制 GSEA barcode/running-score 风格结果图。
+#' 绘制 GSEA barcode/running-score 风格结果图。
 #'
 #' @param gseaResult A GSEA result object containing ranked genes and enrichment results.
 #' @param set_ID Gene-set identifier selected from a GSEA result.
 #' @param bar_color Color specification for `bar_color`.
-#' @param bar_width Numeric setting for `bar_width`.
+#' @param bar_width Width of plotted bars.
 #' @param core_enrichment Gene identifiers in the leading-edge or core-enrichment subset.
-#' @param add_table Logical control for `add_table`.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param add_table Whether to append a compact enrichment-statistics table.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_gsea_barcode <- function(
   gseaResult, set_ID, bar_color = c(up = "#de77ae", down = "#35978f"),
@@ -600,7 +599,7 @@ plot_gsea_barcode <- function(
     dplyr::select(ID, NES) |>
     dplyr::mutate(enriched = ifelse(NES > 0, "up", "down"))
 
-  rank_data <- data.frame(
+  rank_df <- data.frame(
     GENE = names(gseaResult@geneList),
     RANK = seq_along(gseaResult@geneList)
   ) |>
@@ -610,7 +609,7 @@ plot_gsea_barcode <- function(
     dplyr::left_join(dplyr::select(plot_enriched, TERM = ID, enriched), by = "TERM")
 
   p <- ggplot2::ggplot(
-    rank_data, ggplot2::aes(x = RANK, y = value)
+    rank_df, ggplot2::aes(x = RANK, y = value)
   ) +
     ggplot2::geom_bar(
       ggplot2::aes(fill = enriched),
@@ -668,7 +667,7 @@ plot_gsea_barcode <- function(
   return(p)
 }
 
-#### plot_GO_bar ####
+#### plot_go_bar ####
 # GO 富集分析普通横向柱状图
 # data: GO enrichment 结果表
 # term_col: GO term 名称列，默认 Description
@@ -683,10 +682,8 @@ plot_gsea_barcode <- function(
 
 #' Plot GO Bar utility
 #'
-#' `plot_GO_bar()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 绘制 GO enrichment 柱状图，并支持分组、排序和标签。
+#' 绘制 GO enrichment 柱状图，并支持分组、排序和标签。
 #'
 #' @param data An input data frame or compatible object.
 #' @param term_col Name of the `term_col` input column.
@@ -696,18 +693,18 @@ plot_gsea_barcode <- function(
 #' @param top_n Number of highest-ranking features or categories retained.
 #' @param sort_decreasing Whether sorting is performed in decreasing order.
 #' @param group_level Optional order of group levels.
-#' @param group_name Display or identifier name for group name.
+#' @param group_name Named character vector mapping group codes to display labels.
 #' @param palette Color palette name or vector supplied to the plot.
 #' @param title Optional plot or result title.
 #' @param xlab Optional x-axis label.
 #' @param ylab Optional y-axis label.
-#' @param bar_width Numeric setting for `bar_width`.
-#' @param bar_alpha Numeric setting for `bar_alpha`.
-#' @param show_legend Logical control for `show_legend`.
+#' @param bar_width Width of plotted bars.
+#' @param bar_alpha Opacity of plotted bars.
+#' @param show_legend Whether to display the plot legend.
 #' @param facet Whether enrichment results are separated into facets.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
-plot_GO_bar <- function(
+plot_go_bar <- function(
   data,
   term_col = "Description", group_col = "ONTOLOGY",
   value_col = "FoldEnrichment", sort_col = NULL,
@@ -869,7 +866,7 @@ plot_GO_bar <- function(
   return(p)
 }
 
-#### plot_GO_circular_bar ####
+#### plot_go_circular_bar ####
 # GO 富集分析环状柱状图
 # data: GO enrichment 结果表
 # term_col: GO term 名称列，默认 Description
@@ -890,10 +887,8 @@ plot_GO_bar <- function(
 
 #' Plot GO Circular Bar utility
 #'
-#' `plot_GO_circular_bar()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 将 GO enrichment 结果绘制为 circular barplot。
+#' 将 GO enrichment 结果绘制为 circular barplot。
 #'
 #' @param data An input data frame or compatible object.
 #' @param term_col Name of the `term_col` input column.
@@ -903,24 +898,24 @@ plot_GO_bar <- function(
 #' @param top_n Number of highest-ranking features or categories retained.
 #' @param sort_decreasing Whether sorting is performed in decreasing order.
 #' @param group_level Optional order of group levels.
-#' @param group_name Display or identifier name for group name.
+#' @param group_name Named character vector mapping group codes to display labels.
 #' @param empty_bar Angular width reserved as an empty separator in the circular bar plot.
 #' @param palette Color palette name or vector supplied to the plot.
 #' @param grid_breaks Reference values used to draw circular or radar grid lines.
 #' @param grid_n Number of grid intervals.
-#' @param show_grid Logical control for `show_grid`.
-#' @param inner_size Numeric setting for `inner_size`.
+#' @param show_grid Whether to draw panel grid lines.
+#' @param inner_size Radius of the empty inner circle in bar-height units.
 #' @param label_pad Radial padding between circular bars and their labels.
 #' @param label_wrap Maximum label width before circular labels are wrapped.
-#' @param bar_width Numeric setting for `bar_width`.
-#' @param bar_alpha Numeric setting for `bar_alpha`.
-#' @param label_size Numeric setting for `label_size`.
-#' @param group_label_size Numeric setting for `group_label_size`.
+#' @param bar_width Width of plotted bars.
+#' @param bar_alpha Opacity of plotted bars.
+#' @param label_size Text size for sample or group labels.
+#' @param group_label_size Text size for group labels.
 #' @param title Optional plot or result title.
-#' @param show_legend Logical control for `show_legend`.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param show_legend Whether to display the plot legend.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
-plot_GO_circular_bar <- function(
+plot_go_circular_bar <- function(
   data,
   term_col = "Description", group_col = "ONTOLOGY",
   value_col = "FoldEnrichment", sort_col = NULL,
@@ -1082,7 +1077,7 @@ plot_GO_circular_bar <- function(
   }
 
   ## 7. group baseline 数据
-  base_data <- data |>
+  base_df <- data |>
     dplyr::filter(!.empty) |>
     dplyr::group_by(group) |>
     dplyr::summarise(
@@ -1117,15 +1112,15 @@ plot_GO_circular_bar <- function(
   ## 只在每个 group 后面的 empty_bar 区域画 grid
   ## 最后一个 group 后面的 empty_bar 也保留
 
-  grid_data <- base_data |>
+  grid_df <- base_df |>
     dplyr::mutate(
       gap_start = end + 1,
       gap_end = dplyr::lead(start) - 1
     )
 
-  grid_data$gap_end[nrow(grid_data)] <- nrow(data)
+  grid_df$gap_end[nrow(grid_df)] <- nrow(data)
 
-  grid_data <- grid_data |>
+  grid_df <- grid_df |>
     dplyr::filter(gap_end >= gap_start)
 
   ## 10. 颜色
@@ -1138,11 +1133,11 @@ plot_GO_circular_bar <- function(
   ## grid lines 放在前面，让柱子盖在上面
   ## 这里只在 empty_bar 空白区域画 grid
 
-  if (isTRUE(show_grid) && nrow(grid_data) > 0 && length(grid_breaks) > 0) {
+  if (isTRUE(show_grid) && nrow(grid_df) > 0 && length(grid_breaks) > 0) {
     for (g in grid_breaks) {
       p <- p +
         ggplot2::geom_segment(
-          data = grid_data, ggplot2::aes(x = gap_start, xend = gap_end),
+          data = grid_df, ggplot2::aes(x = gap_start, xend = gap_end),
           y = g, yend = g, colour = "grey80", linewidth = .3,
           linetype = "longdash", inherit.aes = FALSE
         )
@@ -1172,13 +1167,13 @@ plot_GO_circular_bar <- function(
       na.rm = TRUE
     ) +
     ggplot2::geom_segment(
-      data = base_data,
+      data = base_df,
       ggplot2::aes(x = start, y = y_min * .08, xend = end, yend = y_min * .08),
       colour = "black", alpha = .8,
       linewidth = .6, inherit.aes = FALSE
     ) +
     ggplot2::geom_text(
-      data = base_data,
+      data = base_df,
       ggplot2::aes(x = title, y = y_min * .22, label = group),
       colour = "black", alpha = .8, size = group_label_size,
       fontface = "bold", inherit.aes = FALSE

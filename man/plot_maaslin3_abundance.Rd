@@ -12,12 +12,8 @@ plot_maaslin3_abundance(data, p_col = "qval_joint")
 \item{p_col}{Name of the \code{p_col} input column.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_maaslin3_abundance()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 绘制 MaAsLin3 abundance model 的 effect 结果。
+绘制 MaAsLin3 abundance model 的 effect 结果。
 }

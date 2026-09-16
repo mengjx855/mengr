@@ -124,7 +124,7 @@ describe_param <- function(param) {
     set_ID = 'Gene-set identifier selected from a GSEA result.',
     gseaResult = 'A GSEA result object containing ranked genes and enrichment results.',
     cpd_list = 'Metabolite or compound identifiers to annotate.',
-    ncm_result = 'Optional result returned by `calcu_NCM()` to avoid refitting the model.',
+    ncm_result = 'Optional result returned by `calcu_ncm()` to avoid refitting the model.',
     adonis_object = 'Object returned by a PERMANOVA/adonis calculation.',
     test = 'Statistical-test result table used for plotting.',
     result = 'Result object or table to summarize.',

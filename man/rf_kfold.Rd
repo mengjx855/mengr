@@ -36,17 +36,17 @@ rf_kfold(
 
 \item{group_level}{Optional order of group levels.}
 
-\item{remove_zero_var}{Logical control for \code{remove_zero_var}.}
+\item{remove_zero_var}{Whether to remove zero-variance features before analysis.}
 
 \item{na_fill}{Value used to replace missing observations before analysis.}
 
 \item{progress}{Whether progress information is printed during repeated analyses.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments passed to \code{randomForest::randomForest()}.}
 }
 \value{
-A result object described in the Details section.
+A data frame of out-of-fold sample predictions, class probabilities, and fold identifiers.
 }
 \description{
-Chinese summary: 执行分层 random-forest k-fold cross-validation。
+执行分层 random-forest k-fold cross-validation。
 }

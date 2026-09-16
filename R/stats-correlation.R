@@ -1,6 +1,7 @@
-#### Jin-Xin Meng, 20220425, 20260720, 0.1.2 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220425, 20260916 ####
 
 # 20260720 v0.1.2: add functions: calcu_correlation(), tidy_correlation()
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
 
 #### calcu_correlation ####
 # 计算相关性矩阵或 long-format 相关性结果
@@ -14,20 +15,18 @@
 
 #' Calcu Correlation utility
 #'
-#' `calcu_correlation()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 计算 feature 间 Pearson、Spearman 或 Kendall 相关及校正 P 值。
+#' 计算 feature 间 Pearson、Spearman 或 Kendall 相关及校正 P 值。
 #'
 #' @param x Primary vector or object supplied to the utility.
 #' @param y Secondary vector or object supplied to the utility.
 #' @param method Analysis or summary method; supported values are shown in the usage.
 #' @param adjust Multiple-testing correction method for correlation P values.
 #' @param output Requested output representation or output path.
-#' @param remove_zero_var Logical control for `remove_zero_var`.
+#' @param remove_zero_var Whether to remove zero-variance features before analysis.
 #' @param na_fill Value used to replace missing observations before analysis.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments passed to `Hmisc::rcorr()` or `psych::corr.test()`.
+#' @return A list of correlation/P-value matrices, a long edge table, or both, according to `output`.
 #' @export
 calcu_correlation <- function(
   x, y = NULL, method = c("spearman", "pearson", "kendall"),
@@ -238,17 +237,15 @@ calcu_correlation <- function(
 #   p_mat：与 r_mat 对应的 P 值矩阵
 #' Tidy Correlation utility
 #'
-#' `tidy_correlation()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 将相关矩阵整理为 edge long table，并按相关性和显著性筛选。
+#' 将相关矩阵整理为 edge long table，并按相关性和显著性筛选。
 #'
 #' @param r_mat Matrix supplying r mat.
 #' @param p_mat Matrix supplying p mat.
 #' @param r Correlation-coefficient column or matrix to be converted to tidy form.
 #' @param pval P-value column or matrix paired with the correlation coefficients.
 #' @param only_signif Whether only statistically significant correlations are retained.
-#' @return A result object described in the Details section.
+#' @return A filtered long data frame containing feature pairs, correlations, P values, and adjusted P values.
 #' @export
 tidy_correlation <- function(
   r_mat, p_mat, r = 0, pval = 0.05, only_signif = FALSE
@@ -261,7 +258,7 @@ tidy_correlation <- function(
     is.null(rownames(r_mat)) || is.null(colnames(r_mat)) ||
       is.null(rownames(p_mat)) || is.null(colnames(p_mat))
   ) {
-    stop("r_mat 和 p_mat 必须同时具有行名和列名")
+    stop("r_mat and p_mat should both have row and column names.")
   }
 
   common_rows <- rownames(r_mat)[rownames(r_mat) %in% rownames(p_mat)]
@@ -299,10 +296,8 @@ tidy_correlation <- function(
 #### get_nwk_attr ####
 #' Get Nwk Attr utility
 #'
-#' `get_nwk_attr()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 从相关 edge table 构建 igraph 网络，整理 edge/node 属性并可选导出。
+#' 从相关 edge table 构建 igraph 网络，整理 edge/node 属性并可选导出。
 #'
 #' @param adjacency Adjacency matrix used to create or summarize a network.
 #' @param suffix Suffix removed from or appended to derived identifiers.
@@ -312,7 +307,7 @@ tidy_correlation <- function(
 #' @param prefix_length Number of leading characters used to derive node prefixes.
 #' @param export Optional export format; `NULL` keeps the operation in memory.
 #' @param output_dir Existing directory used for optional file export.
-#' @return A result object described in the Details section.
+#' @return A list containing the igraph object, edge and node attribute data frames, and paths of any exported files.
 #' @export
 get_nwk_attr <- function(
   adjacency, suffix = NULL,
@@ -406,14 +401,12 @@ get_nwk_attr <- function(
 #### get_nwk_stat ####
 #' Get Nwk Stat utility
 #'
-#' `get_nwk_stat()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 计算网络节点的 degree、strength、centrality 等拓扑统计量。
+#' 计算网络节点的 degree、strength、centrality 等拓扑统计量。
 #'
 #' @param graph An igraph object to summarize.
 #' @param prefix_pattern Regular expression used to extract prefixes from node identifiers.
-#' @return A result object described in the Details section.
+#' @return A node-level data frame of network topology statistics.
 #' @export
 get_nwk_stat <- function(
   graph, prefix_pattern = c(bacteria = "^b_", fungi = "^f_")

@@ -1,8 +1,12 @@
-#### Jin-Xin Meng, 20240305, 20260820, v0.2.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20240305, 20260916 ####
+
+# 20260916: rename `calcu_MEN()` to `calcu_men()` and standardize documentation and naming.
+
+#### calcu_men ####
 
 #' Calculate and plot a microbial ecological network
 #'
-#' Chinese summary: 使用 ggClusterNet 流程构建 microbial ecological network。
+#' 使用 ggClusterNet 流程构建 microbial ecological network。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param metadata A metadata or annotation data frame.
@@ -10,17 +14,17 @@
 #' @param sample_metadata Sample metadata required by normalization methods that model library size.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
-#' @param p_threshold Numeric setting for `p_threshold`.
-#' @param r_threshold Numeric setting for `r_threshold`.
-#' @param scale Logical control for `scale`.
+#' @param p_threshold Maximum adjusted P value retained for a network edge.
+#' @param r_threshold Minimum absolute correlation retained for a network edge.
+#' @param scale Whether to scale values as described by the selected method.
 #' @param scale_method Normalization method applied before network construction.
 #' @param method Analysis or summary method; supported values are shown in the usage.
 #' @param title Optional plot or result title.
-#' @param n_hub Numeric limit controlling n hub.
+#' @param n_hub Number of hub nodes to highlight; `FALSE` disables hub selection.
 #' @param seed Optional random seed for reproducibility.
-#' @return A result object described in the Details section.
+#' @return A list containing aligned inputs, correlations, graph and network tables, layout data, and the network plot.
 #' @export
-calcu_MEN <- function(
+calcu_men <- function(
   profile, metadata, feature_col = NULL, sample_metadata = NULL,
   sample_col = "sample", group_col = "group",
   p_threshold = 0.05, r_threshold = 0.5,

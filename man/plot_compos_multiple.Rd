@@ -48,21 +48,17 @@ plot_compos_multiple(
 
 \item{taxa_color}{Color specification for \code{taxa_color}.}
 
-\item{width}{Numeric setting for \code{width}.}
+\item{width}{Bar width for composition plots; in \code{plot_msa()}, the number of alignment positions per block.}
 
-\item{taxa_levels}{Numeric setting for \code{taxa_levels}.}
+\item{taxa_levels}{Taxonomic rank names to plot; \code{NULL} auto-detects available ranks.}
 
 \item{nrow}{Number of rows used when arranging multiple plots.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments forwarded to \code{plot_compos()}.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_compos_multiple()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 对多个 taxonomy 层级批量绘制组成图并组合输出。
+对多个 taxonomy 层级批量绘制组成图并组合输出。
 }

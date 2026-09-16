@@ -1,4 +1,4 @@
-#### Jin-Xin Meng, 20220918, 20260828, v0.1.6 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220918, 20260916 ####
 
 # 20250206: fix some bug.
 # 20250804: update function.
@@ -7,6 +7,7 @@
 # 20260523: update taxa_trans(), plot_compos(), plot_compos_multiple(),
 #           plot_compos_manual(), and plot_taxa_boxplot().
 # 20260828: move plot-related functions to plot-taxa.R.
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
 
 #### profile_mpa ####
 # 生成 MetaPhlAn-like profile 表
@@ -32,8 +33,8 @@
 #' @param taxa Taxon names or taxonomy data used by the operation.
 #' @param feature_col Name of the feature-identifier column.
 #' @param mode Processing mode; supported values are shown in Usage.
-#' @param normalize Whether to enable the normalize behavior.
-#' @return A result object described in the Details section.
+#' @param normalize Whether to normalize each sample to unit sum before calculation.
+#' @return A list of taxonomic profiles, one for each requested rank.
 #' @export
 profile_mpa <- function(
   profile, taxa, feature_col = "name", 
@@ -205,20 +206,18 @@ profile_mpa <- function(
 # taxonomy_rename: optional, e.g. c(name = "OTU_ID", taxonomy = "Taxonomy")
 #' Taxa Split utility
 #'
-#' `taxa_split()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 将完整 taxonomy 字符串拆分为 domain 至 species 等分类列。
+#' 将完整 taxonomy 字符串拆分为 domain 至 species 等分类列。
 #'
 #' @param taxonomy Feature taxonomy table used for annotation or aggregation.
-#' @param taxonomy_rename Display or identifier name for taxonomy rename.
+#' @param taxonomy_rename Optional replacement name for the parsed taxonomy column.
 #' @param sep Field separator used when reading or writing a text file.
 #' @param from Source taxonomy rank or identifier type to be converted.
 #' @param to Target taxonomy rank or identifier type produced by the conversion.
 #' @param na_fill Value used to replace missing observations before analysis.
 #' @param rm_suffix Whether suffix text is removed from split taxonomy labels.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments passed to `stringr::str_split_fixed()`.
+#' @return A data frame with parsed taxonomy ranks and the original taxonomy identifier.
 #' @export
 taxa_split <- function(
   taxonomy, taxonomy_rename = NULL, sep = ";", from = "d", to = "s",
@@ -380,10 +379,8 @@ taxa_split <- function(
 
 #' Taxa Trans utility
 #'
-#' `taxa_trans()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 按 taxonomy 层级聚合 profile，选择 top taxa，并可按组或相对丰度转换。
+#' 按 taxonomy 层级聚合 profile，选择 top taxa，并可按组或相对丰度转换。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param taxonomy Feature taxonomy table used for annotation or aggregation.
@@ -398,13 +395,13 @@ taxa_split <- function(
 #' @param out_all Whether all hierarchy levels or intermediate results are returned.
 #' @param na_fill Value used to replace missing observations before analysis.
 #' @param trans_ra Whether abundances are converted to relative abundance before analysis.
-#' @param base Numeric setting for `base`.
+#' @param base Scaling constant used for relative-abundance output.
 #' @param digits Optional number of decimal digits retained.
 #' @param collapse_group Whether samples within each group are aggregated before plotting.
 #' @param method Analysis or summary method; supported values are shown in the usage.
-#' @param remove_unknown Logical control for `remove_unknown`.
+#' @param remove_unknown Whether to discard unknown or unclassified entries.
 #' @param unknown_pattern Regular expression identifying unknown or unclassified annotations.
-#' @return A result object described in the Details section.
+#' @return An aggregated taxonomic profile, or a list of profiles when multiple ranks are requested.
 #' @export
 taxa_trans <- function(
   profile, taxonomy, group = NULL, feature_col = "name", taxa_col = "family",

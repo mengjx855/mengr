@@ -1,7 +1,6 @@
-#### Jin-Xin Meng, mengjx855@163.com, 20220529, 20260819, v0.7.2 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20221001, 20260916 ####
 
 # 20221001: 添加选择不同距离尺度的参数 dist_method
-# 20230101: update function.
 # 20231204: update function, check_file_name was deprecated.
 # 20250107: add parameter add_lab_to_plot, show_legend, lab_size, show_grid in plot_pcoa function
 # 20250417: plot function pass to plot_dim()
@@ -12,6 +11,7 @@
 # 20251116: labels() 获取矩阵行列名
 # 20260527: update some functions.
 # 20260819: keep pcoa-related functions, others had been moved to diversity.R
+# 20260916: standardize documentation and rename internal data-frame variables to the `*_df` style.
 
 
 #### calcu_pcoa ####
@@ -27,10 +27,8 @@
 
 #' Calcu pcoa utility
 #'
-#' `calcu_pcoa()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 从 profile 或距离对象计算 pcoa 坐标和特征值。
+#' 从 profile 或距离对象计算 pcoa 坐标和特征值。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param distance A precomputed distance object; when supplied, it takes precedence over `profile`.
@@ -43,8 +41,8 @@
 #' @param prefix Prefix used when naming derived coordinates or labels.
 #' @param adonis2 Whether to run PERMANOVA with `vegan::adonis2()` and attach its result.
 #' @param permutations Number of permutations used by the significance test.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments passed to distance calculation or `vegan::adonis2()`.
+#' @return A list containing the PCoA object, sample coordinates, eigenvalues, and explained variance.
 #' @importFrom rlang .data
 #' @export
 calcu_pcoa <- function(
@@ -180,10 +178,8 @@ calcu_pcoa <- function(
 
 #' Plot pcoa utility
 #'
-#' `plot_pcoa()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 计算并绘制 pcoa，可附加 PERMANOVA 统计结果。
+#' 计算并绘制 pcoa，可附加 PERMANOVA 统计结果。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -204,19 +200,19 @@ calcu_pcoa <- function(
 #' @param xlab Optional x-axis label.
 #' @param ylab Optional y-axis label.
 #' @param legend_title Legend title; `NULL` uses a context-dependent default.
-#' @param add_group_label Logical control for `add_group_label`.
-#' @param add_sample_label Logical control for `add_sample_label`.
-#' @param label_size Numeric setting for `label_size`.
-#' @param point_size Numeric setting for `point_size`.
-#' @param show_legend Logical control for `show_legend`.
-#' @param show_grid Logical control for `show_grid`.
-#' @param show_line Logical control for `show_line`.
+#' @param add_group_label Whether to label group centroids.
+#' @param add_sample_label Whether to label individual samples.
+#' @param label_size Text size for sample or group labels.
+#' @param point_size Point size used for samples or observations.
+#' @param show_legend Whether to display the plot legend.
+#' @param show_grid Whether to draw panel grid lines.
+#' @param show_line Whether to draw horizontal and vertical reference lines at zero.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
 #' @param theme Plot theme preset; supported values are shown in Usage.
 #' @param adonis2 Whether to run PERMANOVA with `vegan::adonis2()` and attach its result.
 #' @param permutations Number of permutations used by the significance test.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param ... Additional arguments passed to `vegan::vegdist()` and `plot_dim()`.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_pcoa <- function(
   profile = NULL, group, distance = NULL,
@@ -450,10 +446,8 @@ plot_pcoa <- function(
 
 #' Plot pcoa Box utility
 #'
-#' `plot_pcoa_box()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 同时展示 pcoa 散点图及主要坐标轴的边际箱线图。
+#' 同时展示 pcoa 散点图及主要坐标轴的边际箱线图。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -471,16 +465,16 @@ plot_pcoa <- function(
 #' @param xlab Optional x-axis label.
 #' @param ylab Optional y-axis label.
 #' @param legend_title Legend title; `NULL` uses a context-dependent default.
-#' @param add_group_label Logical control for `add_group_label`.
-#' @param add_sample_label Logical control for `add_sample_label`.
-#' @param label_size Numeric setting for `label_size`.
-#' @param show_legend Logical control for `show_legend`.
-#' @param show_grid Logical control for `show_grid`.
-#' @param show_line Logical control for `show_line`.
+#' @param add_group_label Whether to label group centroids.
+#' @param add_sample_label Whether to label individual samples.
+#' @param label_size Text size for sample or group labels.
+#' @param show_legend Whether to display the plot legend.
+#' @param show_grid Whether to draw panel grid lines.
+#' @param show_line Whether to draw horizontal and vertical reference lines at zero.
 #' @param theme Plot theme preset; supported values are shown in Usage.
 #' @param permutations Number of permutations used by the significance test.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param ... Additional arguments passed to `plot_pcoa()`.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_pcoa_box <- function(
   profile = NULL, group, distance = NULL, sample_col = "sample",
@@ -598,10 +592,10 @@ plot_pcoa_box <- function(
   y_limits <- ggplot2::ggplot_build(p_main)$layout$panel_params[[1]]$y.range
 
   ## 2. PC1 顶部箱线图
-  top_data <- plot_df |>
+  top_df <- plot_df |>
     dplyr::select(group, X1)
 
-  top_diff <- top_data |>
+  top_diff <- top_df |>
     rstatix::pairwise_wilcox_test(X1 ~ group) |>
     dplyr::mutate(comparison = paste0(group1, "-", group2)) |>
     dplyr::pull(p, name = comparison) |>
@@ -610,13 +604,13 @@ plot_pcoa_box <- function(
   top_label <- data.frame(label = top_diff$Letters) |>
     tibble::rownames_to_column("group") |>
     dplyr::left_join(
-      top_data |>
+      top_df |>
         dplyr::group_by(group) |>
         dplyr::slice_min(order_by = X1, n = 1),
       by = "group"
     )
 
-  p_top <- ggplot2::ggplot(top_data, ggplot2::aes(X1, group, color = group)) +
+  p_top <- ggplot2::ggplot(top_df, ggplot2::aes(X1, group, color = group)) +
     ggplot2::geom_boxplot(fill = NA, outlier.shape = NA, show.legend = FALSE, width = .61) +
     ggplot2::geom_jitter(size = 1.2, height = .2, show.legend = FALSE) +
     ggplot2::geom_text(
@@ -647,10 +641,10 @@ plot_pcoa_box <- function(
     )
 
   ## 3. PC2 右侧箱线图
-  right_data <- plot_df |>
+  right_df <- plot_df |>
     dplyr::select(group, X2)
 
-  right_diff <- right_data |>
+  right_diff <- right_df |>
     rstatix::pairwise_wilcox_test(X2 ~ group) |>
     dplyr::mutate(comparison = paste0(group1, "-", group2)) |>
     dplyr::pull(p, name = comparison) |>
@@ -659,13 +653,13 @@ plot_pcoa_box <- function(
   right_label <- data.frame(label = right_diff$Letters) |>
     tibble::rownames_to_column("group") |>
     dplyr::left_join(
-      right_data |>
+      right_df |>
         dplyr::group_by(group) |>
         dplyr::slice_max(order_by = X2, n = 1),
       by = "group"
     )
 
-  p_right <- ggplot2::ggplot(right_data, ggplot2::aes(group, X2, color = group)) +
+  p_right <- ggplot2::ggplot(right_df, ggplot2::aes(group, X2, color = group)) +
     ggplot2::geom_boxplot(fill = NA, outlier.shape = NA, show.legend = FALSE, width = .61) +
     ggplot2::geom_jitter(size = 1.2, width = .2, show.legend = show_legend) +
     ggplot2::geom_text(

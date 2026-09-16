@@ -1,13 +1,17 @@
-#### Jin-Xin Meng, mengjx855@163.com, 20260101, 20260820, v0.2.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260101, 20260916 ####
+
+# 20260916: rename `calcu_DBE()` to `calcu_dbe()` and standardize documentation.
+
+#### calcu_dbe ####
 
 #' Calculate double-bond equivalents from molecular formulas
 #'
-#' Chinese summary: 从分子式计算 double-bond equivalents，并正确处理卤素元素。
+#' 从分子式计算 double-bond equivalents，并正确处理卤素元素。
 #'
 #' @param formula Model formula defining the response and grouping variables.
-#' @return A result object described in the Details section.
+#' @return A numeric vector of double-bond equivalents, preserving missing values for unparseable formulas.
 #' @export
-calcu_DBE <- function(formula) {
+calcu_dbe <- function(formula) {
   ## 每个分子式独立解析；Cl、Br 等双字母元素不能按单个大写字母拆分
   vapply(formula, function(formula_one) {
     element_token <- stringr::str_extract_all(

@@ -1,4 +1,8 @@
-#### Jin-Xin Meng, 20220529, 20260820, v0.2.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220529, 20260916 ####
+
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
+
+#### .align_gene_length ####
 
 .align_gene_length <- function(
   profile, gene_length, feature_col = "name", length_col = "length"
@@ -19,15 +23,17 @@
   list(profile_mat = as.matrix(profile_df), length_vec = length_vec)
 }
 
+#### rc2tpm ####
+
 #' Convert read counts to TPM
 #'
-#' Chinese summary: 根据 feature 长度把 read counts 转换为 TPM。
+#' 根据 feature 长度把 read counts 转换为 TPM。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param gene_length Feature-length table used for TPM or FPKM/RPKM normalization.
 #' @param feature_col Name of the feature-identifier column.
 #' @param length_col Name of the `length_col` input column.
-#' @return A result object described in the Details section.
+#' @return A feature-by-sample numeric matrix of transcripts per million.
 #' @export
 rc2tpm <- function(
   profile, gene_length, feature_col = "name", length_col = "length"
@@ -44,15 +50,17 @@ rc2tpm <- function(
   data.frame(sweep(rpk_mat, 2, scale_vec, "/"), check.names = FALSE)
 }
 
+#### rc2fpkm ####
+
 #' Convert fragment or read counts to FPKM/RPKM
 #'
-#' Chinese summary: 根据 feature 长度和样本文库大小计算 FPKM/RPKM。
+#' 根据 feature 长度和样本文库大小计算 FPKM/RPKM。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param gene_length Feature-length table used for TPM or FPKM/RPKM normalization.
 #' @param feature_col Name of the feature-identifier column.
 #' @param length_col Name of the `length_col` input column.
-#' @return A result object described in the Details section.
+#' @return A feature-by-sample numeric matrix of FPKM/RPKM values.
 #' @export
 rc2fpkm <- function(
   profile, gene_length, feature_col = "name", length_col = "length"
@@ -67,6 +75,8 @@ rc2fpkm <- function(
   result_mat <- sweep(result_mat, 2, library_size, "/")
   data.frame(result_mat, check.names = FALSE)
 }
+
+#### rc2rpm ####
 
 #' Convert read counts to reads per million
 #'

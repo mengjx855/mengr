@@ -47,19 +47,15 @@ plot_taxa_boxplot(
 
 \item{legend_title}{Legend title; \code{NULL} uses a context-dependent default.}
 
-\item{show_legend}{Logical control for \code{show_legend}.}
+\item{show_legend}{Whether to display the plot legend.}
 
 \item{x_text_angle}{Rotation angle, in degrees, for x-axis text.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments forwarded to \code{calcu_diff()}.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_taxa_boxplot()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 对每个 taxa 绘制分组箱线图，并添加显著性比较。
+对每个 taxa 绘制分组箱线图，并添加显著性比较。
 }

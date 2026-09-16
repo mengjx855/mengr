@@ -26,19 +26,15 @@ write_xlsx_with_comment(
 
 \item{comment_color}{Color specification for \code{comment_color}.}
 
-\item{overwrite}{Logical control for \code{overwrite}.}
+\item{overwrite}{Whether an existing workbook may be replaced.}
 
-\item{append}{Logical control for \code{append}.}
+\item{append}{Whether to append a worksheet to an existing workbook.}
 
 \item{replace_sheet}{Whether an existing worksheet with the same name is replaced.}
 }
 \value{
-A result object described in the Details section.
+The output workbook path, invisibly.
 }
 \description{
-\code{write_xlsx_with_comment()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 将顶部说明和数据写入 Excel；支持追加、替换 worksheet。
+将顶部说明和数据写入 Excel；支持追加、替换 worksheet。
 }

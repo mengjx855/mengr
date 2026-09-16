@@ -21,10 +21,10 @@ profile_mpa(
 
 \item{mode}{Processing mode; supported values are shown in Usage.}
 
-\item{normalize}{Whether to enable the normalize behavior.}
+\item{normalize}{Whether to normalize each sample to unit sum before calculation.}
 }
 \value{
-A result object described in the Details section.
+A list of taxonomic profiles, one for each requested rank.
 }
 \description{
 Build a Metaphlan-style profile, split the taxonomic

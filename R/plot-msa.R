@@ -1,6 +1,8 @@
-#### Jinxin Meng, 20241029, 20250903 v0.2 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241029, 20260916 ####
+
 # 20241029: create functions.
 # 20250903: fix bug.
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
 
 
 #### plot_msa ####
@@ -8,15 +10,13 @@
 # muscle/mafft and trimal
 #' Plot Msa utility
 #'
-#' `plot_msa()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 读取 multiple sequence alignment 并按氨基酸类别分块绘图。
+#' 读取 multiple sequence alignment 并按氨基酸类别分块绘图。
 #'
 #' @param path Path to the required input file.
-#' @param width Numeric setting for `width`.
-#' @param font_size Numeric setting for `font_size`.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param width Bar width for composition plots; in `plot_msa()`, the number of alignment positions per block.
+#' @param font_size Base text size used in the plot.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_msa <- function(path, width = 80, font_size = 2) {
   ## 1. 读取 alignment，并把每条序列拆成单字符列

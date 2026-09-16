@@ -1,13 +1,14 @@
-#### Jin-Xin Meng, 20250418, 20260619, v0.1.5 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250418, 20260916 ####
 
 # 20250423: update some function.
-# 20250502: rename 'profile_KEGG_convert' as 'profile_KEGG_trans'
+# 20250502: rename the KEGG profile conversion function as `profile_kegg_trans()`.
 # 20260502: update some function.
 # 20260504: add new function plot_maaslin3_multi()
 # 20260619: add new function plot_maaslin3_abundance(), plot_maaslin3_both()
+# 20260916: rename KEGG, LEfSe, and CAZyme utilities to lowercase and standardize documentation.
 
 
-#### 20260504 plot_maaslin3_multi ####
+#### plot_maaslin3_multi ####
 #' Plot multi-level MaAsLin3 taxonomic effects
 #'
 #' This function visualizes MaAsLin3 association results across multiple
@@ -38,7 +39,7 @@
 #'   coef < 0 means the taxon is enriched/positively associated with females.
 #'
 #'
-#' Chinese summary: 绘制 MaAsLin3 多分类层级的正负效应及 taxonomy 色带。
+#' 绘制 MaAsLin3 多分类层级的正负效应及 taxonomy 色带。
 #'
 #' @param maaslin3_result
 #'   MaAsLin3 result table. Required columns usually include:
@@ -151,7 +152,7 @@
 #'     attr(p, "plot_df")
 #'     attr(p, "label_df")
 #'
-#' @examples
+#' @examplesIf FALSE
 #' p <- plot_maaslin3_multi(
 #'   maaslin3_result = maaslin_res,
 #'   metadata = "group",
@@ -634,17 +635,15 @@ plot_maaslin3_multi <- function(
 }
 
 
-#### 20260619 plot_maaslin3_abundance ####
+#### plot_maaslin3_abundance ####
 #' Plot Maaslin3 Abundance utility
 #'
-#' `plot_maaslin3_abundance()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 绘制 MaAsLin3 abundance model 的 effect 结果。
+#' 绘制 MaAsLin3 abundance model 的 effect 结果。
 #'
 #' @param data An input data frame or compatible object.
 #' @param p_col Name of the `p_col` input column.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_maaslin3_abundance <- function(
   data, p_col = "qval_joint"
@@ -800,20 +799,18 @@ plot_maaslin3_abundance <- function(
   return(p)
 }
 
-#### 20260619 plot_maaslin3_both ####
+#### plot_maaslin3_both ####
 #' Plot Maaslin3 both utility
 #'
-#' `plot_maaslin3_both()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 联合展示 MaAsLin3 abundance 和 prevalence 模型结果。
+#' 联合展示 MaAsLin3 abundance 和 prevalence 模型结果。
 #'
 #' @param data An input data frame or compatible object.
 #' @param p_col Name of the `p_col` input column.
 #' @param title Optional plot or result title.
-#' @param point_size Numeric setting for `point_size`.
+#' @param point_size Point size used for samples or observations.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_maaslin3_both <- function(
   data, p_col = "qval_individual", title = NULL, point_size = 3.8,
@@ -1025,24 +1022,22 @@ plot_maaslin3_both <- function(
   return(p)
 }
 
-#### 20260502 load_KEGG_info ####
+#### load_kegg_info ####
 #' Load KEGG Info utility
 #'
-#' `load_KEGG_info()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 读取并整理本地 KEGG 注释表。
+#' 读取并整理本地 KEGG 注释表。
 #'
-#' @param database Numeric setting for `database`.
-#' @param level Numeric setting for `level`.
+#' @param database Path to the local annotation database file.
+#' @param level KEGG hierarchy level or levels to retain.
 #' @param relation Relationship table or relation type used to connect database identifiers.
 #' @param keep_desc Whether KEGG descriptions are retained in the returned table.
-#' @param add_prefix Logical control for `add_prefix`.
+#' @param add_prefix Whether to prefix identifiers with their KEGG level letter.
 #' @param distinct Whether duplicated KEGG mapping records are removed.
-#' @return A result object described in the Details section.
+#' @return A KEGG annotation or requested level-relation data frame.
 #' @export
-load_KEGG_info <- function(
-  database = .mengR_db_file(
+load_kegg_info <- function(
+  database = .mengr_db_file(
     "KEGG", "KO", "KO_level_A_B_C_D_Description"
   ),
   level = c("A", "B", "C", "D"), relation = NULL,
@@ -1116,31 +1111,29 @@ load_KEGG_info <- function(
   return(result)
 }
 
-#### 20260502 profile_KEGG_trans ####
+#### profile_kegg_trans ####
 #' Profile KEGG Trans utility
 #'
-#' `profile_KEGG_trans()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 将 KO profile 映射并聚合到 KEGG A/B/C 层级。
+#' 将 KO profile 映射并聚合到 KEGG A/B/C 层级。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param to Target taxonomy rank or identifier type produced by the conversion.
 #' @param trans_ra Whether abundances are converted to relative abundance before analysis.
-#' @param base Numeric setting for `base`.
+#' @param base Scaling constant used for relative-abundance output.
 #' @param rownames_fmt Format used to construct row names after KEGG conversion.
-#' @param remove_unknown Logical control for `remove_unknown`.
+#' @param remove_unknown Whether to discard unknown or unclassified entries.
 #' @param filter Optional expression or criterion used to retain converted records.
-#' @param database Numeric setting for `database`.
+#' @param database Path to the local annotation database file.
 #' @param split_multi Whether records containing multiple identifiers are expanded into separate rows.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments forwarded to profile aggregation.
+#' @return A KEGG-level feature-by-sample profile.
 #' @export
-profile_KEGG_trans <- function(
+profile_kegg_trans <- function(
   profile, to = c("A", "B", "C"), trans_ra = FALSE, base = 100,
   rownames_fmt = c("both", "id", "name"),
   remove_unknown = FALSE, filter = NULL,
-  database = .mengR_db_file(
+  database = .mengr_db_file(
     "KEGG", "KO", "KO_level_A_B_C_D_Description"
   ),
   split_multi = TRUE, ...
@@ -1271,18 +1264,16 @@ profile_KEGG_trans <- function(
   return(data)
 }
 
-#### 20250423 tidy_LEfSe ####
+#### tidy_lefse ####
 #' Tidy LEfSe utility
 #'
-#' `tidy_LEfSe()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 统一 LEfSe 结果列和 taxonomy 字段，便于后续筛选绘图。
+#' 统一 LEfSe 结果列和 taxonomy 字段，便于后续筛选绘图。
 #'
 #' @param data An input data frame or compatible object.
-#' @return A result object described in the Details section.
+#' @return A standardized LEfSe result data frame.
 #' @export
-tidy_LEfSe <- function(data) {
+tidy_lefse <- function(data) {
   RENAMES <- data.frame(
     full = c("domain", "kingdom", "phylum", "class", "order", "family", "genus", "species", "strain"),
     abbr = c("d__", "k__", "p__", "c__", "o__", "f__", "g__", "s__", "t__")
@@ -1305,18 +1296,16 @@ tidy_LEfSe <- function(data) {
   return(data)
 }
 
-#### 20250423 tidy_CAZyme_profile ####
+#### tidy_cazyme_profile ####
 #' Tidy CAZyme Profile utility
 #'
-#' `tidy_CAZyme_profile()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 整理 CAZyme profile 名称并按目标分类层级聚合。
+#' 整理 CAZyme profile 名称并按目标分类层级聚合。
 #'
 #' @param data An input data frame or compatible object.
-#' @return A result object described in the Details section.
+#' @return An aggregated CAZyme feature-by-sample profile.
 #' @export
-tidy_CAZyme_profile <- function(data) {
+tidy_cazyme_profile <- function(data) {
   ## 1. 去除 CAZyme 编号后缀，并合并同名条目
   profile_df <- tibble::rownames_to_column(.as_df(data), "name")
   profile_df$name <- gsub("_\\d+", "", profile_df$name)

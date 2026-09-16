@@ -21,15 +21,11 @@ calcu_beta(
 
 \item{group_col}{Name of the grouping column.}
 
-\item{drop_na_group}{Whether to enable the drop na group behavior.}
+\item{drop_na_group}{Whether to remove samples with missing or empty group labels.}
 }
 \value{
-A result object described in the Details section.
+A data frame of within-group sample pairs and their distances.
 }
 \description{
-\code{calcu_beta()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 基于距离矩阵执行整体 beta-diversity 组间检验。
+基于距离矩阵执行整体 beta-diversity 组间检验。
 }

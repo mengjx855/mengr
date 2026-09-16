@@ -7,8 +7,8 @@
 reactome_longest_path(
   path_ID,
   organism = NULL,
-  path_file = .mengR_db_file("Reactome", "ReactomePathwaysRelation.txt"),
-  path_info_file = .mengR_db_file("Reactome", "ReactomePathways.txt")
+  path_file = .mengr_db_file("Reactome", "ReactomePathwaysRelation.txt"),
+  path_info_file = .mengr_db_file("Reactome", "ReactomePathways.txt")
 )
 }
 \arguments{
@@ -21,12 +21,8 @@ reactome_longest_path(
 \item{path_info_file}{Path to the Reactome pathway-information file.}
 }
 \value{
-A result object described in the Details section.
+A data frame describing the longest root-to-target Reactome path for each requested pathway.
 }
 \description{
-\code{reactome_longest_path()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 根据本地 Reactome 父子关系表提取目标通路的最长层级路径。
+根据本地 Reactome 父子关系表提取目标通路的最长层级路径。
 }

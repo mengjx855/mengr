@@ -9,17 +9,13 @@ plot_msa(path, width = 80, font_size = 2)
 \arguments{
 \item{path}{Path to the required input file.}
 
-\item{width}{Numeric setting for \code{width}.}
+\item{width}{Bar width for composition plots; in \code{plot_msa()}, the number of alignment positions per block.}
 
-\item{font_size}{Numeric setting for \code{font_size}.}
+\item{font_size}{Base text size used in the plot.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_msa()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 读取 multiple sequence alignment 并按氨基酸类别分块绘图。
+读取 multiple sequence alignment 并按氨基酸类别分块绘图。
 }

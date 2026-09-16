@@ -14,12 +14,8 @@ roc_auc_label(roc, digits = 3, prefix = "AUC")
 \item{prefix}{Prefix used when naming derived coordinates or labels.}
 }
 \value{
-A result object described in the Details section.
+A single character label containing the AUC and its confidence interval.
 }
 \description{
-\code{roc_auc_label()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 从 pROC 对象生成包含 AUC 和置信区间的标签。
+从 pROC 对象生成包含 AUC 和置信区间的标签。
 }

@@ -20,19 +20,15 @@ plot_gsea_barcode(
 
 \item{bar_color}{Color specification for \code{bar_color}.}
 
-\item{bar_width}{Numeric setting for \code{bar_width}.}
+\item{bar_width}{Width of plotted bars.}
 
 \item{core_enrichment}{Gene identifiers in the leading-edge or core-enrichment subset.}
 
-\item{add_table}{Logical control for \code{add_table}.}
+\item{add_table}{Whether to append a compact enrichment-statistics table.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_gsea_barcode()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 绘制 GSEA barcode/running-score 风格结果图。
+绘制 GSEA barcode/running-score 风格结果图。
 }

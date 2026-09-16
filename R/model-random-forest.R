@@ -1,4 +1,8 @@
-#### Jin-Xin Meng, 20220529, 20260820, v0.4.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220529, 20260916 ####
+
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
+
+#### .prepare_rf_data ####
 
 .prepare_rf_data <- function(
   profile, group, sample_col = "sample", group_col = "group",
@@ -41,6 +45,8 @@
   )
 }
 
+#### .rf_probability_df ####
+
 .rf_probability_df <- function(model_obj, test_x, level_vec) {
   probability_df <- data.frame(
     stats::predict(model_obj, test_x, type = "prob"),
@@ -51,9 +57,11 @@
   probability_df[, level_vec, drop = FALSE]
 }
 
+#### rf_kfold ####
+
 #' Generate stratified K-fold random-forest predictions
 #'
-#' Chinese summary: 执行分层 random-forest k-fold cross-validation。
+#' 执行分层 random-forest k-fold cross-validation。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -63,11 +71,11 @@
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
-#' @param remove_zero_var Logical control for `remove_zero_var`.
+#' @param remove_zero_var Whether to remove zero-variance features before analysis.
 #' @param na_fill Value used to replace missing observations before analysis.
 #' @param progress Whether progress information is printed during repeated analyses.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments passed to `randomForest::randomForest()`.
+#' @return A data frame of out-of-fold sample predictions, class probabilities, and fold identifiers.
 #' @export
 rf_kfold <- function(
   profile, group, k = 5, seed = 2025, ntree = 1000,
@@ -124,9 +132,11 @@ rf_kfold <- function(
   dplyr::bind_rows(result_list)
 }
 
+#### rf_repeated_kfold ####
+
 #' Repeat stratified K-fold random-forest validation
 #'
-#' Chinese summary: 多次重复 random-forest k-fold，并标记每次重复和 fold。
+#' 多次重复 random-forest k-fold，并标记每次重复和 fold。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -137,11 +147,11 @@ rf_kfold <- function(
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
-#' @param remove_zero_var Logical control for `remove_zero_var`.
+#' @param remove_zero_var Whether to remove zero-variance features before analysis.
 #' @param na_fill Value used to replace missing observations before analysis.
 #' @param progress Whether progress information is printed during repeated analyses.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments passed to `rf_kfold()`.
+#' @return A data frame combining predictions from every repeat and fold.
 #' @export
 rf_repeated_kfold <- function(
   profile, group, k = 5, repeats = 5, seed = 2026, ntree = 1000,
@@ -179,9 +189,11 @@ rf_repeated_kfold <- function(
   result_df
 }
 
+#### rf_cross_dataset_validate ####
+
 #' Validate random forests across datasets
 #'
-#' Chinese summary: 按 dataset 留一验证，评估跨队列 random-forest 泛化能力。
+#' 按 dataset 留一验证，评估跨队列 random-forest 泛化能力。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -193,8 +205,8 @@ rf_repeated_kfold <- function(
 #' @param group_col Name of the grouping column.
 #' @param positive_class Outcome level treated as the positive class for binary metrics.
 #' @param na_fill Value used to replace missing observations before analysis.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments passed to `randomForest::randomForest()`.
+#' @return A data frame of training/testing dataset combinations, sample predictions, probabilities, and AUC values.
 #' @export
 rf_cross_dataset_validate <- function(
   profile, group, dataset_col = "dataset", dataset_level = NULL,
@@ -282,9 +294,11 @@ rf_cross_dataset_validate <- function(
   dplyr::bind_rows(result_list)
 }
 
+#### rf_importance ####
+
 #' Calculate random-forest feature importance
 #'
-#' Chinese summary: 提取并整理 random-forest feature importance。
+#' 提取并整理 random-forest feature importance。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -294,8 +308,8 @@ rf_cross_dataset_validate <- function(
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
 #' @param na_fill Value used to replace missing observations before analysis.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments passed to `randomForest::randomForest()`.
+#' @return A feature-importance data frame with the fitted random-forest model stored in the `model` attribute.
 #' @export
 rf_importance <- function(
   profile, group, seed = 2026, ntree = 1000,
@@ -327,9 +341,11 @@ rf_importance <- function(
   result_df
 }
 
+#### rf_leave_one_out ####
+
 #' Leave-one-out random-forest predictions
 #'
-#' Chinese summary: 执行 leave-one-out random-forest 预测。
+#' 执行 leave-one-out random-forest 预测。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -340,8 +356,8 @@ rf_importance <- function(
 #' @param group_level Optional order of group levels.
 #' @param na_fill Value used to replace missing observations before analysis.
 #' @param progress Whether progress information is printed during repeated analyses.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments passed to `randomForest::randomForest()`.
+#' @return A data frame of leave-one-out predictions and class probabilities.
 #' @export
 rf_leave_one_out <- function(
   profile, group, seed = 2026, ntree = 1000,
@@ -401,9 +417,11 @@ rf_leave_one_out <- function(
   result_df
 }
 
+#### rf_next_validate ####
+
 #' Train a random forest in one dataset and validate it in another
 #'
-#' Chinese summary: 用训练数据拟合 random forest，并在独立数据中验证。
+#' 用训练数据拟合 random forest，并在独立数据中验证。
 #'
 #' @param profile_x Feature-by-sample profile used for model training or the first data space.
 #' @param profile_y Feature-by-sample profile used for validation or the second data space.
@@ -415,8 +433,8 @@ rf_leave_one_out <- function(
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
 #' @param na_fill Value used to replace missing observations before analysis.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments passed to `randomForest::randomForest()`.
+#' @return A validation prediction data frame with the fitted model stored in the `model` attribute.
 #' @export
 rf_next_validate <- function(
   profile_x, profile_y, group_x, group_y,

@@ -1,8 +1,12 @@
-#### Jin-Xin Meng, 20231028, 20260820, v0.2.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20231028, 20260916 ####
+
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
+
+#### calcu_fisher ####
 
 #' Run feature-wise Fisher exact tests
 #'
-#' Chinese summary: 对每个 feature 的 2×2 计数表执行 Fisher exact test。
+#' 对每个 feature 的 2×2 计数表执行 Fisher exact test。
 #'
 #' @param data An input data frame or compatible object.
 #' @param feature_col Name of the feature-identifier column.
@@ -10,16 +14,16 @@
 #' @param y_pos_col Name of the `y_pos_col` input column.
 #' @param x_neg_col Name of the `x_neg_col` input column.
 #' @param y_neg_col Name of the `y_neg_col` input column.
-#' @param add_plab Logical control for `add_plab`.
-#' @param add_padj Logical control for `add_padj`.
+#' @param add_plab Whether to add formatted significance labels.
+#' @param add_padj Whether to calculate multiplicity-adjusted P values.
 #' @param p_adjust_method Multiple-testing correction method passed to `stats::p.adjust()`.
-#' @param add_enriched Logical control for `add_enriched`.
+#' @param add_enriched Whether to report the group enriched for each feature.
 #' @param enriched_by Column used to identify which comparison group is enriched.
-#' @param cutoff Numeric setting for `cutoff`.
-#' @param x_name Display or identifier name for x name.
-#' @param y_name Display or identifier name for y name.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param cutoff Threshold used to form clusters or significance calls, depending on the function.
+#' @param x_name Display label for the first group.
+#' @param y_name Display label for the second group.
+#' @param ... Additional arguments passed to `stats::fisher.test()`.
+#' @return A feature-level data frame of odds ratios, confidence intervals, P values, and optional adjusted/enrichment columns.
 #' @export
 calcu_fisher <- function(
   data, feature_col = "name", x_pos_col = "x_pos", y_pos_col = "y_pos",

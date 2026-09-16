@@ -29,19 +29,15 @@ profile_aggregate(
 
 \item{unknown}{Label assigned to unknown or unclassified taxonomy entries.}
 
-\item{remove_unknown}{Logical control for \code{remove_unknown}.}
+\item{remove_unknown}{Whether to discard unknown or unclassified entries.}
 
 \item{unknown_pattern}{Regular expression identifying unknown or unclassified annotations.}
 
 \item{sep}{Field separator used when reading or writing a text file.}
 }
 \value{
-A result object described in the Details section.
+A profile aggregated by the selected metadata columns.
 }
 \description{
-\code{profile_aggregate()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 根据 feature metadata 聚合 profile，并处理未知分类。
+根据 feature metadata 聚合 profile，并处理未知分类。
 }

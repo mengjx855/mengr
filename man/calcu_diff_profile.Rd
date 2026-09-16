@@ -30,7 +30,7 @@ calcu_diff_profile(
 
 \item{method}{Analysis or summary method; supported values are shown in the usage.}
 
-\item{add_plab}{Logical control for \code{add_plab}.}
+\item{add_plab}{Whether to add formatted significance labels.}
 
 \item{plab_fmt}{Format string or function used to display significance labels.}
 
@@ -42,15 +42,11 @@ calcu_diff_profile(
 
 \item{group_col}{Name of the grouping column.}
 
-\item{...}{Additional arguments passed to the underlying function.}
+\item{...}{Additional arguments forwarded to \code{calcu_diff()}.}
 }
 \value{
-A result object described in the Details section.
+A feature-by-comparison data frame of test results, adjusted P values, and optional significance labels.
 }
 \description{
-\code{calcu_diff_profile()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 对 profile 中的每个 feature 批量执行分组差异检验。
+对 profile 中的每个 feature 批量执行分组差异检验。
 }

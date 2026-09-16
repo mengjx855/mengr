@@ -24,12 +24,8 @@ profile_top_n(
 \item{sort_method}{Summary statistic or function used to rank features.}
 }
 \value{
-A result object described in the Details section.
+A feature-by-sample data frame retaining the top-ranked features and, optionally, an \code{Other} row.
 }
 \description{
-\code{profile_top_n()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 保留总体丰度最高的 n 个 feature，可把其余 feature 合并为 Other。
+保留总体丰度最高的 n 个 feature，可把其余 feature 合并为 Other。
 }

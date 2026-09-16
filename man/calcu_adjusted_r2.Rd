@@ -10,12 +10,8 @@ calcu_adjusted_r2(adonis_object)
 \item{adonis_object}{Object returned by a PERMANOVA/adonis calculation.}
 }
 \value{
-A result object described in the Details section.
+A numeric adjusted R-squared value.
 }
 \description{
-\code{calcu_adjusted_r2()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 从 adonis 类结果中计算或提取 adjusted R-squared。
+从 adonis 类结果中计算或提取 adjusted R-squared。
 }

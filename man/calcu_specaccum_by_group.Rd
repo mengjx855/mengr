@@ -30,8 +30,8 @@ calcu_specaccum_by_group(
 \item{method}{Analysis or summary method; supported values are shown in the usage.}
 }
 \value{
-A result object described in the Details section.
+A data frame of accumulation curves with a group column.
 }
 \description{
-Chinese summary: 分组计算 species/feature accumulation curve。
+分组计算 species/feature accumulation curve。
 }

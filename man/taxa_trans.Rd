@@ -53,7 +53,7 @@ taxa_trans(
 
 \item{trans_ra}{Whether abundances are converted to relative abundance before analysis.}
 
-\item{base}{Numeric setting for \code{base}.}
+\item{base}{Scaling constant used for relative-abundance output.}
 
 \item{digits}{Optional number of decimal digits retained.}
 
@@ -61,17 +61,13 @@ taxa_trans(
 
 \item{method}{Analysis or summary method; supported values are shown in the usage.}
 
-\item{remove_unknown}{Logical control for \code{remove_unknown}.}
+\item{remove_unknown}{Whether to discard unknown or unclassified entries.}
 
 \item{unknown_pattern}{Regular expression identifying unknown or unclassified annotations.}
 }
 \value{
-A result object described in the Details section.
+An aggregated taxonomic profile, or a list of profiles when multiple ranks are requested.
 }
 \description{
-\code{taxa_trans()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 按 taxonomy 层级聚合 profile，选择 top taxa，并可按组或相对丰度转换。
+按 taxonomy 层级聚合 profile，选择 top taxa，并可按组或相对丰度转换。
 }

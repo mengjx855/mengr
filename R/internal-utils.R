@@ -1,8 +1,14 @@
-#### Jin-Xin Meng, 20260820, 20260820, v0.0.1 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260820, 20260916 ####
+
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
+
+#### .as_df ####
 
 .as_df <- function(x) {
   data.frame(x, check.names = FALSE)
 }
+
+#### .as_profile_df ####
 
 .as_profile_df <- function(profile, numeric = FALSE) {
   profile_df <- data.frame(profile, check.names = FALSE)
@@ -20,6 +26,8 @@
   profile_df
 }
 
+#### .check_columns ####
+
 .check_columns <- function(data, columns, object = "data") {
   missing_cols <- setdiff(columns, colnames(data))
   if (length(missing_cols)) {
@@ -30,6 +38,8 @@
   }
   invisible(TRUE)
 }
+
+#### .match_distance_method ####
 
 .match_distance_method <- function(method) {
   ## 上层函数常用 c(default, alternatives) 展示选项，缺省时取第一个
@@ -45,6 +55,8 @@
     )
   )
 }
+
+#### .match_transform_method ####
 
 .match_transform_method <- function(method) {
   if (is.null(method)) {
@@ -68,6 +80,8 @@
   "#a6d854", "#ffd92f", "#e5c494", "#b3b3b3"
 )
 
+#### .resolve_group_colors ####
+
 .resolve_group_colors <- function(group_level, group_color = NULL) {
   if (is.null(group_color)) {
     group_color <- rep(
@@ -85,6 +99,8 @@
 
   stats::setNames(group_color, group_level)
 }
+
+#### .align_profile_group ####
 
 .align_profile_group <- function(
   profile, group, sample_col = "sample", group_col = "group",
@@ -134,6 +150,8 @@
     group_level = group_level
   )
 }
+
+#### .profile_long_df ####
 
 .profile_long_df <- function(
   profile, group, sample_col = "sample", group_col = "group",

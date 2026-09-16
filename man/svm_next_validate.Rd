@@ -42,7 +42,7 @@ svm_next_validate(
 
 \item{kernel}{SVM kernel; supported values are shown in Usage.}
 
-\item{scale}{Logical control for \code{scale}.}
+\item{scale}{Whether to scale values as described by the selected method.}
 
 \item{cost_grid}{Candidate SVM cost values used during tuning.}
 
@@ -51,8 +51,8 @@ svm_next_validate(
 \item{tune_boot}{Number of bootstrap resamples used during SVM tuning.}
 }
 \value{
-A result object described in the Details section.
+A list containing tuned/fitted SVM objects, validation predictions, ROC results, shared features, and classification metrics.
 }
 \description{
-Chinese summary: 在训练集调参拟合 SVM，并在独立数据中验证。
+在训练集调参拟合 SVM，并在独立数据中验证。
 }

@@ -151,9 +151,10 @@ metadata = "gender", value = "M", ref = "F"
 coef > 0 means the taxon is enriched/positively associated with males.
 coef < 0 means the taxon is enriched/positively associated with females.
 
-Chinese summary: 绘制 MaAsLin3 多分类层级的正负效应及 taxonomy 色带。
+绘制 MaAsLin3 多分类层级的正负效应及 taxonomy 色带。
 }
 \examples{
+\dontshow{if (FALSE) withAutoprint(\{ # examplesIf}
 p <- plot_maaslin3_multi(
   maaslin3_result = maaslin_res,
   metadata = "group",
@@ -169,4 +170,5 @@ p <- plot_maaslin3_multi(
 )
 
 ggsave("PPM_associated_taxa.pdf", p, width = 9, height = 6)
+\dontshow{\}) # examplesIf}
 }

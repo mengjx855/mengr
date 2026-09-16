@@ -1,14 +1,18 @@
-#### Jin-Xin Meng, 20260820, 20260820, v0.0.1 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260820, 20260916 ####
+
+# 20260916: rename the public configuration function to `mengr_config()` and standardize documentation.
+
+#### mengr_config ####
 
 #' Configure paths used by mengR
 #'
 #'
-#' Chinese summary: 设置或读取 mengR 配置；目前主要管理公共数据库根目录。
+#' 设置或读取 mengR 配置；目前主要管理公共数据库根目录。
 #'
 #' @param database Root directory containing shared reference databases.
 #' @return The active mengR configuration, invisibly.
 #' @export
-mengR_config <- function(database = NULL) {
+mengr_config <- function(database = NULL) {
   if (!is.null(database)) {
     database <- normalizePath(database, winslash = "/", mustWork = FALSE)
     options(mengR.database = database)
@@ -24,6 +28,8 @@ mengR_config <- function(database = NULL) {
   invisible(config)
 }
 
-.mengR_db_file <- function(...) {
-  file.path(mengR_config()$database, ...)
+#### .mengr_db_file ####
+
+.mengr_db_file <- function(...) {
+  file.path(mengr_config()$database, ...)
 }

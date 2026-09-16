@@ -1,13 +1,17 @@
-#### Jin-Xin Meng, 20220529, 20260820, v0.2.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220529, 20260916 ####
+
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
+
+#### calcu_specaccum ####
 
 #' Calculate a species accumulation curve
 #'
-#' Chinese summary: 计算总体 species/feature accumulation curve。
+#' 计算总体 species/feature accumulation curve。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param permutations Number of permutations used by the significance test.
 #' @param method Analysis or summary method; supported values are shown in the usage.
-#' @return A result object described in the Details section.
+#' @return A data frame containing accumulation effort, richness, standard error, and confidence limits.
 #' @export
 calcu_specaccum <- function(
   profile, permutations = 99,
@@ -32,24 +36,26 @@ calcu_specaccum <- function(
   )
 }
 
+#### plot_specaccum ####
+
 #' Plot a species accumulation curve
 #'
-#' Chinese summary: 绘制总体累积曲线，可添加误差线或置信 ribbon。
+#' 绘制总体累积曲线，可添加误差线或置信 ribbon。
 #'
 #' @param data An input data frame or compatible object.
 #' @param sample_n_col Name of the `sample_n_col` input column.
 #' @param richness_col Name of the `richness_col` input column.
 #' @param sd_col Name of the `sd_col` input column.
 #' @param color Color specification for `color`.
-#' @param add_errorbar Logical control for `add_errorbar`.
-#' @param add_ribbon Logical control for `add_ribbon`.
+#' @param add_errorbar Whether to draw pointwise error bars.
+#' @param add_ribbon Whether to draw an uncertainty ribbon.
 #' @param fill Color specification for fill.
 #' @param linetype Line type used for the accumulation or rarefaction curve.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
 #' @param xlab Optional x-axis label.
 #' @param ylab Optional y-axis label.
 #' @param title Optional plot or result title.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_specaccum <- function(
   data, sample_n_col = "sample_n", richness_col = "richness", sd_col = "sd",
@@ -99,9 +105,11 @@ plot_specaccum <- function(
     ggplot2::theme(aspect.ratio = aspect_ratio)
 }
 
+#### calcu_specaccum_by_group ####
+
 #' Calculate species accumulation curves by group
 #'
-#' Chinese summary: 分组计算 species/feature accumulation curve。
+#' 分组计算 species/feature accumulation curve。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -110,7 +118,7 @@ plot_specaccum <- function(
 #' @param group_level Optional order of group levels.
 #' @param permutations Number of permutations used by the significance test.
 #' @param method Analysis or summary method; supported values are shown in the usage.
-#' @return A result object described in the Details section.
+#' @return A data frame of accumulation curves with a group column.
 #' @export
 calcu_specaccum_by_group <- function(
   profile, group, sample_col = "sample", group_col = "group",
@@ -147,9 +155,11 @@ calcu_specaccum_by_group <- function(
   })
 }
 
+#### plot_specaccum_by_group ####
+
 #' Plot species accumulation curves by group
 #'
-#' Chinese summary: 绘制多组累积曲线并使用统一分组配色。
+#' 绘制多组累积曲线并使用统一分组配色。
 #'
 #' @param data An input data frame or compatible object.
 #' @param sample_n_col Name of the `sample_n_col` input column.
@@ -158,16 +168,16 @@ calcu_specaccum_by_group <- function(
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
 #' @param group_color Optional colors aligned to `group_level`.
-#' @param add_errorbar Logical control for `add_errorbar`.
-#' @param add_group_label Logical control for `add_group_label`.
-#' @param add_ribbon Logical control for `add_ribbon`.
+#' @param add_errorbar Whether to draw pointwise error bars.
+#' @param add_group_label Whether to label group centroids.
+#' @param add_ribbon Whether to draw an uncertainty ribbon.
 #' @param fill Color specification for fill.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
 #' @param linetype Line type used for the accumulation or rarefaction curve.
 #' @param xlab Optional x-axis label.
 #' @param ylab Optional y-axis label.
 #' @param title Optional plot or result title.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_specaccum_by_group <- function(
   data, sample_n_col = "sample_n", richness_col = "richness", sd_col = "sd",
@@ -237,14 +247,16 @@ plot_specaccum_by_group <- function(
   p
 }
 
+#### calcu_specaccum_by_depth ####
+
 #' Calculate sample rarefaction curves by sequencing depth
 #'
-#' Chinese summary: 逐步增加测序深度，计算随机稀释后的 feature 数量。
+#' 逐步增加测序深度，计算随机稀释后的 feature 数量。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param step Increment in sequencing depth between rarefaction points.
 #' @param seed Optional random seed for reproducibility.
-#' @return A result object described in the Details section.
+#' @return A data frame of sample, subsampling depth, and observed feature richness.
 #' @export
 calcu_specaccum_by_depth <- function(profile, step = 1000, seed = NULL) {
   ## 1. 检查深度并整理 count matrix
@@ -284,15 +296,17 @@ calcu_specaccum_by_depth <- function(profile, step = 1000, seed = NULL) {
   )
 }
 
+#### plot_specaccum_by_depth ####
+
 #' Plot sample rarefaction curves by sequencing depth
 #'
-#' Chinese summary: 绘制测序深度与观测 feature 数量的关系。
+#' 绘制测序深度与观测 feature 数量的关系。
 #'
 #' @param data An input data frame or compatible object.
 #' @param sample_col Name of the sample-identifier column.
 #' @param depth_col Name of the `depth_col` input column.
 #' @param richness_col Name of the `richness_col` input column.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_specaccum_by_depth <- function(
   data, sample_col = "sample", depth_col = "depth",
@@ -330,12 +344,14 @@ plot_specaccum_by_depth <- function(
     )
 }
 
+#### calcu_rankabund ####
+
 #' Calculate rank-abundance data for each sample
 #'
-#' Chinese summary: 计算每个样本的 rank-abundance 数据及 log abundance。
+#' 计算每个样本的 rank-abundance 数据及 log abundance。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @return A result object described in the Details section.
+#' @return A data frame containing sample-wise abundance ranks, abundances, and log abundances.
 #' @export
 calcu_rankabund <- function(profile) {
   ## 每列作为一个样本传给 BiodiversityR::rankabundance()
@@ -355,15 +371,17 @@ calcu_rankabund <- function(profile) {
   })
 }
 
+#### plot_rankabund ####
+
 #' Plot rank-abundance curves
 #'
-#' Chinese summary: 绘制 rank-abundance 曲线。
+#' 绘制 rank-abundance 曲线。
 #'
 #' @param data An input data frame or compatible object.
 #' @param sample_col Name of the sample-identifier column.
 #' @param rank_col Name of the `rank_col` input column.
 #' @param log_abundance_col Name of the `log_abundance_col` input column.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_rankabund <- function(
   data, sample_col = "sample", rank_col = "rank",

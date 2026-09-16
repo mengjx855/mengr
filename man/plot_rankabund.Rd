@@ -21,8 +21,8 @@ plot_rankabund(
 \item{log_abundance_col}{Name of the \code{log_abundance_col} input column.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-Chinese summary: 绘制 rank-abundance 曲线。
+绘制 rank-abundance 曲线。
 }

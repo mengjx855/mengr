@@ -1,4 +1,8 @@
-#### Jin-Xin Meng, 20241023, 20260820, v0.2.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241023, 20260916 ####
+
+# 20260916: standardize script metadata, function sections, documentation, and naming style.
+
+#### .lasso_outcome ####
 
 .lasso_outcome <- function(group_vec, family, positive_class = NULL) {
   family <- match.arg(family, c("binomial", "gaussian", "poisson"))
@@ -24,9 +28,11 @@
   list(y = group_vec, family = family, positive_class = positive_class)
 }
 
+#### lasso_kfold ####
+
 #' Cross-validated LASSO predictions
 #'
-#' Chinese summary: 使用 glmnet 和分层 folds 执行 LASSO k-fold cross-validation。
+#' 使用 glmnet 和分层 folds 执行 LASSO k-fold cross-validation。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -37,8 +43,8 @@
 #' @param positive_class Outcome level treated as the positive class for binary metrics.
 #' @param seed Optional random seed for reproducibility.
 #' @param inner_folds Number of internal folds used to tune the regularization parameter.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments passed to `glmnet::cv.glmnet()`.
+#' @return A data frame with sample IDs, observed outcomes, predictions, and predicted classes for binomial models.
 #' @export
 lasso_kfold <- function(
   profile, group, k = 5, sample_col = "sample", group_col = "group",
@@ -97,9 +103,11 @@ lasso_kfold <- function(
   result_df
 }
 
+#### lasso_next_validate ####
+
 #' Train a LASSO model in one dataset and validate it in another
 #'
-#' Chinese summary: 在独立数据集上应用已训练的 LASSO 模型并评估预测。
+#' 在独立数据集上应用已训练的 LASSO 模型并评估预测。
 #'
 #' @param profile_x Feature-by-sample profile used for model training or the first data space.
 #' @param profile_y Feature-by-sample profile used for validation or the second data space.
@@ -111,8 +119,8 @@ lasso_kfold <- function(
 #' @param positive_class Outcome level treated as the positive class for binary metrics.
 #' @param seed Optional random seed for reproducibility.
 #' @param inner_folds Number of internal folds used to tune the regularization parameter.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A result object described in the Details section.
+#' @param ... Additional arguments passed to `glmnet::cv.glmnet()`.
+#' @return A list containing the fitted cross-validated model, shared features, validation predictions, and binary metrics when applicable.
 #' @export
 lasso_next_validate <- function(
   profile_x, profile_y, group_x, group_y,

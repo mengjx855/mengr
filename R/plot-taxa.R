@@ -1,14 +1,13 @@
-#### Jin-Xin Meng, 20220918, 20260828, v0.1.0 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220918, 20260916 ####
 
 # 20260828: plot-related functions to profile-taxa.R.
+# 20260916: standardize documentation and safely forward `...` in `plot_compos_multiple()`.
 
-#### 20220918 plot_compos ####
+#### plot_compos ####
 #' Plot Compos utility
 #'
-#' `plot_compos()` provides a reusable mengR workflow with input validation and standardized
-#'   output.
 #'
-#' Chinese summary: 绘制单个分类层级的样本或分组组成堆叠柱状图。
+#' 绘制单个分类层级的样本或分组组成堆叠柱状图。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param taxonomy Feature taxonomy table used for annotation or aggregation.
@@ -22,14 +21,14 @@
 #' @param top_list Optional feature or category names retained regardless of abundance rank.
 #' @param group_level Optional order of group levels.
 #' @param sample_level Optional order for `sample_level`.
-#' @param width Numeric setting for `width`.
+#' @param width Bar width for composition plots; in `plot_msa()`, the number of alignment positions per block.
 #' @param taxa_level Optional order for `taxa_level`.
 #' @param taxa_color Color specification for `taxa_color`.
-#' @param plot_title Logical control for `plot_title`.
+#' @param plot_title Whether to display the supplied plot title.
 #' @param x_text_angle Rotation angle, in degrees, for x-axis text.
-#' @param remove_unknown Logical control for `remove_unknown`.
+#' @param remove_unknown Whether to discard unknown or unclassified entries.
 #' @param unknown_pattern Regular expression identifying unknown or unclassified annotations.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 
 plot_compos <- function(
@@ -145,7 +144,7 @@ plot_compos <- function(
   return(p)
 }
 
-#### 20220918 plot_compos_multiple ####
+#### plot_compos_multiple ####
 # 一次绘制多个分类层级的组成图
 # profile: 行为 feature，列为 sample 的丰度表
 # taxonomy: feature 注释表
@@ -156,10 +155,8 @@ plot_compos <- function(
 
 #' Plot Compos Multiple utility
 #'
-#' `plot_compos_multiple()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 对多个 taxonomy 层级批量绘制组成图并组合输出。
+#' 对多个 taxonomy 层级批量绘制组成图并组合输出。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param taxonomy Feature taxonomy table used for annotation or aggregation.
@@ -173,11 +170,11 @@ plot_compos <- function(
 #' @param group_level Optional order of group levels.
 #' @param sample_level Optional order for `sample_level`.
 #' @param taxa_color Color specification for `taxa_color`.
-#' @param width Numeric setting for `width`.
-#' @param taxa_levels Numeric setting for `taxa_levels`.
+#' @param width Bar width for composition plots; in `plot_msa()`, the number of alignment positions per block.
+#' @param taxa_levels Taxonomic rank names to plot; `NULL` auto-detects available ranks.
 #' @param nrow Number of rows used when arranging multiple plots.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param ... Additional arguments forwarded to `plot_compos()`.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_compos_multiple <- function(
   profile, taxonomy, group = NULL, display = "group", feature_col = "name",
@@ -202,7 +199,7 @@ plot_compos_multiple <- function(
       order   = c("^order$", "^o$", "^o__$"),
       family  = c("^family$", "^f$", "^f__$"),
       genus   = c("^genus$", "^g$", "^g__$"),
-      species = c("^species$", "^s$", "^s__$"),
+      species = c("^species$", "^s$", "^s__$")
       # strain  = c("^strain$", "^t$", "^t__$")
     )
 
@@ -226,26 +223,29 @@ plot_compos_multiple <- function(
     stop("No taxonomy rank columns were detected. Please specify taxa_levels manually.")
   }
 
+  dots_list <- list(...)
   p <- purrr::map(
     taxa_levels, \(x) {
-      plot_compos(
-        profile = profile,
-        taxonomy = taxonomy,
-        group = group,
-        display = display,
-        feature_col = feature_col,
-        sample_col = sample_col,
-        group_col = group_col,
-        top_n = top_n,
-        top_list = top_list,
-        to = x,
-        group_level = group_level,
-        sample_level = sample_level,
-        taxa_color = taxa_color,
-        width = width,
-        ...
-      ) |>
-        suppressMessages()
+      plot_args_list <- c(
+        list(
+          profile = profile,
+          taxonomy = taxonomy,
+          group = group,
+          display = display,
+          feature_col = feature_col,
+          sample_col = sample_col,
+          group_col = group_col,
+          top_n = top_n,
+          top_list = top_list,
+          to = x,
+          group_level = group_level,
+          sample_level = sample_level,
+          taxa_color = taxa_color,
+          width = width
+        ),
+        dots_list
+      )
+      suppressMessages(do.call(plot_compos, plot_args_list))
     }
   ) |>
     cowplot::plot_grid(plotlist = _, nrow = nrow, align = "v")
@@ -253,7 +253,7 @@ plot_compos_multiple <- function(
   return(p)
 }
 
-#### 20220918 plot_compos_manual ####
+#### plot_compos_manual ####
 # 手动输入已经汇总好的 profile 绘制组成图
 # profile: 行为 taxa，列为 sample 或 group
 # display:
@@ -264,10 +264,8 @@ plot_compos_multiple <- function(
 
 #' Plot Compos Manual utility
 #'
-#' `plot_compos_manual()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 对已经整理好的组成数据绘制可精细控制的堆叠柱状图。
+#' 对已经整理好的组成数据绘制可精细控制的堆叠柱状图。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -280,19 +278,19 @@ plot_compos_multiple <- function(
 #' @param sample_level Optional order for `sample_level`.
 #' @param taxa_level Optional order for `taxa_level`.
 #' @param taxa_color Color specification for `taxa_color`.
-#' @param width Numeric setting for `width`.
+#' @param width Bar width for composition plots; in `plot_msa()`, the number of alignment positions per block.
 #' @param title Optional plot or result title.
 #' @param fill_title Color specification for fill title.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
 #' @param x_text_angle Rotation angle, in degrees, for x-axis text.
 #' @param other_name Label assigned to features combined into the residual category.
 #' @param method Analysis or summary method; supported values are shown in the usage.
-#' @param remove_unknown Logical control for `remove_unknown`.
+#' @param remove_unknown Whether to discard unknown or unclassified entries.
 #' @param unknown_pattern Regular expression identifying unknown or unclassified annotations.
-#' @param base Numeric setting for `base`.
+#' @param base Scaling constant used for relative-abundance output.
 #' @param digits Optional number of decimal digits retained.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param ... Additional arguments passed to the selected profile summary operation.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_compos_manual <- function(
   profile, group = NULL, display = c("group", "sample"),
@@ -499,7 +497,7 @@ plot_compos_manual <- function(
   return(p)
 }
 
-#### 20220918 plot_taxa_boxplot ####
+#### plot_taxa_boxplot ####
 
 # 对 profile 中每个 taxa/feature 绘制分组箱线图
 # profile: 行为 taxa，列为 sample
@@ -509,10 +507,8 @@ plot_compos_manual <- function(
 
 #' Plot Taxa Boxplot utility
 #'
-#' `plot_taxa_boxplot()` provides a reusable mengR workflow with input validation and
-#'   standardized output.
 #'
-#' Chinese summary: 对每个 taxa 绘制分组箱线图，并添加显著性比较。
+#' 对每个 taxa 绘制分组箱线图，并添加显著性比较。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param group A sample metadata table containing sample and group columns.
@@ -526,10 +522,10 @@ plot_compos_manual <- function(
 #' @param ylab Optional y-axis label.
 #' @param aspect_ratio Panel aspect ratio passed to `ggplot2::theme()`.
 #' @param legend_title Legend title; `NULL` uses a context-dependent default.
-#' @param show_legend Logical control for `show_legend`.
+#' @param show_legend Whether to display the plot legend.
 #' @param x_text_angle Rotation angle, in degrees, for x-axis text.
-#' @param ... Additional arguments passed to the underlying function.
-#' @return A plot object; analysis data or models may also be stored as attributes.
+#' @param ... Additional arguments forwarded to `calcu_diff()`.
+#' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_taxa_boxplot <- function(
   profile, group,

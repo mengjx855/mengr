@@ -27,12 +27,8 @@ calcu_stamp_multiple(
 \item{method}{Analysis or summary method; supported values are shown in the usage.}
 }
 \value{
-A result object described in the Details section.
+A feature-level data frame containing group summaries and the omnibus Kruskal-Wallis or ANOVA result.
 }
 \description{
-\code{calcu_stamp_multiple()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 对多组数据计算 STAMP 风格的整体差异统计。
+对多组数据计算 STAMP 风格的整体差异统计。
 }

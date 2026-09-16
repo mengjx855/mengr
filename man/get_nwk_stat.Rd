@@ -12,12 +12,8 @@ get_nwk_stat(graph, prefix_pattern = c(bacteria = "^b_", fungi = "^f_"))
 \item{prefix_pattern}{Regular expression used to extract prefixes from node identifiers.}
 }
 \value{
-A result object described in the Details section.
+A node-level data frame of network topology statistics.
 }
 \description{
-\code{get_nwk_stat()} provides a reusable mengR workflow with input validation and standardized
-output.
-}
-\details{
-Chinese summary: 计算网络节点的 degree、strength、centrality 等拓扑统计量。
+计算网络节点的 degree、strength、centrality 等拓扑统计量。
 }

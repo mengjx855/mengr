@@ -32,31 +32,27 @@ plot_pair_radar(
 
 \item{title}{Optional plot or result title.}
 
-\item{cf_name}{Display or identifier name for cf name.}
+\item{cf_name}{Display label for the first comparison series.}
 
-\item{random_name}{Display or identifier name for random name.}
+\item{random_name}{Display label for the second comparison series.}
 
 \item{colors}{Color specification for \code{colors}.}
 
-\item{fill_alpha}{Numeric setting for \code{fill_alpha}.}
+\item{fill_alpha}{Opacity of the radar polygon fill.}
 
-\item{line_width}{Numeric setting for \code{line_width}.}
+\item{line_width}{Line width used for plotted paths.}
 
-\item{point_size}{Numeric setting for \code{point_size}.}
+\item{point_size}{Point size used for samples or observations.}
 
-\item{label_size}{Numeric setting for \code{label_size}.}
+\item{label_size}{Text size for sample or group labels.}
 
-\item{star_size}{Numeric setting for \code{star_size}.}
+\item{star_size}{Text size of significance-star labels.}
 
 \item{grid_n}{Number of grid intervals.}
 }
 \value{
-A plot object; analysis data or models may also be stored as attributes.
+A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-\code{plot_pair_radar()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 使用 ggplot2 绘制成对比较的极坐标雷达图。
+使用 ggplot2 绘制成对比较的极坐标雷达图。
 }

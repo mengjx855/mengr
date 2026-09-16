@@ -24,7 +24,7 @@ calcu_feature_auc(
 
 \item{group_col}{Name of the grouping column.}
 
-\item{levels}{Numeric setting for \code{levels}.}
+\item{levels}{Two class labels ordered as negative and positive.}
 
 \item{direction}{Direction used for prediction, ROC calculation, or network extraction.}
 
@@ -33,12 +33,8 @@ calcu_feature_auc(
 \item{quiet}{Whether to suppress progress messages.}
 }
 \value{
-A result object described in the Details section.
+A feature-level data frame containing AUC, confidence limits, ROC direction, and discrimination strength.
 }
 \description{
-\code{calcu_feature_auc()} provides a reusable mengR workflow with input validation and
-standardized output.
-}
-\details{
-Chinese summary: 逐 feature 计算二分类 ROC AUC、置信区间、方向和区分强度。
+逐 feature 计算二分类 ROC AUC、置信区间、方向和区分强度。
 }
