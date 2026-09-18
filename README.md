@@ -8,13 +8,13 @@
 
 ## 当前信息
 
-| 项目 | 当前设置 |
-| --- | --- |
-| 版本 | `0.0.2` |
-| 源码目录 | `F:/R_proj/mengR` |
-| R 版本 | R 4.4.3 |
-| 个人包目录 | `E:/SoftwareData/R/win-library/4.4` |
-| 默认数据库目录 | `F:/database` |
+| 项目 | 当前本地设置 | 当前工作站设置 |
+| --- | --- | --- |
+| 版本 | `0.0.2` | `0.0.2` |
+| 源码目录 | `F:/R_proj/mengR` | `/data/mengjx/R_proj/mengR` |
+| R 版本 | R 4.4.3 | R 4.4.3 |
+| 个人包目录 | `E:/SoftwareData/R/win-library/4.4` | `/home/mengjx/.R/library/4.4` |
+| 默认数据库目录 | `F:/database` | `/home/mengjx/database` |
 
 ## 使用前先记住
 
@@ -31,6 +31,7 @@
 
 ```r
 lib_dir <- "E:/SoftwareData/R/win-library/4.4"
+
 
 install.packages(
   "F:/R_proj/mengR/mengR_0.0.2.tar.gz",
