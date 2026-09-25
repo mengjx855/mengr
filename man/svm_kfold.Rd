@@ -6,7 +6,7 @@
 \usage{
 svm_kfold(
   profile,
-  group,
+  sample_meta,
   k = 5,
   sample_col = "sample",
   group_col = "group",
@@ -23,7 +23,7 @@ svm_kfold(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{k}{Number of folds or clusters, according to the analysis performed.}
 
@@ -51,5 +51,5 @@ svm_kfold(
 A data frame of out-of-fold predictions, decision values, and fold identifiers.
 }
 \description{
-执行分层 SVM k-fold cross-validation。
+K-fold cross-validated predictions for a binary SVM
 }

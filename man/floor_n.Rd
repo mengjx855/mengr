@@ -15,5 +15,5 @@ floor_n(x, n = 2)
 A numeric vector rounded downward at the requested decimal position.
 }
 \description{
-按指定的十进制位数向下取整，例如按百位或千位取整。
+Floor n utility
 }

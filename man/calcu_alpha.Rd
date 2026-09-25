@@ -28,5 +28,5 @@ calcu_alpha(
 A sample-level data frame containing the requested alpha-diversity indices.
 }
 \description{
-计算 richness、Shannon、Simpson、Chao1、ACE 等 alpha diversity 指标。
+Calcu Alpha utility
 }

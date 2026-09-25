@@ -30,5 +30,5 @@ plot_gsea_barcode(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-绘制 GSEA barcode/running-score 风格结果图。
+Plot Gsea Barcode utility
 }

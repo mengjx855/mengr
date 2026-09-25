@@ -6,7 +6,7 @@
 \usage{
 rf_repeated_kfold(
   profile,
-  group,
+  sample_meta,
   k = 5,
   repeats = 5,
   seed = 2026,
@@ -23,7 +23,7 @@ rf_repeated_kfold(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{k}{Number of folds or clusters, according to the analysis performed.}
 
@@ -51,5 +51,5 @@ rf_repeated_kfold(
 A data frame combining predictions from every repeat and fold.
 }
 \description{
-多次重复 random-forest k-fold，并标记每次重复和 fold。
+Repeat stratified K-fold random-forest validation
 }

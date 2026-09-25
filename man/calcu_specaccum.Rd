@@ -21,5 +21,5 @@ calcu_specaccum(
 A data frame containing accumulation effort, richness, standard error, and confidence limits.
 }
 \description{
-计算总体 species/feature accumulation curve。
+Calculate a species accumulation curve
 }

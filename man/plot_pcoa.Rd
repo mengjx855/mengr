@@ -6,7 +6,7 @@
 \usage{
 plot_pcoa(
   profile = NULL,
-  group,
+  sample_meta,
   distance = NULL,
   sample_col = "sample",
   group_col = "group",
@@ -41,7 +41,7 @@ plot_pcoa(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{distance}{A precomputed distance object; when supplied, it takes precedence over \code{profile}.}
 
@@ -105,5 +105,5 @@ plot_pcoa(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-计算并绘制 pcoa，可附加 PERMANOVA 统计结果。
+Plot pcoa utility
 }

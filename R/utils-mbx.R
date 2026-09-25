@@ -1,6 +1,8 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241121, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241121, 20260923 ####
 
 # 20260916: rename exported functions to lowercase and standardize their documentation.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 
 #### parse_mchromatograms ####
@@ -11,8 +13,6 @@
 #' report retention-time limits plus intensity quantiles and the retention time
 #' at maximum intensity.
 #'
-#' 从 MChromatograms 对象的每条色谱中提取保留时间和强度，汇总保留时间
-#' 范围、强度分位数和最高强度所在的保留时间。
 #'
 #' @param data An MChromatograms-like object supported by `xcms::rtime()` and
 #'   `xcms::intensity()`.
@@ -66,7 +66,6 @@ parse_mchromatograms <- function(data, label = "MChromatograms object") {
 #' MBT eKEGG utility
 #'
 #'
-#' 将代谢物列表与本地 eKEGG 注释关联并整理 pathway 结果。
 #'
 #' @param cpd_list Metabolite or compound identifiers to annotate.
 #' @param database Path to the local annotation database file.

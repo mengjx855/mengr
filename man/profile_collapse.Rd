@@ -6,7 +6,7 @@
 \usage{
 profile_collapse(
   profile,
-  group,
+  sample_meta,
   sample_col = "sample",
   group_col = "group",
   method = c("mean", "median", "sum"),
@@ -17,7 +17,7 @@ profile_collapse(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{sample_col}{Name of the sample-identifier column.}
 
@@ -33,5 +33,5 @@ profile_collapse(
 A feature-by-group data frame produced by the requested summary function.
 }
 \description{
-按样本分组对 profile 求 mean、median、sum 或自定义统计量。
+Profile Collapse utility
 }

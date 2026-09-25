@@ -1,4 +1,4 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20230915, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20230915, 20260923 ####
 
 # 20250107: add parameter add_group_label, show_legend, lab_size, show_grid in plot_PCoA function
 # 20250115: add sample labels and update group-label parameters.
@@ -7,6 +7,8 @@
 # 20250419: add options sub_sample and sub_group for plot_pca().
 # 20250526: update functions.
 # 20260916: rename PCA functions to lowercase and standardize documentation and naming.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 
 #### calcu_pca ####
@@ -20,7 +22,6 @@
 #' Calcu PCA utility
 #'
 #'
-#' 对 feature × sample profile 执行 PCA 并返回坐标和解释方差。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param dim Number of ordination dimensions retained in the returned coordinate table.
@@ -118,10 +119,9 @@ calcu_pca <- function(
 #' Plot PCA utility
 #'
 #'
-#' 对齐 profile 与分组后执行并绘制 PCA。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
@@ -151,7 +151,7 @@ calcu_pca <- function(
 #' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_pca <- function(
-  profile, group, sample_col = "sample", group_col = "group",
+  profile, sample_meta, sample_col = "sample", group_col = "group",
   group_level = NULL, group_color = NULL,
   sub_sample = NULL, sub_group = NULL,
   display_type = "line", conf_type = "ellipse",
@@ -163,6 +163,7 @@ plot_pca <- function(
   aspect_ratio = 3 / 4, theme = "default",
   remove_zero_var = TRUE, na_fill = 0, ...
 ) {
+  group <- sample_meta
   profile <- data.frame(profile, check.names = FALSE)
   group <- data.frame(group, check.names = FALSE)
 

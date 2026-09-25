@@ -36,7 +36,8 @@ param_description <- function(param) {
   exact <- c(
     profile = 'A feature-by-sample numeric matrix-like object.',
     data = 'An input data frame or compatible object.',
-    group = 'A sample metadata table containing sample and group columns.',
+    sample_meta = 'A sample metadata table containing sample and group columns.',
+    feature_meta = 'A feature metadata table containing feature identifiers and annotations.',
     metadata = 'A metadata or annotation data frame.',
     sample_col = 'Name of the sample-identifier column.',
     group_col = 'Name of the grouping column.',
@@ -136,7 +137,7 @@ for (source_file in source_files) {
         roxygen_line(english_title(function_name)),
         "#'",
         roxygen_line(paste0(
-          '`', function_name, '()` provides a reusable mengR workflow with ',
+          '`', function_name, '()` provides a reusable mengr workflow with ',
           'input validation and standardized output.'
         )),
         "#'",

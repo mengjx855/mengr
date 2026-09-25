@@ -90,5 +90,5 @@ plot_dim(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-统一绘制二维降维结果，支持 point/line、置信区域、标签和主题。
+Plot Dim utility
 }

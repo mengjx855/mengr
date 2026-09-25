@@ -1,12 +1,13 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250617, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250617, 20260923 ####
 
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 #### calcu_jsd_dist ####
 
 #' Calculate Jensen-Shannon distances between samples
 #'
-#' 对组成型 profile 计算 Jensen-Shannon divergence 距离。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param pseudocount Positive value used to replace or offset zeros before logarithmic operations.
@@ -61,7 +62,6 @@ calcu_jsd_dist <- function(profile, pseudocount = 1e-6, normalize = TRUE) {
 
 #' Partition samples around medoids
 #'
-#' 对距离对象执行 partitioning around medoids 聚类。
 #'
 #' @param distance A precomputed distance object; when supplied, it takes precedence over `profile`.
 #' @param k Number of folds or clusters, according to the analysis performed.

@@ -1,8 +1,10 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260815, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260815, 20260923 ####
 
 # 20260815: create new file for single-cell RNA-seq analysis functions.
 # 20260902: add function 'scrna_reduction_plot()' and 'scrna_seurat_subsample()'
 # 20260916: standardize scRNA function names; validate and document reduction plotting and Seurat subsampling; fix `grid::unit()` usage.
+# 20260923: remove Chinese text from Roxygen documentation and correct export tags.
+
 
 #### scrna_marker_db_build ####
 
@@ -12,8 +14,6 @@
 #' it as an RDS file. The input is filtered to the requested organism and tissue
 #' after names are normalized to lower snake case.
 #'
-#' 从 CellMarker 格式的表格构建命名基因集列表，并保存为 RDS 文件。物种、
-#' 组织和细胞名会先统一为小写 snake case，再按 `org` 和 `tissue` 筛选。
 #'
 #' @param data A data frame containing `species`, `tissue_class`, `cell_name`,
 #'   `marker`, `Symbol`, and `GeneID` columns.
@@ -22,7 +22,7 @@
 #' @param database Directory in which the database file is saved.
 #'
 #' @return Invisibly returns the path of the saved RDS file.
-#' @expor
+#' @export
 scrna_marker_db_build <- function(
   data, tissue = "intestine", org = "mouse",
   database = .mengr_db_file("CellMarker-2.0", "cell_marker_rds")
@@ -93,8 +93,6 @@ scrna_marker_db_build <- function(
 #' created by `scrna_marker_db_build()`. Results include overlap counts, inpu
 #' coverage, reference coverage, and matched genes.
 #'
-#' 将输入 marker 与 `scrna_marker_db_build()` 构建的各细胞类型基因集比对，
-#' 返回交集数量、输入覆盖率、参考集覆盖率和匹配基因。
 #'
 #' @param markers Character vector of input marker genes.
 #' @param tissue Tissue name used in the database file name.
@@ -104,7 +102,7 @@ scrna_marker_db_build <- function(
 #' @param database Directory containing CellMarker RDS files.
 #'
 #' @return A data frame sorted by decreasing input-marker coverage.
-#' @expor
+#' @export
 scrna_marker_match <- function(
   markers, tissue = "intestine", org = "mouse",
   gene_type = c("symbol", "marker", "gene_id"),
@@ -159,15 +157,13 @@ scrna_marker_match <- function(
 #' Create one row of Seurat feature plots for each element of a named marker
 #' list. Missing genes are removed, and rows are padded to equal widths.
 #'
-#' 对命名 marker 列表中的每一组基因绘制一行 Seurat FeaturePlot。函数会
-#' 删除不存在的基因，并用空白图保持各行宽度一致。
 #'
 #' @param seurat A Seurat object.
 #' @param markers A named list of marker vectors.
 #' @param reduction Dimensional reduction passed to `Seurat::FeaturePlot()`.
 #'
 #' @return A combined ggplot/cowplot object.
-#' @expor
+#' @export
 scrna_feature_plots <- function(seurat, markers, reduction = "umap") {
   if (!is.list(markers) || is.null(names(markers))) {
     stop("markers should be a named list of character vectors.")
@@ -216,8 +212,6 @@ scrna_feature_plots <- function(seurat, markers, reduction = "umap") {
 #' Markers may be supplied as a vector or a named list; list names are included
 #' in facet labels.
 #'
-#' 整理 Seurat 对象中的 marker 表达量，绘制纵向分面小提琴图。`markers` 可以
-#' 是字符向量或命名列表；命名列表的组名会写入分面标签。
 #'
 #' @param seurat A Seurat object.
 #' @param markers A character vector or a named list of marker vectors.
@@ -227,7 +221,7 @@ scrna_feature_plots <- function(seurat, markers, reduction = "umap") {
 #' @param group_colors Optional named color vector for cell groups.
 #'
 #' @return A ggplot object.
-#' @expor
+#' @export
 scrna_violin_plots <- function(
   seurat, markers, group_col = NULL, group_level = NULL,
   group_colors = NULL
@@ -308,8 +302,6 @@ scrna_violin_plots <- function(
 #' sender/receiver centrality. The input Seurat object is copied by R semantics;
 #' the returned value is the completed CellChat object.
 #'
-#' 从 Seurat 对象整理 RNA assay，创建 CellChat 对象，依次完成配体-受体
-#' 通讯概率、通路聚合网络和 sender/receiver 中心性分析。
 #'
 #' @param seurat A Seurat object.
 #' @param sample_name A single sample or dataset label stored in CellCha
@@ -326,7 +318,7 @@ scrna_violin_plots <- function(
 #' @param trim Trim fraction used when `prob_method = "truncatedMean"`.
 #'
 #' @return A fully processed CellChat object.
-#' @expor
+#' @export
 cellchat_run <- function(
   seurat, sample_name, celltype_col = "celltype",
   species = c("mouse", "human"), assay = "RNA", min_cells = 10,
@@ -408,8 +400,6 @@ cellchat_run <- function(
 #' Extract outgoing or incoming interaction counts/weights for one cell group
 #' and display the values across partner groups as a single-series radar chart.
 #'
-#' 提取某一细胞群的 outgoing 或 incoming 交互数量/强度，并将各互作
-#' 细胞群的数值绘制为单序列雷达图。
 #'
 #' @param cellchat A processed CellChat object.
 #' @param cell Cell-group name present in the selected network matrix.
@@ -423,7 +413,7 @@ cellchat_run <- function(
 #' @param axis_label_size,grid_label_size Text sizes passed to `ggradar`.
 #'
 #' @return A ggplot object returned by `ggradar::ggradar()`.
-#' @expor
+#' @export
 cellchat_radar <- function(
   cellchat, cell, type = c("count", "weight"),
   direction = c("outgoing", "incoming"), title = NULL,
@@ -498,8 +488,6 @@ cellchat_radar <- function(
 #' percentage of expressing cells plus mean count and normalized expression in
 #' all cells and positive cells.
 #'
-#' 针对每个基因和 metadata 分组，计算阳性细胞数及比例，以及全部细胞和
-#' 阳性细胞中的平均 count 与标准化表达量。
 #'
 #' @param seurat A Seurat object.
 #' @param group_cols Metadata columns defining groups.
@@ -510,7 +498,7 @@ cellchat_radar <- function(
 #' @param expression_layer Layer containing normalized expression.
 #'
 #' @return A long-format tibble with one row per group-gene combination.
-#' @expor
+#' @export
 scrna_summarise_genes <- function(
   seurat, group_cols, genes, assay = "RNA", count_layer = "counts",
   expression_layer = "data"
@@ -575,8 +563,6 @@ scrna_summarise_genes <- function(
 #' `scrna_summarise_genes()` or a compatible table. Dot size represents the
 #' positive-cell percentage and color represents mean expression by default.
 #'
-#' 使用 `scrna_summarise_genes()` 的输出或兼容数据绘图。默认点大小表示
-#' 阳性细胞比例，颜色表示平均标准化表达量，每个基因独立分面。
 #'
 #' @param data A data frame containing grouping, gene, percentage, and
 #'   expression columns.
@@ -589,7 +575,7 @@ scrna_summarise_genes <- function(
 #' @param color_option Viridis palette option from `"A"` through `"H"`.
 #'
 #' @return A ggplot object.
-#' @expor
+#' @export
 scrna_expression_dotplot <- function(
   data, x_col, y_col, gene_col = "gene", percent_col = "percent",
   expression_col = "mean_expression", title = NULL, facet_nrow = 1,
@@ -658,7 +644,7 @@ scrna_expression_dotplot <- function(
 #'
 #' @return A ggplot object. The complete plotting data and sampled plotting data
 #'   are stored in the `plot_df` and `sample_df` attributes, respectively.
-#' @expor
+#' @export
 scrna_reduction_plot <- function(
     seurat, reduction = "umap", percent = 0.05, seed = 2026,
     stratified = FALSE, group_col = NULL, min_cells = 100,
@@ -834,7 +820,7 @@ scrna_reduction_plot <- function(
 #'
 #' @return A Seurat object containing the selected cells. When `percent = 1`,
 #'   the input object is returned unchanged.
-#' @expor
+#' @export
 scrna_seurat_subsample <- function(
     seurat, percent = 0.05, seed = 2026, stratified = FALSE,
     group_col = NULL, min_cells = 100, verbose = TRUE

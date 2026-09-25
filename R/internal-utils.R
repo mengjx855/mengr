@@ -1,6 +1,7 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260820, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260820, 20260923 ####
 
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: rename sample metadata arguments in internal alignment helpers.
 
 #### .as_df ####
 
@@ -103,24 +104,24 @@
 #### .align_profile_group ####
 
 .align_profile_group <- function(
-  profile, group, sample_col = "sample", group_col = "group",
+  profile, sample_meta, sample_col = "sample", group_col = "group",
   group_level = NULL, require_group = TRUE
 ) {
   profile_df <- .as_profile_df(profile)
-  group_df <- .as_df(group)
+  group_df <- .as_df(sample_meta)
 
   required_cols <- sample_col
   if (isTRUE(require_group)) required_cols <- c(required_cols, group_col)
-  .check_columns(group_df, required_cols, object = "group")
+  .check_columns(group_df, required_cols, object = "sample_meta")
 
   group_df[[sample_col]] <- as.character(group_df[[sample_col]])
   if (anyDuplicated(group_df[[sample_col]])) {
-    stop("Duplicated sample identifiers found in group[[sample_col]].")
+    stop("Duplicated sample identifiers found in sample_meta[[sample_col]].")
   }
 
   sample_vec <- intersect(colnames(profile_df), group_df[[sample_col]])
   if (!length(sample_vec)) {
-    stop("No matched samples between profile and group.")
+    stop("No matched samples between profile and sample_meta.")
   }
 
   group_df <- group_df[
@@ -154,12 +155,12 @@
 #### .profile_long_df ####
 
 .profile_long_df <- function(
-  profile, group, sample_col = "sample", group_col = "group",
+  profile, sample_meta, sample_col = "sample", group_col = "group",
   group_level = NULL, feature_col = "name", value_col = "value"
 ) {
   aligned <- .align_profile_group(
     profile = profile,
-    group = group,
+    sample_meta = sample_meta,
     sample_col = sample_col,
     group_col = group_col,
     group_level = group_level

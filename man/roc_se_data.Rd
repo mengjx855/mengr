@@ -17,5 +17,5 @@ roc_se_data(roc, by = 0.01, conf.level = 0.95)
 A data frame with specificity, sensitivity, and lower and upper confidence limits.
 }
 \description{
-提取 ROC sensitivity 置信区间并整理为 ribbon 数据。
+Roc Se Data utility
 }

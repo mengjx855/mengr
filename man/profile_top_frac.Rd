@@ -27,5 +27,5 @@ profile_top_frac(
 A feature-by-sample data frame retaining the requested top fraction and, optionally, an \code{Other} row.
 }
 \description{
-按比例保留丰度最高的 feature，可把其余部分合并为 Other。
+Profile Top Frac utility
 }

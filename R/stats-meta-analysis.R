@@ -1,8 +1,9 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220914, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220914, 20260923 ####
 
 # 20250405: update some parameter.
 # 20260516: update some details.
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: remove Chinese text from Roxygen documentation.
 
 # methods:
 # For each case-control comparison, feature-level effect sizes were calculated
@@ -14,6 +15,7 @@
 # statistic. P values from the random-effects model were adjusted for multiple
 # testing using the BH method. Features with FDR < 0.05 were considered significantly
 # associated with disease status.
+
 
 
 #### calcu_metafor ####
@@ -76,7 +78,6 @@
 #' Calcu Metafor utility
 #'
 #'
-#' 按项目计算 feature 效应量，并使用 metafor 合并多队列结果。
 #'
 #' @param data An input data frame or compatible object.
 #' @param sample_col Name of the sample-identifier column.

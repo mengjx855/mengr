@@ -29,7 +29,3 @@ Build a named-list reference database from a CellMarker-style table and save
 it as an RDS file. The input is filtered to the requested organism and tissue
 after names are normalized to lower snake case.
 }
-\details{
-从 CellMarker 格式的表格构建命名基因集列表，并保存为 RDS 文件。物种、
-组织和细胞名会先统一为小写 snake case，再按 \code{org} 和 \code{tissue} 筛选。
-}

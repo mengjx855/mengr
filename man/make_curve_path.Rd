@@ -42,5 +42,5 @@ make_curve_path(
 A data frame of interpolated x/y coordinates and curve identifiers.
 }
 \description{
-为 Mantel 图中的节点连线生成平滑曲线路径坐标。
+Make Curve Path utility
 }

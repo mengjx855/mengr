@@ -1,12 +1,13 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20240328, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20240328, 20260923 ####
 
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 #### plot_volcano ####
 
 #' Plot a volcano plot
 #'
-#' 根据 effect、P 值和富集方向绘制 volcano plot。
 #'
 #' @param data An input data frame or compatible object.
 #' @param feature_col Name of the feature-identifier column.

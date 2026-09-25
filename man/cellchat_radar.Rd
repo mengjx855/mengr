@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-scrna.R
 \name{cellchat_radar}
 \alias{cellchat_radar}
-\title{Plot a CellChat interaction profile as a radar chart}
+\title{Plot a CellChat interaction profile as a radar char}
 \usage{
 cellchat_radar(
   cellchat,
@@ -31,7 +31,7 @@ cellchat_radar(
 
 \item{color}{Line and point color.}
 
-\item{grid_min, grid_max}{Radar-grid limits. \code{grid_max = NULL} derives a limit
+\item{grid_min, grid_max}{Radar-grid limits. \code{grid_max = NULL} derives a limi
 from the data.}
 
 \item{axis_label_size, grid_label_size}{Text sizes passed to \code{ggradar}.}
@@ -42,8 +42,4 @@ A ggplot object returned by \code{ggradar::ggradar()}.
 \description{
 Extract outgoing or incoming interaction counts/weights for one cell group
 and display the values across partner groups as a single-series radar chart.
-}
-\details{
-提取某一细胞群的 outgoing 或 incoming 交互数量/强度，并将各互作
-细胞群的数值绘制为单序列雷达图。
 }

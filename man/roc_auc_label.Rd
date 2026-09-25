@@ -17,5 +17,5 @@ roc_auc_label(roc, digits = 3, prefix = "AUC")
 A single character label containing the AUC and its confidence interval.
 }
 \description{
-从 pROC 对象生成包含 AUC 和置信区间的标签。
+Roc Auc Label utility
 }

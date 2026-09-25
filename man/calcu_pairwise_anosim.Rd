@@ -6,7 +6,7 @@
 \usage{
 calcu_pairwise_anosim(
   profile,
-  group,
+  sample_meta,
   sample_col = "sample",
   group_col = "group",
   group_level = NULL,
@@ -20,7 +20,7 @@ calcu_pairwise_anosim(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{sample_col}{Name of the sample-identifier column.}
 
@@ -43,5 +43,5 @@ A data frame containing each group comparison, ANOSIM statistic, P value, adjust
 #importFrom rlang .data
 }
 \description{
-对各分组组合执行 pairwise ANOSIM。
+Calcu Pairwise Anosim utility
 }

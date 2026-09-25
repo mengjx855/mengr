@@ -6,7 +6,7 @@
 \usage{
 calcu_beta(
   distance,
-  metadata,
+  sample_meta,
   sample_col = "sample",
   group_col = "group",
   drop_na_group = TRUE
@@ -15,7 +15,8 @@ calcu_beta(
 \arguments{
 \item{distance}{A precomputed distance object; when supplied, it takes precedence over \code{profile}.}
 
-\item{metadata}{A metadata or annotation data frame.}
+\item{sample_meta}{A sample metadata table containing sample identifiers and
+group assignments.}
 
 \item{sample_col}{Name of the sample-identifier column.}
 
@@ -27,5 +28,5 @@ calcu_beta(
 A data frame of within-group sample pairs and their distances.
 }
 \description{
-基于距离矩阵执行整体 beta-diversity 组间检验。
+Calcu Beta utility
 }

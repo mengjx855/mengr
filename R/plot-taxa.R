@@ -1,17 +1,18 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220918, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220918, 20260923 ####
 
 # 20260828: plot-related functions to profile-taxa.R.
 # 20260916: standardize documentation and safely forward `...` in `plot_compos_multiple()`.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 #### plot_compos ####
 #' Plot Compos utility
 #'
 #'
-#' 绘制单个分类层级的样本或分组组成堆叠柱状图。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param taxonomy Feature taxonomy table used for annotation or aggregation.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param display Whether composition is summarized by sample or by group.
 #' @param feature_col Name of the feature-identifier column.
 #' @param sample_col Name of the sample-identifier column.
@@ -32,13 +33,14 @@
 #' @export
 
 plot_compos <- function(
-  profile, taxonomy, group = NULL, display = c("group", "sample"),
+  profile, taxonomy, sample_meta = NULL, display = c("group", "sample"),
   feature_col = "name", sample_col = "sample", group_col = "group",
   to = "family", top_n = 12, top_list = NULL, group_level = NULL,
   sample_level = NULL, width = .75, taxa_level = NULL, taxa_color = NULL,
   plot_title = NULL, x_text_angle = 90, remove_unknown = FALSE,
   unknown_pattern = "unknown|unclassified|unassigned|uncultured"
 ) {
+  group <- sample_meta
   display <- match.arg(display)
 
   if (missing(profile) || missing(taxonomy)) {
@@ -62,7 +64,7 @@ plot_compos <- function(
   other_name <- paste0(stringr::str_to_lower(stringr::str_sub(to, 1, 1)), "__Other")
 
   data <- taxa_trans(
-    profile = profile, taxonomy = taxonomy, group = group,
+    profile = profile, taxonomy = taxonomy, sample_meta = group,
     feature_col = feature_col, taxa_col = to,
     sample_col = sample_col, group_col = group_col,
     top_n = top_n, top_list = top_list, other_name = other_name,
@@ -156,11 +158,10 @@ plot_compos <- function(
 #' Plot Compos Multiple utility
 #'
 #'
-#' 对多个 taxonomy 层级批量绘制组成图并组合输出。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param taxonomy Feature taxonomy table used for annotation or aggregation.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param display Whether composition is summarized by sample or by group.
 #' @param feature_col Name of the feature-identifier column.
 #' @param sample_col Name of the sample-identifier column.
@@ -177,11 +178,12 @@ plot_compos <- function(
 #' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_compos_multiple <- function(
-  profile, taxonomy, group = NULL, display = "group", feature_col = "name",
+  profile, taxonomy, sample_meta = NULL, display = "group", feature_col = "name",
   sample_col = "sample", group_col = "group", top_n = 12, top_list = NULL,
   group_level = NULL, sample_level = NULL, taxa_color = NULL, width = .75,
   taxa_levels = NULL, nrow = 2, ...
 ) {
+  group <- sample_meta
   if (missing(profile) || missing(taxonomy)) {
     stop("missing profile or taxonomy.")
   }
@@ -265,10 +267,9 @@ plot_compos_multiple <- function(
 #' Plot Compos Manual utility
 #'
 #'
-#' 对已经整理好的组成数据绘制可精细控制的堆叠柱状图。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param display Whether composition is summarized by sample or by group.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
@@ -293,7 +294,7 @@ plot_compos_multiple <- function(
 #' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_compos_manual <- function(
-  profile, group = NULL, display = c("group", "sample"),
+  profile, sample_meta = NULL, display = c("group", "sample"),
   sample_col = "sample", group_col = "group",
   top_n = 12, out_all = FALSE, group_level = NULL, sample_level = NULL,
   taxa_level = NULL, taxa_color = "category20", width = .75,
@@ -302,6 +303,7 @@ plot_compos_manual <- function(
   unknown_pattern = "unknown|unclassified|unassigned|uncultured",
   base = 100, digits = 8, ...
 ) {
+  group <- sample_meta
   display <- match.arg(display)
 
   if (display == "group" && is.null(group)) {
@@ -382,7 +384,7 @@ plot_compos_manual <- function(
   if (display == "group") {
     data <- profile_collapse(
       profile = profile,
-      group = group,
+      sample_meta = group,
       sample_col = sample_col,
       group_col = group_col,
       method = method
@@ -508,10 +510,9 @@ plot_compos_manual <- function(
 #' Plot Taxa Boxplot utility
 #'
 #'
-#' 对每个 taxa 绘制分组箱线图，并添加显著性比较。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
@@ -528,7 +529,7 @@ plot_compos_manual <- function(
 #' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_taxa_boxplot <- function(
-  profile, group,
+  profile, sample_meta,
   sample_col = "sample", group_col = "group",
   group_level = NULL, group_color = NULL,
   trans = NULL, method = c("wilcox", "anova", "t"),
@@ -536,6 +537,7 @@ plot_taxa_boxplot <- function(
   aspect_ratio = 1, legend_title = "group",
   show_legend = FALSE, x_text_angle = 0, ...
 ) {
+  group <- sample_meta
   method <- match.arg(method)
   if (!all(c(sample_col, group_col) %in% colnames(group))) {
     stop("group should contain columns: ", sample_col, " | ", group_col)

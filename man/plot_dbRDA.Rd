@@ -6,7 +6,7 @@
 \usage{
 plot_dbrda(
   profile = NULL,
-  group,
+  sample_meta,
   distance = NULL,
   sample_col = "sample",
   group_col = "group",
@@ -43,7 +43,7 @@ plot_dbrda(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{distance}{A precomputed distance object; when supplied, it takes precedence over \code{profile}.}
 
@@ -108,7 +108,4 @@ A ggplot-compatible plot object; computed data or fitted objects are retained as
 Supply either a feature-by-sample \code{profile} or a precomputed \code{distance}.
 The columns in \code{constraint_cols} are used as explanatory variables, while
 \code{group_col} controls the plot colour.
-}
-\details{
-从 profile 或距离对象执行 constrained dbRDA，并绘制样本和变量箭头。
 }

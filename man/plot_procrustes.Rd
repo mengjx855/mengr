@@ -69,5 +69,5 @@ plot_procrustes(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-比较两个 profile 或距离空间，执行 Procrustes 和 permutation test。
+Plot Procrustes utility
 }

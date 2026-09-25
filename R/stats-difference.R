@@ -1,4 +1,4 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220101, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220101, 20260923 ####
 
 # 20220601: 可选择'wilcox rank-sum','one-way anova','student's t test'三种方法做差异分析；
 # 20230117: diff_test_profile函数对feature进行差异分析，输入的是标准otu表和group表
@@ -14,6 +14,8 @@
 # 20260523: add new function 'calcu_empirical_p()'
 # 20260624: 更新difference_analysis
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 
 #### .add_plab ####
@@ -108,7 +110,6 @@
 #' Calcu Empirical p utility
 #'
 #'
-#' 根据置换或背景分布计算双侧、左侧或右侧 empirical P 值。
 #'
 #' @param obs Observed statistic compared with the randomization distribution.
 #' @param random Randomized statistics forming the empirical null distribution.
@@ -193,7 +194,6 @@ calcu_empirical_p <- function(
 #' Calcu Diff utility
 #'
 #'
-#' 对公式指定的数值与分组执行 Wilcoxon、ANOVA 或 t-test 两两比较。
 #'
 #' @param data An input data frame or compatible object.
 #' @param formula Model formula defining the response and grouping variables.
@@ -299,10 +299,9 @@ calcu_diff <- function(data, formula, method = c("wilcox", "anova", "t"),
 #' Calcu Diff Profile utility
 #'
 #'
-#' 对 profile 中的每个 feature 批量执行分组差异检验。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param group_by Metadata column or grouping definition used for aggregation.
 #' @param comparison Two outcome levels ordered as case and control.
 #' @param method Analysis or summary method; supported values are shown in the usage.
@@ -316,11 +315,12 @@ calcu_diff <- function(data, formula, method = c("wilcox", "anova", "t"),
 #' @return A feature-by-comparison data frame of test results, adjusted P values, and optional significance labels.
 #' @export
 calcu_diff_profile <- function(
-  profile, group, group_by = NULL, comparison = NULL,
+  profile, sample_meta, group_by = NULL, comparison = NULL,
   method = c("wilcox", "anova", "t"), add_plab = FALSE,
   plab_fmt = 2, var_equal = FALSE, progress = TRUE,
   sample_col = "sample", group_col = "group", ...
 ) {
+  group <- sample_meta
   method <- match.arg(method)
 
   ## Backward compatibility for the former group_by argument.
@@ -328,7 +328,7 @@ calcu_diff_profile <- function(
 
   aligned <- .align_profile_group(
     profile = profile,
-    group = group,
+    sample_meta = group,
     sample_col = sample_col,
     group_col = group_col
   )
@@ -560,10 +560,9 @@ calcu_diff_profile <- function(
 #' Difference Analysis utility
 #'
 #'
-#' 汇总差异检验、fold change、均值和 prevalence 的完整 feature 分析流程。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param comparison Two outcome levels ordered as case and control.
@@ -582,7 +581,7 @@ calcu_diff_profile <- function(
 #' @return A feature-level data frame combining abundance, prevalence, fold-change, and hypothesis-test results.
 #' @export
 difference_analysis <- function(
-  profile, group, sample_col = "sample", group_col = "group", comparison = NULL,
+  profile, sample_meta, sample_col = "sample", group_col = "group", comparison = NULL,
   input_scale = c("raw", "log10", "log2"),
   test_trans = c("none", "log10", "log2", "sqrt", "ra", "clr"),
   fc_method = c("arithmetic", "geometric"),
@@ -590,6 +589,7 @@ difference_analysis <- function(
   min_abundance = 0, fc_pseudo = 1e-6, log_pseudo_factor = 0.5,
   progress = TRUE, digits = 6, ...
 ) {
+  group <- sample_meta
   input_scale <- match.arg(input_scale)
   test_trans <- match.arg(test_trans)
   fc_method <- match.arg(fc_method)

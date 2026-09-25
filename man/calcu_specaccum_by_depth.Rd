@@ -17,5 +17,5 @@ calcu_specaccum_by_depth(profile, step = 1000, seed = NULL)
 A data frame of sample, subsampling depth, and observed feature richness.
 }
 \description{
-逐步增加测序深度，计算随机稀释后的 feature 数量。
+Calculate sample rarefaction curves by sequencing depth
 }

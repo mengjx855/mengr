@@ -1,6 +1,8 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260820, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260820, 20260923 ####
 
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 #### .heatmap_annotation_palette ####
 
@@ -61,9 +63,6 @@
 #' need to match the profile. Missing categorical palettes are generated
 #' automatically, while user-supplied palettes take precedence.
 #'
-#' 基于数值矩阵绘制 `ComplexHeatmap::pheatmap()` 热图。行、列注释表通过
-#' `name` 列与 profile 对齐，因此输入顺序可以不同。分类变量缺失配色时会
-#' 自动生成，用户在 `annotation_colors` 中提供的配色优先。
 #'
 #' @param profile A numeric matrix-like object with features in rows and samples
 #'   in columns.

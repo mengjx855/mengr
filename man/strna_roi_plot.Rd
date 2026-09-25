@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-strna.R
 \name{strna_roi_plot}
 \alias{strna_roi_plot}
-\title{Plot cell polygons inside a spatial region of interest}
+\title{Plot cell polygons inside a spatial region of interes}
 \usage{
 strna_roi_plot(
   boundary,

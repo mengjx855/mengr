@@ -1,6 +1,8 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220927, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220927, 20260923 ####
 
 # 20260916: rename `plot_dbRDA()` to `plot_dbrda()` and standardize documentation and naming.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 #### plot_dbrda ####
 
@@ -10,10 +12,9 @@
 #' The columns in `constraint_cols` are used as explanatory variables, while
 #' `group_col` controls the plot colour.
 #'
-#' 从 profile 或距离对象执行 constrained dbRDA，并绘制样本和变量箭头。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param distance A precomputed distance object; when supplied, it takes precedence over `profile`.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
@@ -45,7 +46,7 @@
 #' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_dbrda <- function(
-  profile = NULL, group, distance = NULL,
+  profile = NULL, sample_meta, distance = NULL,
   sample_col = "sample", group_col = "group",
   constraint_cols = group_col, group_level = NULL, group_color = NULL,
   dist_method = c(
@@ -68,6 +69,7 @@ plot_dbrda <- function(
   show_line = TRUE, aspect_ratio = 3 / 4,
   theme = c("default", "pubr"), permutations = 999, ...
 ) {
+  group <- sample_meta
   dist_method <- .match_distance_method(dist_method)
   transform <- .match_transform_method(transform)
   display_type <- match.arg(display_type)
@@ -88,7 +90,7 @@ plot_dbrda <- function(
   if (is.null(distance)) {
     if (is.null(profile)) stop("Supply either profile or distance.")
     aligned <- .align_profile_group(
-      profile = profile, group = group_df,
+      profile = profile, sample_meta = group_df,
       sample_col = sample_col, group_col = group_col,
       group_level = group_level
     )

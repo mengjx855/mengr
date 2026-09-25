@@ -1,14 +1,15 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241023, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241023, 20260923 ####
 
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: remove Chinese text from Roxygen documentation.
 
 # 由于reactome没有对应的层级结构，获取某个ID的上级关系需要用此函数进行确定
+
 #### reactome_longest_path ####
 
 #' Reactome Longest Path utility
 #'
 #'
-#' 根据本地 Reactome 父子关系表提取目标通路的最长层级路径。
 #'
 #' @param path_ID Reactome pathway identifier used as the starting node.
 #' @param organism Reactome organism name used to restrict pathway records.

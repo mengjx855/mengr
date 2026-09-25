@@ -33,5 +33,5 @@ calcu_pca(
 A list containing the \code{prcomp} object, sample scores, feature loadings, and explained variance.
 }
 \description{
-对 feature × sample profile 执行 PCA 并返回坐标和解释方差。
+Calcu PCA utility
 }

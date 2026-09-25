@@ -150,8 +150,6 @@ Example:
 metadata = "gender", value = "M", ref = "F"
 coef > 0 means the taxon is enriched/positively associated with males.
 coef < 0 means the taxon is enriched/positively associated with females.
-
-绘制 MaAsLin3 多分类层级的正负效应及 taxonomy 色带。
 }
 \examples{
 \dontshow{if (FALSE) withAutoprint(\{ # examplesIf}

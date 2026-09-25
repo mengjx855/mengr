@@ -24,5 +24,5 @@ plot_ncm(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-绘制 neutral community model 的拟合曲线和置信边界。
+Plot Sloan's neutral community model
 }

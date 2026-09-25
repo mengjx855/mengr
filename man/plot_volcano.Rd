@@ -57,5 +57,5 @@ plot_volcano(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-根据 effect、P 值和富集方向绘制 volcano plot。
+Plot a volcano plot
 }

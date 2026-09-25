@@ -17,5 +17,5 @@ profile_adjacency(profile, logical = FALSE, min_abundance = 0)
 A feature-by-sample presence/absence data frame, logical or numeric as requested.
 }
 \description{
-将丰度表转换为 feature × sample 的存在/缺失矩阵。
+Profile Adjacency utility
 }

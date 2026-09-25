@@ -7,7 +7,7 @@
 calcu_pcoa(
   profile = NULL,
   distance = NULL,
-  group = NULL,
+  sample_meta = NULL,
   sample_col = "sample",
   group_col = "group",
   dim = 2,
@@ -24,7 +24,7 @@ calcu_pcoa(
 
 \item{distance}{A precomputed distance object; when supplied, it takes precedence over \code{profile}.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{sample_col}{Name of the sample-identifier column.}
 
@@ -48,5 +48,5 @@ calcu_pcoa(
 A list containing the PCoA object, sample coordinates, eigenvalues, and explained variance.
 }
 \description{
-从 profile 或距离对象计算 pcoa 坐标和特征值。
+Calcu pcoa utility
 }

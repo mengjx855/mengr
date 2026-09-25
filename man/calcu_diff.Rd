@@ -33,5 +33,5 @@ calcu_diff(
 A data frame of pairwise comparisons, effect summaries, P values, and optional significance labels.
 }
 \description{
-对公式指定的数值与分组执行 Wilcoxon、ANOVA 或 t-test 两两比较。
+Calcu Diff utility
 }

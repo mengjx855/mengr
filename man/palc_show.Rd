@@ -17,5 +17,5 @@ palc_show(name = NULL, n = 2, ...)
 A palette preview or a character summary of available palettes.
 }
 \description{
-预览指定的连续调色板。
+Palc Show utility
 }

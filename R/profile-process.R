@@ -1,4 +1,4 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20240308, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20240308, 20260923 ####
 
 # 20231101: add all_group parameter in profile_filter().
 # 20231219: add function profile_replace().
@@ -13,6 +13,9 @@
 #                   update function with removing *_rename() parameters.
 # 20260718 v0.4.3: add zero-variance feature filtering.
 # 20260916: rename vector transformations to `transform_log2()`, `transform_log10()`, and `transform_clr()`; standardize documentation.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+# 20260923: add aggregate_df() for metadata-based numeric feature aggregation.
+
 
 
 #### transform_log2 ####
@@ -24,7 +27,6 @@
 #'
 #' `transform_log2()` replaces non-positive values when requested and applies a log2 transformation.
 #'
-#' 对一个数值向量进行 log2 转换，并处理零值和缺失值。
 #'
 #' @param x Primary vector or object supplied to the utility.
 #' @param pseudocount Positive value used to replace or offset zeros before logarithmic operations.
@@ -49,7 +51,6 @@ transform_log2 <- function(x, pseudocount = 1e-6, use_half_minimum = TRUE) {
 #'
 #' `transform_log10()` replaces non-positive values when requested and applies a log10 transformation.
 #'
-#' 对一个数值向量进行 log10 转换，并处理零值和缺失值。
 #'
 #' @param x Primary vector or object supplied to the utility.
 #' @param pseudocount Positive value used to replace or offset zeros before logarithmic operations.
@@ -76,7 +77,6 @@ transform_log10 <- function(x, pseudocount = 1e-6, use_half_minimum = TRUE) {
 #'
 #' `transform_clr()` applies a centered log-ratio transformation to one composition.
 #'
-#' 对组成型数值向量执行 centered log-ratio 转换。
 #'
 #' @param x Primary vector or object supplied to the utility.
 #' @param pseudocount Positive value used to replace or offset zeros before logarithmic operations.
@@ -106,7 +106,6 @@ transform_clr <- function(x, pseudocount = 1e-6, use_half_minimum = FALSE) {
 #' Profile Trans Log2 utility
 #'
 #'
-#' 对 feature × sample profile 按 feature 执行 log2 转换。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param pseudocount Positive value used to replace or offset zeros before logarithmic operations.
@@ -133,7 +132,6 @@ profile_trans_log2 <- function(profile, pseudocount = 1e-6,
 #' Profile Trans Log10 utility
 #'
 #'
-#' 对 feature × sample profile 按 feature 执行 log10 转换。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param pseudocount Positive value used to replace or offset zeros before logarithmic operations.
@@ -162,7 +160,6 @@ profile_trans_log10 <- function(profile, pseudocount = 1e-6,
 #' Profile Trans Clr utility
 #'
 #'
-#' 对每个样本执行 CLR 转换，保持 feature × sample 方向。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param pseudocount Positive value used to replace or offset zeros before logarithmic operations.
@@ -190,7 +187,6 @@ profile_trans_clr <- function(profile, pseudocount = 1e-6,
 #' Profile Trans Sqrt utility
 #'
 #'
-#' 对 profile 执行平方根转换。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param digits Optional number of decimal digits retained.
@@ -219,7 +215,6 @@ profile_trans_sqrt <- function(profile, digits = NULL) {
 #' Profile Trans Ra utility
 #'
 #'
-#' 将每个样本转换为相对丰度或百分比，并处理空样本。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param base Scaling constant used for relative-abundance output.
@@ -263,7 +258,6 @@ profile_trans_ra <- function(
 #' Profile Trans Hellinger utility
 #'
 #'
-#' 对 profile 执行 Hellinger 转换，适合部分生态距离分析。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param digits Optional number of decimal digits retained.
@@ -294,10 +288,9 @@ profile_trans_hellinger <- function(profile, digits = NULL) {
 #' Profile Collapse utility
 #'
 #'
-#' 按样本分组对 profile 求 mean、median、sum 或自定义统计量。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param method Analysis or summary method; supported values are shown in the usage.
@@ -306,9 +299,10 @@ profile_trans_hellinger <- function(profile, digits = NULL) {
 #' @return A feature-by-group data frame produced by the requested summary function.
 #' @export
 profile_collapse <- function(
-  profile, group, sample_col = "sample", group_col = "group",
+  profile, sample_meta, sample_col = "sample", group_col = "group",
   method = c("mean", "median", "sum"), na_fill = 0, group_level = NULL
 ) {
+  group <- sample_meta
   if (is.function(method)) {
     stat_fun <- method
   } else {
@@ -381,10 +375,9 @@ profile_collapse <- function(
 #' Profile Filter utility
 #'
 #'
-#' 按总体或组内 prevalence、出现样本数和最低丰度筛选 feature。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param by_group Whether calculations are performed separately within each group.
@@ -396,10 +389,11 @@ profile_collapse <- function(
 #' @return A filtered feature-by-sample data frame.
 #' @export
 profile_filter <- function(
-  profile, group = NULL, sample_col = "sample", group_col = "group",
+  profile, sample_meta = NULL, sample_col = "sample", group_col = "group",
   by_group = FALSE, all_group = FALSE, n_group = 1,
   min_prevalence = 0.1, min_n = NULL, min_abundance = 0
 ) {
+  group <- sample_meta
   profile <- data.frame(profile, check.names = FALSE)
   profile <- as.matrix(profile)
   suppressWarnings(storage.mode(profile) <- "numeric")
@@ -490,7 +484,6 @@ profile_filter <- function(
 #' Profile Top n utility
 #'
 #'
-#' 保留总体丰度最高的 n 个 feature，可把其余 feature 合并为 Other。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param n Requested number of values, features, or results.
@@ -557,7 +550,6 @@ profile_top_n <- function(profile, n = 12, out_other = FALSE,
 #' Profile Top Frac utility
 #'
 #'
-#' 按比例保留丰度最高的 feature，可把其余部分合并为 Other。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param frac Fraction of the highest-ranking features retained.
@@ -599,7 +591,6 @@ profile_top_frac <- function(profile, frac = 0.1, out_other = FALSE,
 #' Profile Replace utility
 #'
 #'
-#' 按阈值替换低丰度值，并可在替换前转换为相对丰度。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param min_value Minimum abundance threshold; smaller values are replaced.
@@ -645,7 +636,6 @@ profile_replace <- function(profile, min_value = 1, fill_value = 0,
 #' Profile Adjacency utility
 #'
 #'
-#' 将丰度表转换为 feature × sample 的存在/缺失矩阵。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param logical Whether the adjacency matrix contains logical presence/absence values.
@@ -680,10 +670,9 @@ profile_adjacency <- function(profile, logical = FALSE, min_abundance = 0) {
 #' Profile Prevalence utility
 #'
 #'
-#' 计算 feature 在总体或各组中的出现样本数或 prevalence。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param by_group Whether calculations are performed separately within each group.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
@@ -692,9 +681,10 @@ profile_adjacency <- function(profile, logical = FALSE, min_abundance = 0) {
 #' @param base Scaling constant used for relative-abundance output.
 #' @return A feature-level data frame of occurrence counts or prevalence, optionally stratified by group.
 #' @export
-profile_prevalence <- function(profile, group = NULL, by_group = TRUE,
+profile_prevalence <- function(profile, sample_meta = NULL, by_group = TRUE,
                                sample_col = "sample", group_col = "group",
                                min_abundance = 0, count = FALSE, base = 100) {
+  group <- sample_meta
   profile <- data.frame(profile, check.names = FALSE)
   profile <- as.matrix(profile)
   suppressWarnings(storage.mode(profile) <- "numeric")
@@ -771,10 +761,9 @@ profile_prevalence <- function(profile, group = NULL, by_group = TRUE,
 #' Profile Statistics utility
 #'
 #'
-#' 计算 feature 的 mean、SD、median 和 prevalence，可按组汇总。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param by_group Whether calculations are performed separately within each group.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
@@ -782,9 +771,10 @@ profile_prevalence <- function(profile, group = NULL, by_group = TRUE,
 #' @param base Scaling constant used for relative-abundance output.
 #' @return A feature-level data frame of abundance and prevalence summaries, optionally stratified by group.
 #' @export
-profile_statistics <- function(profile, group = NULL, by_group = TRUE,
+profile_statistics <- function(profile, sample_meta = NULL, by_group = TRUE,
                                sample_col = "sample", group_col = "group",
                                min_abundance = 0, base = 100) {
+  group <- sample_meta
   profile <- data.frame(profile, check.names = FALSE)
   profile <- as.matrix(profile)
   suppressWarnings(storage.mode(profile) <- "numeric")
@@ -859,10 +849,10 @@ profile_statistics <- function(profile, group = NULL, by_group = TRUE,
 #' Profile Aggregate utility
 #'
 #'
-#' 根据 feature metadata 聚合 profile，并处理未知分类。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param metadata A metadata or annotation data frame.
+#' @param feature_meta A feature metadata table containing feature identifiers
+#'   and one or more annotation columns used for aggregation.
 #' @param feature_col Name of the feature-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param method Analysis or summary method; supported values are shown in the usage.
@@ -873,11 +863,12 @@ profile_statistics <- function(profile, group = NULL, by_group = TRUE,
 #' @return A profile aggregated by the selected metadata columns.
 #' @export
 profile_aggregate <- function(
-  profile, metadata, feature_col = NULL, group_col = NULL,
+  profile, feature_meta, feature_col = NULL, group_col = NULL,
   method = c("sum", "mean", "median"), unknown = "unknown",
   remove_unknown = FALSE, unknown_pattern = "unknown|unclassified|unassigned",
   sep = "|"
 ) {
+  metadata <- feature_meta
   profile <- data.frame(profile, check.names = FALSE) |>
     tibble::rownames_to_column(".feature")
 
@@ -992,7 +983,6 @@ profile_aggregate <- function(
 #' Profile Remove Zero Var utility
 #'
 #'
-#' 删除跨样本零方差的 feature，避免降维或模型拟合失败。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @return A feature-by-sample data frame with zero-variance features removed.
@@ -1001,4 +991,110 @@ profile_remove_zero_var <- function(profile) {
   row_sd <- apply(profile, 1, stats::sd, na.rm = TRUE)
   keep <- is.finite(row_sd) & row_sd > 0
   profile[keep, , drop = FALSE]
+}
+
+
+#### aggregate_df ####
+
+#' Aggregate numeric features by sample metadata
+#'
+#' @param df A data frame with samples in rows and numeric features in columns.
+#' @param sample_meta A sample metadata table containing matching keys and
+#'   grouping columns.
+#' @param join_by Character vector naming columns used to match `df` and
+#'   `sample_meta`.
+#' @param group_cols Character vector naming metadata columns used to group
+#'   samples before aggregation.
+#' @param value_cols Optional character vector naming numeric feature columns
+#'   to aggregate. `NULL` selects all numeric columns in `df` except matching
+#'   keys and grouping columns.
+#' @param method Aggregation method: `"mean"`, `"median"`, or `"sum"`.
+#'
+#' @return A data frame containing one row per metadata group and the
+#'   aggregated numeric features.
+#'
+#' @export
+aggregate_df <- function(
+  df, sample_meta, join_by = "sample", group_cols = "group",
+  value_cols = NULL, method = c("mean", "median", "sum")
+) {
+  method <- match.arg(method)
+
+  # 1. Check input
+  if (!all(join_by %in% names(df))) {
+    stop("join_by columns were not found in df.")
+  }
+
+  if (!all(c(join_by, group_cols) %in% names(sample_meta))) {
+    stop("Required columns were not found in sample_meta.")
+  }
+
+  # Metadata 中匹配键必须唯一，避免 join 后意外重复样本
+  if (anyDuplicated(sample_meta[join_by])) {
+    stop("Duplicated join keys were found in sample_meta.")
+  }
+
+  # 2. Select numeric features
+  # 默认汇总 df 中的所有数值列，排除匹配键和分组列
+  if (is.null(value_cols)) {
+    value_cols <- names(df)[vapply(df, is.numeric, logical(1))]
+  }
+
+  value_cols <- setdiff(value_cols, c(join_by, group_cols))
+
+  if (length(value_cols) == 0) {
+    stop("No numeric feature columns were selected.")
+  }
+
+  if (!all(value_cols %in% names(df))) {
+    stop("Some value_cols were not found in df.")
+  }
+
+  if (!all(vapply(df[value_cols], is.numeric, logical(1)))) {
+    stop("All value_cols must be numeric.")
+  }
+
+  # 3. Match sample metadata
+  # 检查 df 中的样本能否全部匹配到 metadata
+  unmatched <- dplyr::anti_join(
+    df[join_by], sample_meta[join_by], by = join_by
+  )
+
+  if (nrow(unmatched) > 0) {
+    stop("Some samples in df were not found in sample_meta.")
+  }
+
+  # 只保留匹配键和需要的分组信息，避免引入无关 metadata
+  meta <- sample_meta[, unique(c(join_by, group_cols)), drop = FALSE]
+
+  df <- df[, unique(c(join_by, value_cols)), drop = FALSE] |>
+    dplyr::left_join(meta, by = join_by)
+
+  # 4. Aggregate
+  fun <- switch(
+    method,
+    mean = base::mean,
+    median = stats::median,
+    sum = base::sum
+  )
+
+  df |>
+    dplyr::group_by(
+      dplyr::across(dplyr::all_of(group_cols))
+    ) |>
+    dplyr::summarise(
+      dplyr::across(
+        dplyr::all_of(value_cols),
+        \(x) {
+          # 整组都是 NA 时返回 NA，避免 mean() 得到 NaN，
+          # 或 sum(..., na.rm = TRUE) 将全缺失误认为 0
+          if (all(is.na(x))) {
+            NA_real_
+          } else {
+            fun(x, na.rm = TRUE)
+          }
+        }
+      ),
+      .groups = "drop"
+    )
 }

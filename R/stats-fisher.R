@@ -1,12 +1,13 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20231028, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20231028, 20260923 ####
 
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 #### calcu_fisher ####
 
 #' Run feature-wise Fisher exact tests
 #'
-#' 对每个 feature 的 2×2 计数表执行 Fisher exact test。
 #'
 #' @param data An input data frame or compatible object.
 #' @param feature_col Name of the feature-identifier column.

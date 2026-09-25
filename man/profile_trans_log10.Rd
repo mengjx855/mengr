@@ -24,5 +24,5 @@ profile_trans_log10(
 A feature-by-sample data frame after log10 transformation.
 }
 \description{
-对 feature × sample profile 按 feature 执行 log10 转换。
+Profile Trans Log10 utility
 }

@@ -13,5 +13,5 @@ calcu_dbe(formula)
 A numeric vector of double-bond equivalents, preserving missing values for unparseable formulas.
 }
 \description{
-从分子式计算 double-bond equivalents，并正确处理卤素元素。
+Calculate double-bond equivalents from molecular formulas
 }

@@ -45,5 +45,5 @@ plot_stamp(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-将 \code{calcu_stamp()} 结果绘制为 STAMP 风格多面板图。
+Plot Stamp utility
 }

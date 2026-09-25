@@ -15,5 +15,5 @@ plot_pairwise_adonis(data, group_level = NULL)
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-将 pairwise PERMANOVA 结果绘制为矩阵或热图式结果图。
+Plot Pairwise Adonis utility
 }

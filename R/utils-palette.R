@@ -1,10 +1,11 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20240304, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20240304, 20260923 ####
 
 # 20250418: update function.
 # 20250727: update function.
 # 20260407: add some palette.
 # 20260905: add some new continuous palette.
 # 20260916: integrate additional gradients into `palc()`, remove top-level package attachment, and standardize documentation.
+# 20260923: remove Chinese text from Roxygen documentation.
 
 
 #### palette data ####
@@ -180,12 +181,12 @@
 # colors <- c('#9DB8D7','#F9C78E','#EFB1B2','#B6D7D5','#ACCB9D',
 #             '#F5E19A','#D1B2C8','#FFC9CF','#C9B3A7','#DED8D6')
 
+
 #### pald ####
 # name: 预设的颜色集, n: 输出颜色的数量, 不指定参数默认输出颜色集的名称
 #' Pald utility
 #'
 #'
-#' 按名称取得离散配色，可指定数量、反转顺序或输出可复制文本。
 #'
 #' @param name Name of a discrete palette; `NULL` lists available palettes.
 #' @param reverse Whether to reverse the selected color sequence.
@@ -228,7 +229,6 @@ pald <- function(name = NULL, reverse = FALSE, n = NULL, paste = FALSE, ...) {
 #' Pald Show utility
 #'
 #'
-#' 预览一个离散调色板，或列出可用离散调色板名称。
 #'
 #' @param name Name of a discrete palette; `NULL` lists available palettes.
 #' @param n Requested number of values, features, or results.
@@ -256,7 +256,6 @@ pald_show <- function(name = NULL, n = NULL, ...) {
 #' Palc utility
 #'
 #'
-#' 根据预设名称生成指定数量的连续渐变颜色。
 #'
 #' @param name Name of a continuous palette; `NULL` lists available palettes.
 #' @param n Requested number of values, features, or results.
@@ -388,7 +387,6 @@ palc <- function(name = NULL, n = NULL, paste = FALSE, ...) {
 #' Palc Show utility
 #'
 #'
-#' 预览指定的连续调色板。
 #'
 #' @param name Name of a continuous palette.
 #' @param n Requested number of values, features, or results.

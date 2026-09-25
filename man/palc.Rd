@@ -19,5 +19,5 @@ palc(name = NULL, n = NULL, paste = FALSE, ...)
 A character vector of interpolated colors, or a copyable \code{c(...)} string when \code{paste = TRUE}.
 }
 \description{
-根据预设名称生成指定数量的连续渐变颜色。
+Palc utility
 }

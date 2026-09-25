@@ -19,5 +19,5 @@ calcu_ncm(profile, name = NULL, conf_level = 0.95, max_iter = 500)
 A list with \code{summary_df}, feature-level \code{fit_df}, and the fitted nonlinear model.
 }
 \description{
-拟合 neutral community model，返回摘要、拟合数据和模型。
+Fit Sloan's neutral community model
 }

@@ -42,5 +42,5 @@ plot_roc_multiple(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-在同一图中绘制多个 ROC 对象及各自 AUC 标签。
+Plot Roc Multiple utility
 }

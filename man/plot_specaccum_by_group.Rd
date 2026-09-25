@@ -60,5 +60,5 @@ plot_specaccum_by_group(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-绘制多组累积曲线并使用统一分组配色。
+Plot species accumulation curves by group
 }

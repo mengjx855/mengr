@@ -17,5 +17,5 @@ pald_show(name = NULL, n = NULL, ...)
 A palette preview or a character summary of available palettes.
 }
 \description{
-预览一个离散调色板，或列出可用离散调色板名称。
+Pald Show utility
 }

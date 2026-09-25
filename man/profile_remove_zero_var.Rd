@@ -13,5 +13,5 @@ profile_remove_zero_var(profile)
 A feature-by-sample data frame with zero-variance features removed.
 }
 \description{
-删除跨样本零方差的 feature，避免降维或模型拟合失败。
+Profile Remove Zero Var utility
 }

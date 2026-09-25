@@ -1,7 +1,9 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260520, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260520, 20260923 ####
 
 # 20260520 v0.0.1: add functions 'calcu_feature_auc()'
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 #### calcu_feature_auc ####
 # 计算每个 feature 的单特征 AUC，只用一个 feature 的数值作为 predictor，
@@ -29,7 +31,6 @@
 #' Calcu Feature Auc utility
 #'
 #'
-#' 逐 feature 计算二分类 ROC AUC、置信区间、方向和区分强度。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param label Outcome labels corresponding to the profile samples.

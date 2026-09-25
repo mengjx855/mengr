@@ -6,7 +6,7 @@
 \usage{
 profile_aggregate(
   profile,
-  metadata,
+  feature_meta,
   feature_col = NULL,
   group_col = NULL,
   method = c("sum", "mean", "median"),
@@ -19,7 +19,8 @@ profile_aggregate(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{metadata}{A metadata or annotation data frame.}
+\item{feature_meta}{A feature metadata table containing feature identifiers
+and one or more annotation columns used for aggregation.}
 
 \item{feature_col}{Name of the feature-identifier column.}
 
@@ -39,5 +40,5 @@ profile_aggregate(
 A profile aggregated by the selected metadata columns.
 }
 \description{
-根据 feature metadata 聚合 profile，并处理未知分类。
+Profile Aggregate utility
 }

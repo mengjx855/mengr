@@ -1,14 +1,15 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260501, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260501, 20260923 ####
 
 # 20260501: create this scripts to parse a variety of database.
 # 20260916: rename `extract_HMDB_xrefs()` to `extract_hmdb_xrefs()`, repair its progress bar, and standardize documentation.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 
 #### extract_hmdb_xrefs ####
 #' Extract HMDB Xrefs utility
 #'
 #'
-#' 流式解析 HMDB XML，提取代谢物名称、标识符和外部数据库交叉引用。
 #'
 #' @param xml_file Path to the HMDB XML file.
 #' @param ids HMDB XML fields to extract, or `"common"` for the predefined

@@ -13,5 +13,5 @@ tidy_lefse(data)
 A standardized LEfSe result data frame.
 }
 \description{
-统一 LEfSe 结果列和 taxonomy 字段，便于后续筛选绘图。
+Tidy LEfSe utility
 }

@@ -1,10 +1,12 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260911, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260911, 20260923 ####
 
 # 20260911: create new file for single-cell spatial RNA-seq analysis functions.
 # 20260911: add 'strna_rank_roi()' to rank spatial ROIs by target-cell enrichment.
 # 20260911: add 'strna_roi_plot()' to plot spatial ROIs with cell polygons.
 # 20260911: add 'strna_overview_plot()' to plot spatial overview with cell centroids.
 # 20260916: correct ROI indexing and boundary handling, add validation, and document all spatial functions.
+# 20260923: correct Roxygen export tags and the window-height variable reference.
+
 
 #### strna_rank_roi ####
 #' Rank spatial ROIs by target-cell enrichmen
@@ -49,7 +51,7 @@
 #' @return A data frame containing ROI coordinates, target-cell counts,
 #'   fractions, expected counts, enrichment scores, and ROI rank.
 #'
-#' @expor
+#' @export
 strna_rank_roi <- function(
   data, cell_col = "cell_id", x_col = "X", y_col = "Y", celltype_col = "celltype",
   target_celltype, window_width = 700, window_height = 700, step_x = 200,
@@ -179,7 +181,7 @@ strna_rank_roi <- function(
     x_min = x_start[ix],
     x_max = x_start[ix] + window_width,
     y_min = y_start[iy],
-    y_max = y_start[iy] + window_heigh
+    y_max = y_start[iy] + window_height
   )
   ]
 
@@ -298,7 +300,7 @@ strna_rank_roi <- function(
   # 这里 = 最终精确确认
   membership_df <- membership_df[
     x >= x_start[ix] & x <= x_start[ix] + window_width &
-      y >= y_start[iy] & y <= y_start[iy] + window_heigh
+      y >= y_start[iy] & y <= y_start[iy] + window_height
   ]
 
   # 现在每一行 membership 已经确定：“某个 cell 属于某个 ix, iy 对应的 ROI”
@@ -561,7 +563,7 @@ strna_rank_roi <- function(
 #' @param scalebar_linewidth Scale-bar line width.
 #'
 #' @return A ggplot object containing the clipped cell polygons.
-#' @expor
+#' @export
 strna_roi_plot <- function(
   boundary, xmin, xmax, ymin, ymax,
   cell_col = "cell_id", x_col = "vertex_x", y_col = "vertex_y",
@@ -835,7 +837,7 @@ strna_roi_plot <- function(
 #' @param title Optional plot title.
 #'
 #' @return A ggplot object with one point per cell.
-#' @expor
+#' @export
 strna_overview_plot <- function(
   boundary, cell_col = "cell_id", x_col = "vertex_x", y_col = "vertex_y",
   celltype_col = "celltype", palette = NULL, reverse_y = TRUE,

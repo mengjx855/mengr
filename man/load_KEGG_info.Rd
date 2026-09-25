@@ -30,5 +30,5 @@ load_kegg_info(
 A KEGG annotation or requested level-relation data frame.
 }
 \description{
-读取并整理本地 KEGG 注释表。
+Load KEGG Info utility
 }

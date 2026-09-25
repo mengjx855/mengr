@@ -29,10 +29,6 @@ A data frame sorted by decreasing input-marker coverage.
 }
 \description{
 Compare an input marker vector with every cell-type gene set in a database
-created by \code{scrna_marker_db_build()}. Results include overlap counts, input
+created by \code{scrna_marker_db_build()}. Results include overlap counts, inpu
 coverage, reference coverage, and matched genes.
-}
-\details{
-将输入 marker 与 \code{scrna_marker_db_build()} 构建的各细胞类型基因集比对，
-返回交集数量、输入覆盖率、参考集覆盖率和匹配基因。
 }

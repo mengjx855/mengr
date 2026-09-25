@@ -6,7 +6,7 @@
 \usage{
 plot_nmds(
   profile = NULL,
-  group,
+  sample_meta,
   distance = NULL,
   sample_col = "sample",
   group_col = "group",
@@ -42,7 +42,7 @@ plot_nmds(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{distance}{A precomputed distance object; when supplied, it takes precedence over \code{profile}.}
 
@@ -108,5 +108,5 @@ plot_nmds(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-从 profile 或距离对象执行 NMDS，可附加 ANOSIM 结果。
+Plot NMDS utility
 }

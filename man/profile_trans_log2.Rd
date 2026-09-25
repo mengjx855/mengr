@@ -24,5 +24,5 @@ profile_trans_log2(
 A feature-by-sample data frame after log2 transformation.
 }
 \description{
-对 feature × sample profile 按 feature 执行 log2 转换。
+Profile Trans Log2 utility
 }

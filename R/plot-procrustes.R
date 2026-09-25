@@ -1,7 +1,9 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20231215, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20231215, 20260923 ####
 
 # 20260522 v0.1.1: update functions.
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 
 #### plot_procrustes ####
@@ -35,7 +37,6 @@
 #' Plot Procrustes utility
 #'
 #'
-#' 比较两个 profile 或距离空间，执行 Procrustes 和 permutation test。
 #'
 #' @param profile_x Feature-by-sample profile used for model training or the first data space.
 #' @param profile_y Feature-by-sample profile used for validation or the second data space.

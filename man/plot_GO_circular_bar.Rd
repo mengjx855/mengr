@@ -82,5 +82,5 @@ plot_go_circular_bar(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-将 GO enrichment 结果绘制为 circular barplot。
+Plot GO Circular Bar utility
 }

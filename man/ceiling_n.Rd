@@ -15,5 +15,5 @@ ceiling_n(x, n = 2)
 A numeric vector rounded upward at the requested decimal position.
 }
 \description{
-按指定的十进制位数向上取整。
+Ceiling n utility
 }

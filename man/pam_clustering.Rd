@@ -15,5 +15,5 @@ pam_clustering(distance, k)
 A \code{pam} clustering object from \code{cluster::pam()}.
 }
 \description{
-对距离对象执行 partitioning around medoids 聚类。
+Partition samples around medoids
 }

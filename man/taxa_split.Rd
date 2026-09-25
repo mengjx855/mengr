@@ -36,5 +36,5 @@ taxa_split(
 A data frame with parsed taxonomy ranks and the original taxonomy identifier.
 }
 \description{
-将完整 taxonomy 字符串拆分为 domain 至 species 等分类列。
+Taxa Split utility
 }

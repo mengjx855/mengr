@@ -27,5 +27,5 @@ plot_maaslin3_both(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-联合展示 MaAsLin3 abundance 和 prevalence 模型结果。
+Plot Maaslin3 both utility
 }

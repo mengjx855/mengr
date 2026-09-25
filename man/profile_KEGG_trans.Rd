@@ -42,5 +42,5 @@ profile_kegg_trans(
 A KEGG-level feature-by-sample profile.
 }
 \description{
-将 KO profile 映射并聚合到 KEGG A/B/C 层级。
+Profile KEGG Trans utility
 }

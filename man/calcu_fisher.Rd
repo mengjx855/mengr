@@ -58,5 +58,5 @@ calcu_fisher(
 A feature-level data frame of odds ratios, confidence intervals, P values, and optional adjusted/enrichment columns.
 }
 \description{
-对每个 feature 的 2×2 计数表执行 Fisher exact test。
+Run feature-wise Fisher exact tests
 }

@@ -21,5 +21,5 @@ tidy_correlation(r_mat, p_mat, r = 0, pval = 0.05, only_signif = FALSE)
 A filtered long data frame containing feature pairs, correlations, P values, and adjusted P values.
 }
 \description{
-将相关矩阵整理为 edge long table，并按相关性和显著性筛选。
+Tidy Correlation utility
 }

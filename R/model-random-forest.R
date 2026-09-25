@@ -1,16 +1,18 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220529, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220529, 20260923 ####
 
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 #### .prepare_rf_data ####
 
 .prepare_rf_data <- function(
-  profile, group, sample_col = "sample", group_col = "group",
+  profile, sample_meta, sample_col = "sample", group_col = "group",
   group_level = NULL, na_fill = NULL, remove_zero_var = TRUE
 ) {
   ## 对齐样本并转为 sample × feature 数值表
   aligned <- .align_profile_group(
-    profile = profile, group = group,
+    profile = profile, sample_meta = sample_meta,
     sample_col = sample_col, group_col = group_col,
     group_level = group_level
   )
@@ -61,10 +63,9 @@
 
 #' Generate stratified K-fold random-forest predictions
 #'
-#' 执行分层 random-forest k-fold cross-validation。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param k Number of folds or clusters, according to the analysis performed.
 #' @param seed Optional random seed for reproducibility.
 #' @param ntree Number of trees fitted by the random-forest model.
@@ -78,10 +79,11 @@
 #' @return A data frame of out-of-fold sample predictions, class probabilities, and fold identifiers.
 #' @export
 rf_kfold <- function(
-  profile, group, k = 5, seed = 2025, ntree = 1000,
+  profile, sample_meta, k = 5, seed = 2025, ntree = 1000,
   sample_col = "sample", group_col = "group", group_level = NULL,
   remove_zero_var = TRUE, na_fill = NULL, progress = TRUE, ...
 ) {
+  group <- sample_meta
   ## 1. 统一输入并创建 stratified folds
   prepared <- .prepare_rf_data(
     profile, group, sample_col, group_col, group_level,
@@ -136,10 +138,9 @@ rf_kfold <- function(
 
 #' Repeat stratified K-fold random-forest validation
 #'
-#' 多次重复 random-forest k-fold，并标记每次重复和 fold。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param k Number of folds or clusters, according to the analysis performed.
 #' @param repeats Number of repeated cross-validation runs.
 #' @param seed Optional random seed for reproducibility.
@@ -154,15 +155,16 @@ rf_kfold <- function(
 #' @return A data frame combining predictions from every repeat and fold.
 #' @export
 rf_repeated_kfold <- function(
-  profile, group, k = 5, repeats = 5, seed = 2026, ntree = 1000,
+  profile, sample_meta, k = 5, repeats = 5, seed = 2026, ntree = 1000,
   sample_col = "sample", group_col = "group", group_level = NULL,
   remove_zero_var = TRUE, na_fill = NULL, progress = TRUE, ...
 ) {
+  group <- sample_meta
   ## 1. 重复执行 K-fold，并记录每次预测
   result_list <- vector("list", repeats)
   for (repeat_idx in seq_len(repeats)) {
     repeat_df <- rf_kfold(
-      profile = profile, group = group, k = k,
+      profile = profile, sample_meta = group, k = k,
       seed = seed + repeat_idx - 1L, ntree = ntree,
       sample_col = sample_col, group_col = group_col,
       group_level = group_level, remove_zero_var = remove_zero_var,
@@ -193,10 +195,9 @@ rf_repeated_kfold <- function(
 
 #' Validate random forests across datasets
 #'
-#' 按 dataset 留一验证，评估跨队列 random-forest 泛化能力。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param dataset_col Name of the `dataset_col` input column.
 #' @param dataset_level Optional order for `dataset_level`.
 #' @param seed Optional random seed for reproducibility.
@@ -209,10 +210,11 @@ rf_repeated_kfold <- function(
 #' @return A data frame of training/testing dataset combinations, sample predictions, probabilities, and AUC values.
 #' @export
 rf_cross_dataset_validate <- function(
-  profile, group, dataset_col = "dataset", dataset_level = NULL,
+  profile, sample_meta, dataset_col = "dataset", dataset_level = NULL,
   seed = 2026, ntree = 1000, sample_col = "sample",
   group_col = "group", positive_class = NULL, na_fill = 0, ...
 ) {
+  group <- sample_meta
   ## 1. 检查 metadata 并确定数据集顺序
   profile_df <- .as_profile_df(profile, numeric = TRUE)
   group_df <- .as_df(group)
@@ -298,10 +300,9 @@ rf_cross_dataset_validate <- function(
 
 #' Calculate random-forest feature importance
 #'
-#' 提取并整理 random-forest feature importance。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param seed Optional random seed for reproducibility.
 #' @param ntree Number of trees fitted by the random-forest model.
 #' @param sample_col Name of the sample-identifier column.
@@ -312,10 +313,11 @@ rf_cross_dataset_validate <- function(
 #' @return A feature-importance data frame with the fitted random-forest model stored in the `model` attribute.
 #' @export
 rf_importance <- function(
-  profile, group, seed = 2026, ntree = 1000,
+  profile, sample_meta, seed = 2026, ntree = 1000,
   sample_col = "sample", group_col = "group", group_level = NULL,
   na_fill = 0, ...
 ) {
+  group <- sample_meta
   ## 1. 预处理并拟合全数据模型
   prepared <- .prepare_rf_data(
     profile, group, sample_col, group_col, group_level,
@@ -345,10 +347,9 @@ rf_importance <- function(
 
 #' Leave-one-out random-forest predictions
 #'
-#' 执行 leave-one-out random-forest 预测。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param seed Optional random seed for reproducibility.
 #' @param ntree Number of trees fitted by the random-forest model.
 #' @param sample_col Name of the sample-identifier column.
@@ -360,10 +361,11 @@ rf_importance <- function(
 #' @return A data frame of leave-one-out predictions and class probabilities.
 #' @export
 rf_leave_one_out <- function(
-  profile, group, seed = 2026, ntree = 1000,
+  profile, sample_meta, seed = 2026, ntree = 1000,
   sample_col = "sample", group_col = "group", group_level = NULL,
   na_fill = 0, progress = TRUE, ...
 ) {
+  group <- sample_meta
   ## 1. 预处理并逐个留出样本
   prepared <- .prepare_rf_data(
     profile, group, sample_col, group_col, group_level,
@@ -421,12 +423,11 @@ rf_leave_one_out <- function(
 
 #' Train a random forest in one dataset and validate it in another
 #'
-#' 用训练数据拟合 random forest，并在独立数据中验证。
 #'
 #' @param profile_x Feature-by-sample profile used for model training or the first data space.
 #' @param profile_y Feature-by-sample profile used for validation or the second data space.
-#' @param group_x Sample metadata associated with `profile_x`.
-#' @param group_y Sample metadata associated with `profile_y`.
+#' @param sample_meta_x Sample metadata associated with `profile_x`.
+#' @param sample_meta_y Sample metadata associated with `profile_y`.
 #' @param seed Optional random seed for reproducibility.
 #' @param ntree Number of trees fitted by the random-forest model.
 #' @param sample_col Name of the sample-identifier column.
@@ -437,11 +438,13 @@ rf_leave_one_out <- function(
 #' @return A validation prediction data frame with the fitted model stored in the `model` attribute.
 #' @export
 rf_next_validate <- function(
-  profile_x, profile_y, group_x, group_y,
+  profile_x, profile_y, sample_meta_x, sample_meta_y,
   seed = 2026, ntree = 1000,
   sample_col = "sample", group_col = "group",
   group_level = NULL, na_fill = 0, ...
 ) {
+  group_x <- sample_meta_x
+  group_y <- sample_meta_y
   ## 1. 仅保留训练集和验证集共有 feature
   feature_vec <- intersect(rownames(profile_x), rownames(profile_y))
   if (!length(feature_vec)) {

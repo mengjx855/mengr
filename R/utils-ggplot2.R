@@ -1,9 +1,11 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260911, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260911, 20260923 ####
 
 # 20260911: create new file for ggplot2-related utility functions.
 # 20260911: add a function `add_strip` to add alternating strip backgrounds to ggplot2 plots.
 # 20260911: add a function `format_stat_label` to format p-values and q-values for ggplot2 plots.
 # 20260916: validate inputs, document both functions, and prevent `add_strip()` from replacing existing fill scales.
+# 20260923: correct Roxygen export tags.
+
 
 #### format_stat_label ####
 #' Format statistical values as plotmath labels
@@ -24,7 +26,7 @@
 #'
 #' @return A character vector with the same length as `p`, suitable for
 #'   `ggplot2::geom_text(parse = TRUE)` or `ggplot2::annotate(parse = TRUE)`.
-#' @expor
+#' @export
 format_stat_label <- function(
     p, digits = 3, scientific = FALSE,
     label = c(
@@ -94,7 +96,7 @@ format_stat_label <- function(
 #' individual panels manually.
 #'
 #' @return The input ggplot with background rectangle layers prepended.
-#' @expor
+#' @export
 add_strip <- function(
     p, fill = c("white", "grey95"), alpha = 1,
     axis = c("auto", "x", "y", "both")

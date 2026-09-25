@@ -1,17 +1,19 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20240305, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20240305, 20260923 ####
 
 # 20260916: rename `calcu_MEN()` to `calcu_men()` and standardize documentation and naming.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 #### calcu_men ####
 
 #' Calculate and plot a microbial ecological network
 #'
-#' 使用 ggClusterNet 流程构建 microbial ecological network。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param metadata A metadata or annotation data frame.
+#' @param feature_meta A feature metadata table containing taxonomy or other
+#'   node annotations.
 #' @param feature_col Name of the feature-identifier column.
-#' @param sample_metadata Sample metadata required by normalization methods that model library size.
+#' @param sample_meta Sample metadata required by normalization methods that model library size.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param p_threshold Maximum adjusted P value retained for a network edge.
@@ -25,7 +27,7 @@
 #' @return A list containing aligned inputs, correlations, graph and network tables, layout data, and the network plot.
 #' @export
 calcu_men <- function(
-  profile, metadata, feature_col = NULL, sample_metadata = NULL,
+  profile, feature_meta, feature_col = NULL, sample_meta = NULL,
   sample_col = "sample", group_col = "group",
   p_threshold = 0.05, r_threshold = 0.5,
   scale = FALSE,
@@ -33,6 +35,8 @@ calcu_men <- function(
   method = c("spearman", "pearson", "kendall"),
   title = "", n_hub = FALSE, seed = 2024
 ) {
+  metadata <- feature_meta
+  sample_metadata <- sample_meta
   ## 1. 对齐 profile 与 feature taxonomy
   scale_method <- match.arg(scale_method)
   method <- match.arg(method)
@@ -59,7 +63,7 @@ calcu_men <- function(
       stop("sample_metadata is required for TMM, RLE or upperquartile scaling.")
     }
     aligned <- .align_profile_group(
-      profile = profile_df, group = sample_metadata,
+      profile = profile_df, sample_meta = sample_metadata,
       sample_col = sample_col, group_col = group_col
     )
     profile_df <- aligned$profile_df

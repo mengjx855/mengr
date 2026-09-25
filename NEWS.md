@@ -1,4 +1,33 @@
-# mengR 0.0.2
+# mengr 0.0.3
+
+## 包名与版本
+
+- 包名由 `mengR` 改为全小写 `mengr`；加载方式相应改为 `library(mengr)`。
+- GitHub 仓库名、源码目录示例、构建包文件名和包级帮助统一使用 `mengr`。
+- 配置 option 由 `mengR.database` 改为 `mengr.database`；环境变量
+  `MENGR_DATABASE` 保持不变。
+- 版本升级为 `0.0.3`。
+
+## API 与帮助文档
+
+- 新增 `plot_circlepack()`，用于绘制类别组成的圆形打包图。
+- 新增 `aggregate_df()`，按样本元数据分组汇总数值特征。
+- 将表示样本元数据表的 `group` 参数统一改为 `sample_meta`；独立训练/验证接口中的
+  `group_x` 和 `group_y` 改为 `sample_meta_x` 和 `sample_meta_y`。
+- 将 feature 注释表参数统一为 `feature_meta`，包括 `profile_aggregate()`、
+  `calcu_mantel()` 和 `calcu_men()`；`calcu_men()` 原来的 `sample_metadata` 改为
+  `sample_meta`。
+- `sample_col` 和 `group_col` 保持不变。
+- Roxygen 帮助文档移除中文段落，保留英文参数、返回值和用法说明；函数体内已有的
+  中文注释保持不变。
+
+## 函数体修正
+
+- 修正 `pairwise_cluster()` 返回距离矩阵属性时的变量名。
+- 修正 `write_xlsx_with_comment()` 已存在 worksheet 报错信息中的变量名。
+- 修正 `strna_rank_roi()` 计算 ROI 高度边界时的变量名。
+
+# mengr 0.0.2
 
 ## 函数体与行为修改
 

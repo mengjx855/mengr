@@ -6,7 +6,7 @@
 \usage{
 rf_cross_dataset_validate(
   profile,
-  group,
+  sample_meta,
   dataset_col = "dataset",
   dataset_level = NULL,
   seed = 2026,
@@ -21,7 +21,7 @@ rf_cross_dataset_validate(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{dataset_col}{Name of the \code{dataset_col} input column.}
 
@@ -45,5 +45,5 @@ rf_cross_dataset_validate(
 A data frame of training/testing dataset combinations, sample predictions, probabilities, and AUC values.
 }
 \description{
-按 dataset 留一验证，评估跨队列 random-forest 泛化能力。
+Validate random forests across datasets
 }

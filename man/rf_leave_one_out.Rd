@@ -6,7 +6,7 @@
 \usage{
 rf_leave_one_out(
   profile,
-  group,
+  sample_meta,
   seed = 2026,
   ntree = 1000,
   sample_col = "sample",
@@ -20,7 +20,7 @@ rf_leave_one_out(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{seed}{Optional random seed for reproducibility.}
 
@@ -42,5 +42,5 @@ rf_leave_one_out(
 A data frame of leave-one-out predictions and class probabilities.
 }
 \description{
-执行 leave-one-out random-forest 预测。
+Leave-one-out random-forest predictions
 }

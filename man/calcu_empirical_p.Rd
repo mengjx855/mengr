@@ -24,5 +24,5 @@ calcu_empirical_p(
 A numeric empirical P value, or a data frame of observed values and empirical P values when \code{simplify = FALSE}.
 }
 \description{
-根据置换或背景分布计算双侧、左侧或右侧 empirical P 值。
+Calcu Empirical p utility
 }

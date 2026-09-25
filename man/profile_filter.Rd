@@ -6,7 +6,7 @@
 \usage{
 profile_filter(
   profile,
-  group = NULL,
+  sample_meta = NULL,
   sample_col = "sample",
   group_col = "group",
   by_group = FALSE,
@@ -20,7 +20,7 @@ profile_filter(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{sample_col}{Name of the sample-identifier column.}
 
@@ -42,5 +42,5 @@ profile_filter(
 A filtered feature-by-sample data frame.
 }
 \description{
-按总体或组内 prevalence、出现样本数和最低丰度筛选 feature。
+Profile Filter utility
 }

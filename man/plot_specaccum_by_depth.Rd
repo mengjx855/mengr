@@ -24,5 +24,5 @@ plot_specaccum_by_depth(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-绘制测序深度与观测 feature 数量的关系。
+Plot sample rarefaction curves by sequencing depth
 }

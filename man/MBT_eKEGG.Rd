@@ -18,5 +18,5 @@ mbt_ekegg(
 A data frame containing compound-set enrichment results.
 }
 \description{
-将代谢物列表与本地 eKEGG 注释关联并整理 pathway 结果。
+MBT eKEGG utility
 }

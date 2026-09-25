@@ -1,8 +1,10 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260606, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260606, 20260923 ####
 
 # 20260606: add calcu_mantel()
 # 20260607: add make_curve_path(), plot_mantel_lower(), plot_mantel_upper(),
 # 20260916: standardize documentation and rename internal plotting data frames to the `*_df` style without changing plot attributes.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 #### calcu_mantel ####
 # 根据 feature 分组计算 Mantel test
@@ -20,10 +22,10 @@
 #' Calcu Mantel utility
 #'
 #'
-#' 在多个 profile 或环境变量之间批量执行 Mantel test。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param metadata A metadata or annotation data frame.
+#' @param feature_meta A feature metadata table mapping feature identifiers to
+#'   the categories tested by Mantel analysis.
 #' @param envs Environmental or host-variable table used in Mantel analyses.
 #' @param feature_col Name of the feature-identifier column.
 #' @param category_col Name of the `category_col` input column.
@@ -38,12 +40,13 @@
 #' @return A Mantel-test data frame with aligned inputs and feature selections stored as attributes.
 #' @export
 calcu_mantel <- function(
-  profile, metadata, envs,
+  profile, feature_meta, envs,
   feature_col = "name", category_col = "category",
   sample_col = "sample", category_keep = NULL,
   trans_ra = FALSE, base = 100, remove_empty = TRUE,
   na_fill = NULL, parallel = 1, ...
 ) {
+  metadata <- feature_meta
   profile <- data.frame(profile, check.names = FALSE)
   metadata <- data.frame(metadata, check.names = FALSE)
   envs <- data.frame(envs, check.names = FALSE)
@@ -214,7 +217,6 @@ calcu_mantel <- function(
 #' Make Curve Path utility
 #'
 #'
-#' 为 Mantel 图中的节点连线生成平滑曲线路径坐标。
 #'
 #' @param data An input data frame or compatible object.
 #' @param x Primary vector or object supplied to the utility.
@@ -326,7 +328,6 @@ make_curve_path <- function(
 #' Plot Mantel Lower utility
 #'
 #'
-#' 在环境相关矩阵下三角区域叠加 Mantel 关联曲线。
 #'
 #' @param test Statistical-test result table used for plotting.
 #' @param envs Environmental or host-variable table used in Mantel analyses.
@@ -732,7 +733,6 @@ plot_mantel_lower <- function(
 #' Plot Mantel Upper utility
 #'
 #'
-#' 在环境相关矩阵上三角区域叠加 Mantel 关联曲线。
 #'
 #' @param test Statistical-test result table used for plotting.
 #' @param envs Environmental or host-variable table used in Mantel analyses.

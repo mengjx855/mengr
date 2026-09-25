@@ -30,5 +30,5 @@ profile_replace(
 A feature-by-sample data frame with values below the threshold replaced.
 }
 \description{
-按阈值替换低丰度值，并可在替换前转换为相对丰度。
+Profile Replace utility
 }

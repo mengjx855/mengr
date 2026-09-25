@@ -7,8 +7,8 @@
 svm_next_validate(
   profile_x,
   profile_y,
-  group_x,
-  group_y,
+  sample_meta_x,
+  sample_meta_y,
   sample_col = "sample",
   group_col = "group",
   group_level = NULL,
@@ -26,9 +26,9 @@ svm_next_validate(
 
 \item{profile_y}{Feature-by-sample profile used for validation or the second data space.}
 
-\item{group_x}{Sample metadata associated with \code{profile_x}.}
+\item{sample_meta_x}{Sample metadata associated with \code{profile_x}.}
 
-\item{group_y}{Sample metadata associated with \code{profile_y}.}
+\item{sample_meta_y}{Sample metadata associated with \code{profile_y}.}
 
 \item{sample_col}{Name of the sample-identifier column.}
 
@@ -54,5 +54,5 @@ svm_next_validate(
 A list containing tuned/fitted SVM objects, validation predictions, ROC results, shared features, and classification metrics.
 }
 \description{
-在训练集调参拟合 SVM，并在独立数据中验证。
+Train an SVM in one dataset and validate it in another
 }

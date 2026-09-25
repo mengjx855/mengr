@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-scrna.R
 \name{cellchat_run}
 \alias{cellchat_run}
-\title{Run a standard CellChat analysis from a Seurat object}
+\title{Run a standard CellChat analysis from a Seurat objec}
 \usage{
 cellchat_run(
   seurat,
@@ -19,7 +19,7 @@ cellchat_run(
 \arguments{
 \item{seurat}{A Seurat object.}
 
-\item{sample_name}{A single sample or dataset label stored in CellChat
+\item{sample_name}{A single sample or dataset label stored in CellCha
 metadata.}
 
 \item{celltype_col}{Metadata column containing cell-type labels.}
@@ -31,7 +31,7 @@ metadata.}
 \item{min_cells}{Minimum number of cells required by
 \code{CellChat::filterCommunication()}.}
 
-\item{population_size}{Whether communication probabilities should account
+\item{population_size}{Whether communication probabilities should accoun
 for the size of each cell population.}
 
 \item{prob_method}{Average-expression method passed as \code{type} to
@@ -47,8 +47,4 @@ Prepare an RNA assay, create a CellChat object, infer ligand-receptor
 communication probabilities, aggregate pathway networks, and calculate
 sender/receiver centrality. The input Seurat object is copied by R semantics;
 the returned value is the completed CellChat object.
-}
-\details{
-从 Seurat 对象整理 RNA assay，创建 CellChat 对象，依次完成配体-受体
-通讯概率、通路聚合网络和 sender/receiver 中心性分析。
 }

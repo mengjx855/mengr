@@ -6,7 +6,7 @@
 \usage{
 profile_statistics(
   profile,
-  group = NULL,
+  sample_meta = NULL,
   by_group = TRUE,
   sample_col = "sample",
   group_col = "group",
@@ -17,7 +17,7 @@ profile_statistics(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{by_group}{Whether calculations are performed separately within each group.}
 
@@ -33,5 +33,5 @@ profile_statistics(
 A feature-level data frame of abundance and prevalence summaries, optionally stratified by group.
 }
 \description{
-计算 feature 的 mean、SD、median 和 prevalence，可按组汇总。
+Profile Statistics utility
 }

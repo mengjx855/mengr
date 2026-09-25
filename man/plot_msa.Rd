@@ -17,5 +17,5 @@ plot_msa(path, width = 80, font_size = 2)
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-读取 multiple sequence alignment 并按氨基酸类别分块绘图。
+Plot Msa utility
 }

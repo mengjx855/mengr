@@ -68,8 +68,3 @@ rows are matched by the explicit \code{name} column, so their input order does n
 need to match the profile. Missing categorical palettes are generated
 automatically, while user-supplied palettes take precedence.
 }
-\details{
-基于数值矩阵绘制 \code{ComplexHeatmap::pheatmap()} 热图。行、列注释表通过
-\code{name} 列与 profile 对齐，因此输入顺序可以不同。分类变量缺失配色时会
-自动生成，用户在 \code{annotation_colors} 中提供的配色优先。
-}

@@ -19,6 +19,3 @@ A numeric vector of centered log-ratio values.
 \description{
 \code{transform_clr()} applies a centered log-ratio transformation to one composition.
 }
-\details{
-对组成型数值向量执行 centered log-ratio 转换。
-}

@@ -13,5 +13,5 @@ tidy_cazyme_profile(data)
 An aggregated CAZyme feature-by-sample profile.
 }
 \description{
-整理 CAZyme profile 名称并按目标分类层级聚合。
+Tidy CAZyme Profile utility
 }

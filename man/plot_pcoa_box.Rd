@@ -6,7 +6,7 @@
 \usage{
 plot_pcoa_box(
   profile = NULL,
-  group,
+  sample_meta,
   distance = NULL,
   sample_col = "sample",
   group_col = "group",
@@ -35,7 +35,7 @@ plot_pcoa_box(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{distance}{A precomputed distance object; when supplied, it takes precedence over \code{profile}.}
 
@@ -87,5 +87,5 @@ plot_pcoa_box(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-同时展示 pcoa 散点图及主要坐标轴的边际箱线图。
+Plot pcoa Box utility
 }

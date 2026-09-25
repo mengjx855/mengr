@@ -6,7 +6,7 @@
 \usage{
 difference_analysis(
   profile,
-  group,
+  sample_meta,
   sample_col = "sample",
   group_col = "group",
   comparison = NULL,
@@ -27,7 +27,7 @@ difference_analysis(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{sample_col}{Name of the sample-identifier column.}
 
@@ -63,5 +63,5 @@ difference_analysis(
 A feature-level data frame combining abundance, prevalence, fold-change, and hypothesis-test results.
 }
 \description{
-汇总差异检验、fold change、均值和 prevalence 的完整 feature 分析流程。
+Difference Analysis utility
 }

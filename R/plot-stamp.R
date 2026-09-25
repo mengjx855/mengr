@@ -1,4 +1,4 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250308, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250308, 20260923 ####
 
 # 20250327: update some parameter.
 # 20250327: add mean abundance of feature as output in calcu_stamp() with option 'method=wilcox'.
@@ -7,21 +7,23 @@
 # 20260301: add new function with 'multiple' suffix for multivariable analysis.
 # 20260502: update functions.
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 #### .check_group ####
 .check_group <- function(
-  group, sample_col = "sample", group_col = "group",
+  sample_meta, sample_col = "sample", group_col = "group",
   comparison = NULL, two_group = FALSE
 ) {
   ## 统一为内部使用的 sample/group 两列
-  group_df <- .as_df(group)
-  .check_columns(group_df, c(sample_col, group_col), object = "group")
+  group_df <- .as_df(sample_meta)
+  .check_columns(group_df, c(sample_col, group_col), object = "sample_meta")
   group_df <- data.frame(
     sample = as.character(group_df[[sample_col]]),
     group = group_df[[group_col]], check.names = FALSE
   )
   if (anyDuplicated(group_df$sample)) {
-    stop("Duplicated sample identifiers found in group.")
+    stop("Duplicated sample identifiers found in sample_meta.")
   }
   if (is.null(comparison)) comparison <- unique(as.character(group_df$group))
   group_df <- group_df[group_df$group %in% comparison, , drop = FALSE]
@@ -62,10 +64,9 @@
 #' Calcu Stamp utility
 #'
 #'
-#' 计算两组 STAMP 风格均值差、置信区间和显著性结果。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param comparison Two outcome levels ordered as case and control.
@@ -79,20 +80,21 @@
 #' @importFrom rlang .data
 #' @export
 calcu_stamp <- function(
-  profile, group, sample_col = "sample", group_col = "group",
+  profile, sample_meta, sample_col = "sample", group_col = "group",
   comparison = NULL, method = c("wilcox", "t"),
   var_equal = FALSE, exact = NULL, qvalue = 0.2,
   pvalue = NULL, add_enriched = TRUE
 ) {
+  group <- sample_meta
   ## 1. 检查方法、分组并对齐样本
   method <- match.arg(method)
   group_info <- .check_group(
-    group = group, sample_col = sample_col, group_col = group_col,
+    sample_meta = group, sample_col = sample_col, group_col = group_col,
     comparison = comparison, two_group = TRUE
   )
   comparison <- group_info$comparison
   aligned <- .align_profile_group(
-    profile = profile, group = group_info$group_df,
+    profile = profile, sample_meta = group_info$group_df,
     sample_col = "sample", group_col = "group",
     group_level = comparison
   )
@@ -176,7 +178,6 @@ calcu_stamp <- function(
 #' Plot Stamp utility
 #'
 #'
-#' 将 `calcu_stamp()` 结果绘制为 STAMP 风格多面板图。
 #'
 #' @param data An input data frame or compatible object.
 #' @param top_n Number of highest-ranking features or categories retained.
@@ -375,10 +376,9 @@ plot_stamp <- function(
 #' Calcu Stamp Multiple utility
 #'
 #'
-#' 对多组数据计算 STAMP 风格的整体差异统计。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
@@ -387,17 +387,18 @@ plot_stamp <- function(
 #' @importFrom rlang .data
 #' @export
 calcu_stamp_multiple <- function(
-  profile, group, sample_col = "sample", group_col = "group",
+  profile, sample_meta, sample_col = "sample", group_col = "group",
   group_level = NULL, method = c("kruskal", "anova")
 ) {
+  group <- sample_meta
   ## 1. 检查方法、分组并对齐样本
   method <- match.arg(method)
   group_info <- .check_group(
-    group = group, sample_col = sample_col, group_col = group_col,
+    sample_meta = group, sample_col = sample_col, group_col = group_col,
     comparison = group_level, two_group = FALSE
   )
   aligned <- .align_profile_group(
-    profile = profile, group = group_info$group_df,
+    profile = profile, sample_meta = group_info$group_df,
     sample_col = "sample", group_col = "group",
     group_level = group_info$comparison
   )

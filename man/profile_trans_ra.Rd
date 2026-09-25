@@ -19,5 +19,5 @@ profile_trans_ra(profile, base = 100, digits = 8, remove_empty = FALSE)
 A feature-by-sample relative-abundance or percentage data frame.
 }
 \description{
-将每个样本转换为相对丰度或百分比，并处理空样本。
+Profile Trans Ra utility
 }

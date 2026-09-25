@@ -1,11 +1,17 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260820, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260820, 20260925 ####
 
 # 20260916: standardize package documentation and declare data-masking variables used across functions.
+# 20260925: rename the package from mengR to mengr and update package-level documentation.
 
-#' mengR: Personal bioinformatics analysis utilities
+#' mengr: Personal bioinformatics analysis utilities
 #'
-#' Reusable functions for omics data processing, statistical analysis,
-#' machine learning, and publication-oriented visualization.
+#' A personal collection of reusable functions for bioinformatics and omics
+#' data processing, statistical analysis, machine learning, and
+#' publication-oriented visualization.
+#'
+#' The package generally represents abundance profiles as feature-by-sample
+#' tables. Functions that combine a profile with sample information use
+#' `sample_meta`, `sample_col`, and `group_col` consistently.
 #'
 #' @author Jin-Xin Meng \email{jinxmeng@zju.edu.cn}
 #' @importFrom rlang .data

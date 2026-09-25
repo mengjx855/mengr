@@ -6,9 +6,9 @@
 \usage{
 calcu_men(
   profile,
-  metadata,
+  feature_meta,
   feature_col = NULL,
-  sample_metadata = NULL,
+  sample_meta = NULL,
   sample_col = "sample",
   group_col = "group",
   p_threshold = 0.05,
@@ -24,11 +24,12 @@ calcu_men(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{metadata}{A metadata or annotation data frame.}
+\item{feature_meta}{A feature metadata table containing taxonomy or other
+node annotations.}
 
 \item{feature_col}{Name of the feature-identifier column.}
 
-\item{sample_metadata}{Sample metadata required by normalization methods that model library size.}
+\item{sample_meta}{Sample metadata required by normalization methods that model library size.}
 
 \item{sample_col}{Name of the sample-identifier column.}
 
@@ -54,5 +55,5 @@ calcu_men(
 A list containing aligned inputs, correlations, graph and network tables, layout data, and the network plot.
 }
 \description{
-使用 ggClusterNet 流程构建 microbial ecological network。
+Calculate and plot a microbial ecological network
 }

@@ -1,23 +1,25 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20221102, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20221102, 20260923 ####
 
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 #### .prepare_batch_data ####
 
 .prepare_batch_data <- function(
-  profile, metadata, sample_col, batch_col,
+  profile, sample_meta, sample_col, batch_col,
   batch2_col = NULL, covariate_cols = NULL
 ) {
-  metadata_df <- .as_df(metadata)
+  metadata_df <- .as_df(sample_meta)
   required_cols <- unique(c(
     sample_col, batch_col, batch2_col, covariate_cols
   ))
   required_cols <- required_cols[!is.na(required_cols) & nzchar(required_cols)]
-  .check_columns(metadata_df, required_cols, object = "metadata")
+  .check_columns(metadata_df, required_cols, object = "sample_meta")
 
   aligned <- .align_profile_group(
     profile = profile,
-    group = metadata_df,
+    sample_meta = metadata_df,
     sample_col = sample_col,
     require_group = FALSE
   )
@@ -44,10 +46,10 @@
 
 #' Remove batch effects with sva::ComBat
 #'
-#' 使用 `sva::ComBat()` 校正一个或两个批次变量，可保留协变量效应。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param metadata A metadata or annotation data frame.
+#' @param sample_meta A sample metadata table containing sample identifiers,
+#'   batch assignments, and optional covariates.
 #' @param sample_col Name of the sample-identifier column.
 #' @param batch_col Name of the `batch_col` input column.
 #' @param covariate_cols Metadata columns whose effects should be retained during batch correction.
@@ -59,13 +61,14 @@
 #' @return A feature-by-sample numeric data frame after ComBat correction.
 #' @export
 remove_batch_combat <- function(
-  profile, metadata, sample_col = "sample", batch_col = "batch",
+  profile, sample_meta, sample_col = "sample", batch_col = "batch",
   covariate_cols = NULL, par_prior = TRUE, prior_plots = FALSE,
   mean_only = FALSE, ref_batch = NULL, ...
 ) {
+  metadata <- sample_meta
   prepared <- .prepare_batch_data(
     profile = profile,
-    metadata = metadata,
+    sample_meta = metadata,
     sample_col = sample_col,
     batch_col = batch_col,
     covariate_cols = covariate_cols
@@ -88,10 +91,10 @@ remove_batch_combat <- function(
 
 #' Remove batch effects with limma::removeBatchEffect
 #'
-#' 使用 `limma::removeBatchEffect()` 校正批次并保留设计矩阵中的协变量。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param metadata A metadata or annotation data frame.
+#' @param sample_meta A sample metadata table containing sample identifiers,
+#'   one or two batch columns, and optional covariates.
 #' @param sample_col Name of the sample-identifier column.
 #' @param batch_col Name of the `batch_col` input column.
 #' @param batch2_col Name of the `batch2_col` input column.
@@ -100,12 +103,13 @@ remove_batch_combat <- function(
 #' @return A feature-by-sample numeric data frame after limma batch-effect removal.
 #' @export
 remove_batch_limma <- function(
-  profile, metadata, sample_col = "sample", batch_col = "batch",
+  profile, sample_meta, sample_col = "sample", batch_col = "batch",
   batch2_col = NULL, covariate_cols = NULL, ...
 ) {
+  metadata <- sample_meta
   prepared <- .prepare_batch_data(
     profile = profile,
-    metadata = metadata,
+    sample_meta = metadata,
     sample_col = sample_col,
     batch_col = batch_col,
     batch2_col = batch2_col,

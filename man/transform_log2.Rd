@@ -19,6 +19,3 @@ A numeric vector of log2-transformed values.
 \description{
 \code{transform_log2()} replaces non-positive values when requested and applies a log2 transformation.
 }
-\details{
-对一个数值向量进行 log2 转换，并处理零值和缺失值。
-}

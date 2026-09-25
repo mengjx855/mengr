@@ -13,36 +13,24 @@ rc2rpm(
 )
 }
 \arguments{
-\item{profile}{A numeric feature-by-sample data frame or matrix.
-数值型 feature × sample 数据框或矩阵。}
+\item{profile}{A numeric feature-by-sample data frame or matrix.}
 
 \item{library_size}{\code{NULL}, a two-column data frame, a path to a CSV/TSV
-file, or a named numeric vector. \code{NULL} uses \code{colSums(profile)}。
-\code{NULL}、两列表、CSV/TSV 文件路径或带名称数值向量；\code{NULL} 时使用
-\code{colSums(profile)}。}
+file, or a named numeric vector. \code{NULL} uses \code{colSums(profile)}.
+\code{colSums(profile)}.}
 
-\item{sample_col}{Sample identifier column in \code{library_size}.
-\code{library_size} 中的样本列名。}
+\item{sample_col}{Sample identifier column in \code{library_size}.}
 
-\item{library_size_col}{Library-size column in \code{library_size}.
-\code{library_size} 中的文库大小列名。}
+\item{library_size_col}{Library-size column in \code{library_size}.}
 
-\item{library_size_sep}{Separator used when \code{library_size} is a file path.
-\code{NULL} selects comma for \code{.csv} and tab otherwise. \code{library_size} 为文件
-路径时使用的分隔符；\code{NULL} 时 \code{.csv} 使用逗号，其余文件使用制表符。}
+\item{library_size_sep}{Separator used when \code{library_size} is a file path.}
 }
 \value{
 A numeric matrix with the same dimensions and dimnames as \code{profile}.
-与 \code{profile} 维度及 dimnames 相同的数值矩阵。
 }
 \description{
 Convert a feature-by-sample count matrix to reads per million (RPM). When
 \code{library_size} is \code{NULL}, column sums of \code{profile} are used. A two-column
 sample table, a delimited text-file path, or a named numeric vector can
 instead supply externally calculated library sizes.
-}
-\details{
-将 feature × sample 的 count matrix 转换为 RPM。\code{library_size = NULL} 时使用
-\code{profile} 的列和；也可以传入两列样本表、分隔文本文件路径或带名称的数值
-向量，使用外部计算的 library size。
 }

@@ -6,7 +6,7 @@
 \usage{
 remove_batch_combat(
   profile,
-  metadata,
+  sample_meta,
   sample_col = "sample",
   batch_col = "batch",
   covariate_cols = NULL,
@@ -20,7 +20,8 @@ remove_batch_combat(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{metadata}{A metadata or annotation data frame.}
+\item{sample_meta}{A sample metadata table containing sample identifiers,
+batch assignments, and optional covariates.}
 
 \item{sample_col}{Name of the sample-identifier column.}
 
@@ -42,5 +43,5 @@ remove_batch_combat(
 A feature-by-sample numeric data frame after ComBat correction.
 }
 \description{
-使用 \code{sva::ComBat()} 校正一个或两个批次变量，可保留协变量效应。
+Remove batch effects with sva::ComBat
 }

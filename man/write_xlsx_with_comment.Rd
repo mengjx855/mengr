@@ -36,5 +36,5 @@ write_xlsx_with_comment(
 The output workbook path, invisibly.
 }
 \description{
-将顶部说明和数据写入 Excel；支持追加、替换 worksheet。
+Write xlsx with Comment utility
 }

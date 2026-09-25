@@ -6,7 +6,7 @@
 \usage{
 plot_alpha(
   data,
-  group,
+  sample_meta,
   sample_col = "sample",
   value_col = "value",
   group_col = "group",
@@ -30,7 +30,7 @@ plot_alpha(
 \arguments{
 \item{data}{An input data frame or compatible object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{sample_col}{Name of the sample-identifier column.}
 
@@ -72,5 +72,5 @@ plot_alpha(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-绘制 alpha diversity 分组图，并支持排序、显著性及参考线。
+Plot Alpha utility
 }

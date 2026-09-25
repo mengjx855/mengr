@@ -7,7 +7,7 @@
 plot_compos(
   profile,
   taxonomy,
-  group = NULL,
+  sample_meta = NULL,
   display = c("group", "sample"),
   feature_col = "name",
   sample_col = "sample",
@@ -31,7 +31,7 @@ plot_compos(
 
 \item{taxonomy}{Feature taxonomy table used for annotation or aggregation.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{display}{Whether composition is summarized by sample or by group.}
 
@@ -69,5 +69,5 @@ plot_compos(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-绘制单个分类层级的样本或分组组成堆叠柱状图。
+Plot Compos utility
 }

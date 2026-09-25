@@ -17,5 +17,5 @@ calcu_jsd_dist(profile, pseudocount = 1e-06, normalize = TRUE)
 A \code{dist} object containing pairwise Jensen-Shannon distances.
 }
 \description{
-对组成型 profile 计算 Jensen-Shannon divergence 距离。
+Calculate Jensen-Shannon distances between samples
 }

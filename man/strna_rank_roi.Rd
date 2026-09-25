@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-strna.R
 \name{strna_rank_roi}
 \alias{strna_rank_roi}
-\title{Rank spatial ROIs by target-cell enrichment}
+\title{Rank spatial ROIs by target-cell enrichmen}
 \usage{
 strna_rank_roi(
   data,
@@ -31,7 +31,7 @@ strna_rank_roi(
 
 \item{celltype_col}{Column containing cell-type annotations.}
 
-\item{target_celltype}{Character vector specifying one or more target
+\item{target_celltype}{Character vector specifying one or more targe
 cell types.}
 
 \item{window_width, window_height}{Width and height of each sliding ROI.}

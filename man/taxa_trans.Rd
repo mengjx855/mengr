@@ -7,7 +7,7 @@
 taxa_trans(
   profile,
   taxonomy,
-  group = NULL,
+  sample_meta = NULL,
   feature_col = "name",
   taxa_col = "family",
   sample_col = "sample",
@@ -31,7 +31,7 @@ taxa_trans(
 
 \item{taxonomy}{Feature taxonomy table used for annotation or aggregation.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{feature_col}{Name of the feature-identifier column.}
 
@@ -69,5 +69,5 @@ taxa_trans(
 An aggregated taxonomic profile, or a list of profiles when multiple ranks are requested.
 }
 \description{
-按 taxonomy 层级聚合 profile，选择 top taxa，并可按组或相对丰度转换。
+Taxa Trans utility
 }

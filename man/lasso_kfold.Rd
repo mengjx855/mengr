@@ -6,7 +6,7 @@
 \usage{
 lasso_kfold(
   profile,
-  group,
+  sample_meta,
   k = 5,
   sample_col = "sample",
   group_col = "group",
@@ -20,7 +20,7 @@ lasso_kfold(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{k}{Number of folds or clusters, according to the analysis performed.}
 
@@ -42,5 +42,5 @@ lasso_kfold(
 A data frame with sample IDs, observed outcomes, predictions, and predicted classes for binomial models.
 }
 \description{
-使用 glmnet 和分层 folds 执行 LASSO k-fold cross-validation。
+Cross-validated LASSO predictions
 }

@@ -1,8 +1,10 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20230816, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20230816, 20260923 ####
 
 # 20250820: update some function.
 # 20260519: simplify code, add helper functions, fix CI label and ribbon order.
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 
 #### theme_roc ####
@@ -17,7 +19,6 @@
 #' Theme Roc utility
 #'
 #'
-#' 提供 default、grid、classic、minimal、nature 和 lancet ROC 主题。
 #'
 #' @param base_size Base font size for the plot theme.
 #' @param show_grid Whether to draw panel grid lines.
@@ -126,7 +127,6 @@ theme_roc <- function(base_size = 12, show_grid = NULL,
 #' Roc Auc Label utility
 #'
 #'
-#' 从 pROC 对象生成包含 AUC 和置信区间的标签。
 #'
 #' @param roc A single object returned by `pROC::roc()`.
 #' @param digits Optional number of decimal digits retained.
@@ -153,7 +153,6 @@ roc_auc_label <- function(roc, digits = 3, prefix = "AUC") {
 #' Roc Se Data utility
 #'
 #'
-#' 提取 ROC sensitivity 置信区间并整理为 ribbon 数据。
 #'
 #' @param roc A single object returned by `pROC::roc()`.
 #' @param by Spacing between successive specificity values used to calculate the ROC confidence band.
@@ -197,7 +196,6 @@ roc_se_data <- function(roc, by = 0.01, conf.level = 0.95) {
 #' Plot Roc utility
 #'
 #'
-#' 绘制单个 pROC ROC 曲线，可添加 sensitivity 置信 ribbon。
 #'
 #' @param roc A single object returned by `pROC::roc()`.
 #' @param color Color specification for `color`.
@@ -291,7 +289,6 @@ plot_roc <- function(roc, color = "#238443", plot_se = FALSE,
 #' Plot Roc Multiple utility
 #'
 #'
-#' 在同一图中绘制多个 ROC 对象及各自 AUC 标签。
 #'
 #' @param roc_list Named list of objects returned by `pROC::roc()`.
 #' @param colors Color specification for `colors`.

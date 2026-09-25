@@ -1,12 +1,13 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20240307, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20240307, 20260923 ####
 
 # 20260916: rename NCM functions to lowercase and standardize documentation and naming.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 #### calcu_ncm ####
 
 #' Fit Sloan's neutral community model
 #'
-#' 拟合 neutral community model，返回摘要、拟合数据和模型。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param name Optional identifier appended to the model summary.
@@ -90,7 +91,6 @@ calcu_ncm <- function(
 
 #' Plot Sloan's neutral community model
 #'
-#' 绘制 neutral community model 的拟合曲线和置信边界。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param ncm_result Optional result returned by `calcu_ncm()` to avoid refitting the model.

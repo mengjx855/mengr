@@ -54,5 +54,5 @@ plot_pair_radar(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-使用 ggplot2 绘制成对比较的极坐标雷达图。
+Plot Pair Radar utility
 }

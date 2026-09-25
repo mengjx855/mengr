@@ -1,4 +1,4 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220918, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220918, 20260923 ####
 
 # 20250206: fix some bug.
 # 20250804: update function.
@@ -8,6 +8,8 @@
 #           plot_compos_manual(), and plot_taxa_boxplot().
 # 20260828: move plot-related functions to plot-taxa.R.
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 #### profile_mpa ####
 # 生成 MetaPhlAn-like profile 表
@@ -207,7 +209,6 @@ profile_mpa <- function(
 #' Taxa Split utility
 #'
 #'
-#' 将完整 taxonomy 字符串拆分为 domain 至 species 等分类列。
 #'
 #' @param taxonomy Feature taxonomy table used for annotation or aggregation.
 #' @param taxonomy_rename Optional replacement name for the parsed taxonomy column.
@@ -380,11 +381,10 @@ taxa_split <- function(
 #' Taxa Trans utility
 #'
 #'
-#' 按 taxonomy 层级聚合 profile，选择 top taxa，并可按组或相对丰度转换。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param taxonomy Feature taxonomy table used for annotation or aggregation.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param feature_col Name of the feature-identifier column.
 #' @param taxa_col Name of the `taxa_col` input column.
 #' @param sample_col Name of the sample-identifier column.
@@ -404,13 +404,14 @@ taxa_split <- function(
 #' @return An aggregated taxonomic profile, or a list of profiles when multiple ranks are requested.
 #' @export
 taxa_trans <- function(
-  profile, taxonomy, group = NULL, feature_col = "name", taxa_col = "family",
+  profile, taxonomy, sample_meta = NULL, feature_col = "name", taxa_col = "family",
   sample_col = "sample", group_col = "group", top_n = 12, top_list = NULL,
   other_name = "Other", out_all = FALSE, na_fill = "Unknown",
   trans_ra = FALSE, base = 100, digits = 8, collapse_group = FALSE,
   method = c("mean", "median", "sum"), remove_unknown = FALSE,
   unknown_pattern = "unknown|unclassified|unassigned|uncultured"
 ) {
+  group <- sample_meta
   if (is.function(method)) {
     summary_fun <- method
   } else {

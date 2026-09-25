@@ -7,7 +7,7 @@
 plot_compos_multiple(
   profile,
   taxonomy,
-  group = NULL,
+  sample_meta = NULL,
   display = "group",
   feature_col = "name",
   sample_col = "sample",
@@ -28,7 +28,7 @@ plot_compos_multiple(
 
 \item{taxonomy}{Feature taxonomy table used for annotation or aggregation.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{display}{Whether composition is summarized by sample or by group.}
 
@@ -60,5 +60,5 @@ plot_compos_multiple(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-对多个 taxonomy 层级批量绘制组成图并组合输出。
+Plot Compos Multiple utility
 }

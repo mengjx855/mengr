@@ -1,10 +1,12 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250328, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250328, 20260923 ####
 
 # 20250416: update function.
 # 20250417: plot function pass to plot_dim()
 # 20250419: add options sub_sample, sub_group for plot_pls().
 # 20260622: update functional style.
 # 20260916: rename PLS/OPLS functions to lowercase and standardize documentation and naming.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 
 #### plot_pls ####
@@ -21,10 +23,9 @@
 #' Plot PLS utility
 #'
 #'
-#' 使用 ropls 执行 PLS-DA，并绘制前两个 predictive components。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
@@ -55,7 +56,7 @@
 #' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_pls <- function(
-  profile, group,
+  profile, sample_meta,
   sample_col = "sample", group_col = "group",
   group_level = NULL, group_color = NULL,
   sub_sample = NULL, sub_group = NULL,
@@ -70,6 +71,7 @@ plot_pls <- function(
   remove_zero_var = TRUE, na_fill = 0,
   predI = 3, ...
 ) {
+  group <- sample_meta
   profile <- data.frame(profile, check.names = FALSE)
   group <- data.frame(group, check.names = FALSE)
 
@@ -304,10 +306,9 @@ plot_pls <- function(
 #' Plot OPLS utility
 #'
 #'
-#' 对二分类数据执行 OPLS-DA 并绘制 predictive/orthogonal components。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
@@ -340,7 +341,7 @@ plot_pls <- function(
 #' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_opls <- function(
-  profile, group,
+  profile, sample_meta,
   sample_col = "sample", group_col = "group",
   group_level = NULL, group_color = NULL,
   sub_sample = NULL, sub_group = NULL,
@@ -357,6 +358,7 @@ plot_opls <- function(
   predI = 1, orthoI = NA,
   ...
 ) {
+  group <- sample_meta
   profile <- data.frame(profile, check.names = FALSE)
   group <- data.frame(group, check.names = FALSE)
 

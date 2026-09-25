@@ -42,7 +42,3 @@ Draw one dot-plot facet per gene from the output of
 \code{scrna_summarise_genes()} or a compatible table. Dot size represents the
 positive-cell percentage and color represents mean expression by default.
 }
-\details{
-使用 \code{scrna_summarise_genes()} 的输出或兼容数据绘图。默认点大小表示
-阳性细胞比例，颜色表示平均标准化表达量，每个基因独立分面。
-}

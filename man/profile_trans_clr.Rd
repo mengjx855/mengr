@@ -24,5 +24,5 @@ profile_trans_clr(
 A feature-by-sample data frame after sample-wise CLR transformation.
 }
 \description{
-对每个样本执行 CLR 转换，保持 feature × sample 方向。
+Profile Trans Clr utility
 }

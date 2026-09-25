@@ -6,7 +6,7 @@
 \usage{
 calcu_diff_profile(
   profile,
-  group,
+  sample_meta,
   group_by = NULL,
   comparison = NULL,
   method = c("wilcox", "anova", "t"),
@@ -22,7 +22,7 @@ calcu_diff_profile(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{group_by}{Metadata column or grouping definition used for aggregation.}
 
@@ -48,5 +48,5 @@ calcu_diff_profile(
 A feature-by-comparison data frame of test results, adjusted P values, and optional significance labels.
 }
 \description{
-对 profile 中的每个 feature 批量执行分组差异检验。
+Calcu Diff Profile utility
 }

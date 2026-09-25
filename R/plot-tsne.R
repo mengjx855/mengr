@@ -1,6 +1,8 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241204, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241204, 20260923 ####
 
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 #### plot_tsne ####
 
@@ -10,7 +12,7 @@
 #' arbitrary column names through `sample_col` and `group_col`.
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
@@ -42,7 +44,7 @@
 #' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_tsne <- function(
-  profile, group, sample_col = "sample", group_col = "group",
+  profile, sample_meta, sample_col = "sample", group_col = "group",
   group_level = NULL, group_color = NULL, seed = 2025,
   theta = 0.4, perplexity = 30, pca = TRUE, max_iter = 1000,
   verbose = FALSE, display_type = c("line", "point"),
@@ -53,13 +55,14 @@ plot_tsne <- function(
   show_legend = TRUE, show_grid = FALSE, show_line = TRUE,
   aspect_ratio = 3 / 4, theme = c("default", "pubr"), ...
 ) {
+  group <- sample_meta
   display_type <- match.arg(display_type)
   conf_type <- match.arg(conf_type)
   theme <- match.arg(theme)
 
   aligned <- .align_profile_group(
     profile = profile,
-    group = group,
+    sample_meta = group,
     sample_col = sample_col,
     group_col = group_col,
     group_level = group_level

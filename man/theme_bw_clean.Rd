@@ -13,5 +13,5 @@ theme_bw_clean(base_size = 12)
 A ggplot2 theme object.
 }
 \description{
-返回简洁的黑白 ggplot2 theme，作为其他绘图的统一基础主题。
+Theme Bw Clean utility
 }

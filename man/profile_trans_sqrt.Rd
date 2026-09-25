@@ -15,5 +15,5 @@ profile_trans_sqrt(profile, digits = NULL)
 A feature-by-sample data frame after square-root transformation.
 }
 \description{
-对 profile 执行平方根转换。
+Profile Trans Sqrt utility
 }

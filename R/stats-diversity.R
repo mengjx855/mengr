@@ -1,4 +1,4 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20211029, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20211029, 20260923 ####
 
 # 20230101: update function 'calcu_alpha()'.
 # 20231204: update function 'check_file_name()' was deprecated.
@@ -7,6 +7,8 @@
 # 20260527: update function.
 # 20260819: add functions about beta-diversity from the plot_PCoA.R script.
 # 20260916: standardize documentation and rename internal data-frame variables to the `*_df` style without changing returned component names.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 
 #### calcu_alpha ####
@@ -20,7 +22,6 @@
 #' Calcu Alpha utility
 #'
 #'
-#' 计算 richness、Shannon、Simpson、Chao1、ACE 等 alpha diversity 指标。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param method Analysis or summary method; supported values are shown in the usage.
@@ -104,10 +105,9 @@ calcu_alpha <- function(
 #' Plot Alpha utility
 #'
 #'
-#' 绘制 alpha diversity 分组图，并支持排序、显著性及参考线。
 #'
 #' @param data An input data frame or compatible object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param value_col Name of the `value_col` input column.
 #' @param group_col Name of the grouping column.
@@ -129,13 +129,14 @@ calcu_alpha <- function(
 #' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_alpha <- function(
-  data, group, sample_col = "sample", value_col = "value",
+  data, sample_meta, sample_col = "sample", value_col = "value",
   group_col = "group", group_level = NULL, group_color = NULL,
   xlab = "", ylab = "", title = "", aspect_ratio = 1, show_grid = TRUE,
   show_jitter = TRUE, rotate_x_text = FALSE, coord_flip = FALSE,
   show_diff = TRUE, method = c("wilcox", "t"), sort_value = NULL,
   add_ref_line = NULL, ...
 ) {
+  group <- sample_meta
   method <- match.arg(method)
 
   data <- data.frame(data, check.names = FALSE)
@@ -316,7 +317,6 @@ plot_alpha <- function(
 #' Calcu Distance utility
 #'
 #'
-#' 计算 Bray、Jaccard、Euclidean、UniFrac 等样本距离，可先转换 profile。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param dist_method Distance method; available values are validated with `match.arg()`.
@@ -423,19 +423,20 @@ calcu_distance <- function(
 #' Calcu Beta utility
 #'
 #'
-#' 基于距离矩阵执行整体 beta-diversity 组间检验。
 #'
 #' @param distance A precomputed distance object; when supplied, it takes precedence over `profile`.
-#' @param metadata A metadata or annotation data frame.
+#' @param sample_meta A sample metadata table containing sample identifiers and
+#'   group assignments.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param drop_na_group Whether to remove samples with missing or empty group labels.
 #' @return A data frame of within-group sample pairs and their distances.
 #' @export
 calcu_beta <- function(
-  distance, metadata, sample_col = "sample",
+  distance, sample_meta, sample_col = "sample",
   group_col = "group", drop_na_group = TRUE
 ) {
+  metadata <- sample_meta
   dist_mat <- as.matrix(distance)
 
   metadata <- data.frame(metadata, check.names = FALSE)
@@ -492,7 +493,6 @@ calcu_beta <- function(
 #' Calcu Adjusted R2 utility
 #'
 #'
-#' 从 adonis 类结果中计算或提取 adjusted R-squared。
 #'
 #' @param adonis_object Object returned by a PERMANOVA/adonis calculation.
 #' @return A numeric adjusted R-squared value.
@@ -519,10 +519,9 @@ calcu_adjusted_r2 <- function(adonis_object) {
 #' Calcu Pairwise Adonis utility
 #'
 #'
-#' 对各组组合执行 pairwise PERMANOVA，并校正 P 值。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
@@ -533,10 +532,11 @@ calcu_adjusted_r2 <- function(adonis_object) {
 #' @return A data frame containing pairwise PERMANOVA statistics, P values, adjusted P values, and optional labels.
 #' @export
 calcu_pairwise_adonis <- function(
-  profile, group, sample_col = "sample", group_col = "group",
+  profile, sample_meta, sample_col = "sample", group_col = "group",
   group_level = NULL, dist_method = "bray", permutations = 999,
   add_plab = TRUE, ...
 ) {
+  group <- sample_meta
   profile <- data.frame(profile, check.names = FALSE)
   group <- data.frame(group, check.names = FALSE)
 
@@ -626,7 +626,6 @@ calcu_pairwise_adonis <- function(
 #' Plot Pairwise Adonis utility
 #'
 #'
-#' 将 pairwise PERMANOVA 结果绘制为矩阵或热图式结果图。
 #'
 #' @param data An input data frame or compatible object.
 #' @param group_level Optional order of group levels.
@@ -726,10 +725,9 @@ plot_pairwise_adonis <- function(data, group_level = NULL) {
 #' Calcu Betadisper utility
 #'
 #'
-#' 检验各组到中心或中位数中心的 multivariate dispersion。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param distance A precomputed distance object; when supplied, it takes precedence over `profile`.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
@@ -742,11 +740,12 @@ plot_pairwise_adonis <- function(data, group_level = NULL) {
 #' @return A list containing the betadisper object, group metadata, permutation/ANOVA/Tukey tests, and sample distances to group centers.
 #' @export
 calcu_betadisper <- function(
-  profile = NULL, group, distance = NULL, sample_col = "sample",
+  profile = NULL, sample_meta, distance = NULL, sample_col = "sample",
   group_col = "group", group_level = NULL, dist_method = "bray",
   permutations = 999, type = c("median", "centroid"),
   bias_adjust = FALSE, ...
 ) {
+  group <- sample_meta
   type <- match.arg(type)
 
   group <- data.frame(group, check.names = FALSE)
@@ -859,7 +858,6 @@ calcu_betadisper <- function(
 #' Plot Betadisper utility
 #'
 #'
-#' 绘制组内离散度及组间比较结果。
 #'
 #' @param result Result object or table to summarize.
 #' @param group_color Optional colors aligned to `group_level`.
@@ -962,7 +960,6 @@ plot_betadisper <- function(
 #' Calcu Adonis R2 utility
 #'
 #'
-#' 根据距离对象和分组标签计算 PERMANOVA R-squared。
 #'
 #' @param dist A distance object used by the analysis.
 #' @param group_labels Labels corresponding to group labels.

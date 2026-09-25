@@ -1,12 +1,13 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220529, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220529, 20260923 ####
 
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 #### calcu_specaccum ####
 
 #' Calculate a species accumulation curve
 #'
-#' 计算总体 species/feature accumulation curve。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param permutations Number of permutations used by the significance test.
@@ -40,7 +41,6 @@ calcu_specaccum <- function(
 
 #' Plot a species accumulation curve
 #'
-#' 绘制总体累积曲线，可添加误差线或置信 ribbon。
 #'
 #' @param data An input data frame or compatible object.
 #' @param sample_n_col Name of the `sample_n_col` input column.
@@ -109,10 +109,9 @@ plot_specaccum <- function(
 
 #' Calculate species accumulation curves by group
 #'
-#' 分组计算 species/feature accumulation curve。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
@@ -121,14 +120,15 @@ plot_specaccum <- function(
 #' @return A data frame of accumulation curves with a group column.
 #' @export
 calcu_specaccum_by_group <- function(
-  profile, group, sample_col = "sample", group_col = "group",
+  profile, sample_meta, sample_col = "sample", group_col = "group",
   group_level = NULL, permutations = 99,
   method = c("random", "collector", "exact", "rarefaction", "coleman")
 ) {
+  group <- sample_meta
   ## 1. 对齐 profile 与 group
   method <- match.arg(method)
   aligned <- .align_profile_group(
-    profile = profile, group = group,
+    profile = profile, sample_meta = group,
     sample_col = sample_col, group_col = group_col,
     group_level = group_level
   )
@@ -159,7 +159,6 @@ calcu_specaccum_by_group <- function(
 
 #' Plot species accumulation curves by group
 #'
-#' 绘制多组累积曲线并使用统一分组配色。
 #'
 #' @param data An input data frame or compatible object.
 #' @param sample_n_col Name of the `sample_n_col` input column.
@@ -251,7 +250,6 @@ plot_specaccum_by_group <- function(
 
 #' Calculate sample rarefaction curves by sequencing depth
 #'
-#' 逐步增加测序深度，计算随机稀释后的 feature 数量。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param step Increment in sequencing depth between rarefaction points.
@@ -300,7 +298,6 @@ calcu_specaccum_by_depth <- function(profile, step = 1000, seed = NULL) {
 
 #' Plot sample rarefaction curves by sequencing depth
 #'
-#' 绘制测序深度与观测 feature 数量的关系。
 #'
 #' @param data An input data frame or compatible object.
 #' @param sample_col Name of the sample-identifier column.
@@ -348,7 +345,6 @@ plot_specaccum_by_depth <- function(
 
 #' Calculate rank-abundance data for each sample
 #'
-#' 计算每个样本的 rank-abundance 数据及 log abundance。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @return A data frame containing sample-wise abundance ranks, abundances, and log abundances.
@@ -375,7 +371,6 @@ calcu_rankabund <- function(profile) {
 
 #' Plot rank-abundance curves
 #'
-#' 绘制 rank-abundance 曲线。
 #'
 #' @param data An input data frame or compatible object.
 #' @param sample_col Name of the sample-identifier column.

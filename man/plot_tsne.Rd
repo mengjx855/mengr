@@ -6,7 +6,7 @@
 \usage{
 plot_tsne(
   profile,
-  group,
+  sample_meta,
   sample_col = "sample",
   group_col = "group",
   group_level = NULL,
@@ -40,7 +40,7 @@ plot_tsne(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{sample_col}{Name of the sample-identifier column.}
 

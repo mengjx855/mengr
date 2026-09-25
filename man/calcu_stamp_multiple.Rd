@@ -6,7 +6,7 @@
 \usage{
 calcu_stamp_multiple(
   profile,
-  group,
+  sample_meta,
   sample_col = "sample",
   group_col = "group",
   group_level = NULL,
@@ -16,7 +16,7 @@ calcu_stamp_multiple(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{sample_col}{Name of the sample-identifier column.}
 
@@ -30,5 +30,5 @@ calcu_stamp_multiple(
 A feature-level data frame containing group summaries and the omnibus Kruskal-Wallis or ANOVA result.
 }
 \description{
-对多组数据计算 STAMP 风格的整体差异统计。
+Calcu Stamp Multiple utility
 }

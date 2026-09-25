@@ -6,7 +6,7 @@
 \usage{
 plot_compos_manual(
   profile,
-  group = NULL,
+  sample_meta = NULL,
   display = c("group", "sample"),
   sample_col = "sample",
   group_col = "group",
@@ -33,7 +33,7 @@ plot_compos_manual(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{display}{Whether composition is summarized by sample or by group.}
 
@@ -81,5 +81,5 @@ plot_compos_manual(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-对已经整理好的组成数据绘制可精细控制的堆叠柱状图。
+Plot Compos Manual utility
 }

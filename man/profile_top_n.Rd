@@ -27,5 +27,5 @@ profile_top_n(
 A feature-by-sample data frame retaining the top-ranked features and, optionally, an \code{Other} row.
 }
 \description{
-保留总体丰度最高的 n 个 feature，可把其余 feature 合并为 Other。
+Profile Top n utility
 }

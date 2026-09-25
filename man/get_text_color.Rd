@@ -19,5 +19,5 @@ get_text_color(color, threshold = 0.5, dark = "black", light = "white")
 A character vector choosing \code{dark} or \code{light} for each input color.
 }
 \description{
-根据背景色亮度选择深色或浅色文字，提高文字对比度。
+Get Text Color utility
 }

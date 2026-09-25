@@ -15,5 +15,5 @@ plot_pairwise_anosim(data, group_level = NULL)
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-将 pairwise ANOSIM 结果绘制为矩阵式结果图。
+Plot Pairwise Anosim utility
 }

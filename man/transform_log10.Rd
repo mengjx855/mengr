@@ -19,6 +19,3 @@ A numeric vector of log10-transformed values.
 \description{
 \code{transform_log10()} replaces non-positive values when requested and applies a log10 transformation.
 }
-\details{
-对一个数值向量进行 log10 转换，并处理零值和缺失值。
-}

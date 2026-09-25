@@ -45,5 +45,5 @@ plot_roc(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-绘制单个 pROC ROC 曲线，可添加 sensitivity 置信 ribbon。
+Plot Roc utility
 }

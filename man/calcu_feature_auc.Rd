@@ -36,5 +36,5 @@ calcu_feature_auc(
 A feature-level data frame containing AUC, confidence limits, ROC direction, and discrimination strength.
 }
 \description{
-逐 feature 计算二分类 ROC AUC、置信区间、方向和区分强度。
+Calcu Feature Auc utility
 }

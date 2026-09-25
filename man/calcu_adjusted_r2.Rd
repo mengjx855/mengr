@@ -13,5 +13,5 @@ calcu_adjusted_r2(adonis_object)
 A numeric adjusted R-squared value.
 }
 \description{
-从 adonis 类结果中计算或提取 adjusted R-squared。
+Calcu Adjusted R2 utility
 }

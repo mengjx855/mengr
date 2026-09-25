@@ -33,5 +33,5 @@ plot_betadisper(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-绘制组内离散度及组间比较结果。
+Plot Betadisper utility
 }

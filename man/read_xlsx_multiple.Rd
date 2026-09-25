@@ -17,5 +17,5 @@ read_xlsx_multiple(file, sheets = NULL, ...)
 A named list of data frames, one for each selected worksheet.
 }
 \description{
-一次读取 Excel 文件中的多个 worksheet，返回命名列表。
+Read xlsx Multiple utility
 }

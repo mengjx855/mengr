@@ -6,7 +6,7 @@
 \usage{
 profile_prevalence(
   profile,
-  group = NULL,
+  sample_meta = NULL,
   by_group = TRUE,
   sample_col = "sample",
   group_col = "group",
@@ -18,7 +18,7 @@ profile_prevalence(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{by_group}{Whether calculations are performed separately within each group.}
 
@@ -36,5 +36,5 @@ profile_prevalence(
 A feature-level data frame of occurrence counts or prevalence, optionally stratified by group.
 }
 \description{
-计算 feature 在总体或各组中的出现样本数或 prevalence。
+Profile Prevalence utility
 }

@@ -1,4 +1,4 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20251229, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20251229, 20260923 ####
 
 # time-stamp:
 # 20251229: create script, add function 'plot_gsea_barcode()'.
@@ -6,6 +6,8 @@
 # 20260822: add function 'run_limma_diff()', 'run_voom_diff()', 'run_deseq2_diff()'
 #           for RNA-seq differential analysis in different scenarios.
 # 20260916: rename GO plotting functions to lowercase, standardize documentation, and adopt `*_df` data-frame names.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 #### run_limma_diff ####
 # 使用 limma 对连续型 profile 数据进行组间差异分析
@@ -62,9 +64,10 @@
 #      建议使用 WT、KO、Control、Treat 等简单名称，避免空格和 "-"。
 
 run_limma_diff <- function(
-    profile, metadata, comparisons, sample_col = "sample", group_col = "group",
+    profile, sample_meta, comparisons, sample_col = "sample", group_col = "group",
     fc_cutoff = 1, padj_cutoff = .05
 ) {
+  metadata <- sample_meta
   
   # 匹配 metadata 与 profile 中的样本，并统一样本顺序
   metadata <- metadata |>
@@ -209,10 +212,11 @@ run_limma_diff <- function(
 #   7. group 名称建议使用简单且合法的 R coefficient 名称。
 
 run_voom_diff <- function(
-    rc, metadata, comparisons, sample_col = "sample", group_col = "group",
+    rc, sample_meta, comparisons, sample_col = "sample", group_col = "group",
     method = c("voomLmFit", "voom"), fc_cutoff = 1, padj_cutoff = .05,
     plot = FALSE
 ) {
+  metadata <- sample_meta
   
   method <- match.arg(method)
   
@@ -399,9 +403,10 @@ run_voom_diff <- function(
 #   9. comparisons 中第一个组为 numerator，第二个组为 denominator。
 
 run_deseq2_diff <- function(
-    rc, metadata, comparisons, sample_col = "sample", group_col = "group",
+    rc, sample_meta, comparisons, sample_col = "sample", group_col = "group",
     pairwise = FALSE, fc_cutoff = 1, padj_cutoff = .05
 ) {
+  metadata <- sample_meta
   
   # 匹配 metadata 与 raw count matrix，并统一样本顺序
   metadata <- metadata |>
@@ -549,7 +554,6 @@ run_deseq2_diff <- function(
 #' Plot Gsea Barcode utility
 #'
 #'
-#' 绘制 GSEA barcode/running-score 风格结果图。
 #'
 #' @param gseaResult A GSEA result object containing ranked genes and enrichment results.
 #' @param set_ID Gene-set identifier selected from a GSEA result.
@@ -683,7 +687,6 @@ plot_gsea_barcode <- function(
 #' Plot GO Bar utility
 #'
 #'
-#' 绘制 GO enrichment 柱状图，并支持分组、排序和标签。
 #'
 #' @param data An input data frame or compatible object.
 #' @param term_col Name of the `term_col` input column.
@@ -888,7 +891,6 @@ plot_go_bar <- function(
 #' Plot GO Circular Bar utility
 #'
 #'
-#' 将 GO enrichment 结果绘制为 circular barplot。
 #'
 #' @param data An input data frame or compatible object.
 #' @param term_col Name of the `term_col` input column.

@@ -1,4 +1,4 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20221001, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20221001, 20260923 ####
 
 # 20221001: 添加选择不同距离尺度的参数 dist_method
 # 20231204: update function, check_file_name was deprecated.
@@ -12,6 +12,8 @@
 # 20260527: update some functions.
 # 20260819: keep pcoa-related functions, others had been moved to diversity.R
 # 20260916: standardize documentation and rename internal data-frame variables to the `*_df` style.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 
 #### calcu_pcoa ####
@@ -28,11 +30,10 @@
 #' Calcu pcoa utility
 #'
 #'
-#' 从 profile 或距离对象计算 pcoa 坐标和特征值。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param distance A precomputed distance object; when supplied, it takes precedence over `profile`.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param dim Number of ordination dimensions retained in the returned coordinate table.
@@ -46,12 +47,13 @@
 #' @importFrom rlang .data
 #' @export
 calcu_pcoa <- function(
-  profile = NULL, distance = NULL, group = NULL,
+  profile = NULL, distance = NULL, sample_meta = NULL,
   sample_col = "sample", group_col = "group", dim = 2,
   cumulative_eig = NULL,
   dist_method = c("bray", "jaccard", "euclidean", "manhattan", "unifrac"),
   prefix = NULL, adonis2 = FALSE, permutations = 999, ...
 ) {
+  group <- sample_meta
   ## 1. 检查距离方法并计算或整理距离矩阵
   dist_method <- .match_distance_method(dist_method)
   ## 如果没有提供 distance，就用 calcu_distance() 计算
@@ -179,10 +181,9 @@ calcu_pcoa <- function(
 #' Plot pcoa utility
 #'
 #'
-#' 计算并绘制 pcoa，可附加 PERMANOVA 统计结果。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param distance A precomputed distance object; when supplied, it takes precedence over `profile`.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
@@ -215,7 +216,7 @@ calcu_pcoa <- function(
 #' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_pcoa <- function(
-  profile = NULL, group, distance = NULL,
+  profile = NULL, sample_meta, distance = NULL,
   sample_col = "sample", group_col = "group",
   group_level = NULL, group_color = NULL,
   sub_sample = NULL, sub_group = NULL,
@@ -231,6 +232,7 @@ plot_pcoa <- function(
   aspect_ratio = 3 / 4, theme = c("default", "pubr"),
   adonis2 = TRUE, permutations = 999, ...
 ) {
+  group <- sample_meta
   dist_method <- .match_distance_method(dist_method)
   transform <- .match_transform_method(transform)
   display_type <- match.arg(display_type)
@@ -447,10 +449,9 @@ plot_pcoa <- function(
 #' Plot pcoa Box utility
 #'
 #'
-#' 同时展示 pcoa 散点图及主要坐标轴的边际箱线图。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param distance A precomputed distance object; when supplied, it takes precedence over `profile`.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
@@ -477,7 +478,7 @@ plot_pcoa <- function(
 #' @return A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 #' @export
 plot_pcoa_box <- function(
-  profile = NULL, group, distance = NULL, sample_col = "sample",
+  profile = NULL, sample_meta, distance = NULL, sample_col = "sample",
   group_col = "group", group_level = NULL, group_color = NULL,
   dist_method = c("bray", "jaccard", "euclidean", "manhattan", "unifrac"),
   display_type = c("line", "point"),
@@ -488,6 +489,7 @@ plot_pcoa_box <- function(
   show_grid = FALSE, show_line = TRUE, theme = c("default", "pubr"),
   permutations = 999, ...
 ) {
+  group <- sample_meta
   dist_method <- .match_distance_method(dist_method)
   display_type <- match.arg(display_type)
   conf_type <- match.arg(conf_type)
@@ -502,7 +504,7 @@ plot_pcoa_box <- function(
   res <- calcu_pcoa(
     profile = profile,
     distance = distance,
-    group = group,
+    sample_meta = group,
     sample_col = sample_col,
     group_col = group_col,
     dim = 2,

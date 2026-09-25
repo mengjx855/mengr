@@ -1,15 +1,17 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241024, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241024, 20260923 ####
 
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 #### .prepare_svm_data ####
 
 .prepare_svm_data <- function(
-  profile, group, sample_col = "sample", group_col = "group",
+  profile, sample_meta, sample_col = "sample", group_col = "group",
   group_level = NULL
 ) {
   aligned <- .align_profile_group(
-    profile = profile, group = group,
+    profile = profile, sample_meta = sample_meta,
     sample_col = sample_col, group_col = group_col,
     group_level = group_level
   )
@@ -94,10 +96,9 @@
 
 #' Repeated holdout validation for a binary SVM
 #'
-#' 拟合带参数搜索的基础 SVM，并返回样本预测和性能。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
@@ -113,13 +114,14 @@
 #' @return A list containing tuned/fitted SVM objects, predictions, ROC objects and plots, model settings, and classification metrics.
 #' @export
 svm_base <- function(
-  profile, group, sample_col = "sample", group_col = "group",
+  profile, sample_meta, sample_col = "sample", group_col = "group",
   group_level = NULL, positive_class = NULL,
   rep = 5, seed = 2024, train_prop = 0.8,
   kernel = c("radial", "linear", "polynomial", "sigmoid"),
   scale = TRUE, cost_grid = 10^(-1:3), gamma_grid = 10^(-3:1),
   tune_boot = 10
 ) {
+  group <- sample_meta
   kernel <- match.arg(kernel)
   prepared <- .prepare_svm_data(
     profile, group, sample_col, group_col, group_level
@@ -185,10 +187,9 @@ svm_base <- function(
 
 #' K-fold cross-validated predictions for a binary SVM
 #'
-#' 执行分层 SVM k-fold cross-validation。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param k Number of folds or clusters, according to the analysis performed.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
@@ -203,12 +204,13 @@ svm_base <- function(
 #' @return A data frame of out-of-fold predictions, decision values, and fold identifiers.
 #' @export
 svm_kfold <- function(
-  profile, group, k = 5, sample_col = "sample", group_col = "group",
+  profile, sample_meta, k = 5, sample_col = "sample", group_col = "group",
   group_level = NULL, positive_class = NULL, seed = 2024,
   kernel = c("radial", "linear", "polynomial", "sigmoid"),
   scale = TRUE, cost_grid = 10^(-1:3), gamma_grid = 10^(-3:1),
   tune_boot = 10
 ) {
+  group <- sample_meta
   kernel <- match.arg(kernel)
   prepared <- .prepare_svm_data(
     profile, group, sample_col, group_col, group_level
@@ -251,12 +253,11 @@ svm_kfold <- function(
 
 #' Train an SVM in one dataset and validate it in another
 #'
-#' 在训练集调参拟合 SVM，并在独立数据中验证。
 #'
 #' @param profile_x Feature-by-sample profile used for model training or the first data space.
 #' @param profile_y Feature-by-sample profile used for validation or the second data space.
-#' @param group_x Sample metadata associated with `profile_x`.
-#' @param group_y Sample metadata associated with `profile_y`.
+#' @param sample_meta_x Sample metadata associated with `profile_x`.
+#' @param sample_meta_y Sample metadata associated with `profile_y`.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
@@ -270,13 +271,15 @@ svm_kfold <- function(
 #' @return A list containing tuned/fitted SVM objects, validation predictions, ROC results, shared features, and classification metrics.
 #' @export
 svm_next_validate <- function(
-  profile_x, profile_y, group_x, group_y,
+  profile_x, profile_y, sample_meta_x, sample_meta_y,
   sample_col = "sample", group_col = "group",
   group_level = NULL, positive_class = NULL, seed = 2024,
   kernel = c("radial", "linear", "polynomial", "sigmoid"),
   scale = TRUE, cost_grid = 10^(-1:3), gamma_grid = 10^(-3:1),
   tune_boot = 20
 ) {
+  group_x <- sample_meta_x
+  group_y <- sample_meta_y
   kernel <- match.arg(kernel)
   train <- .prepare_svm_data(
     profile_x, group_x, sample_col, group_col, group_level

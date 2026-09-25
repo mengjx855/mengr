@@ -112,5 +112,5 @@ plot_mantel_upper(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-在环境相关矩阵上三角区域叠加 Mantel 关联曲线。
+Plot Mantel Upper utility
 }

@@ -21,5 +21,5 @@ theme_roc(
 A ggplot2 theme object.
 }
 \description{
-提供 default、grid、classic、minimal、nature 和 lancet ROC 主题。
+Theme Roc utility
 }

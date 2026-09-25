@@ -1,6 +1,8 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260820, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260820, 20260923 ####
 
 # 20260916: standardize documentation and rename plotting data-frame variables to the `*_df` style.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 #### plot_ggradar_pair ####
 # data: 需要包含 proj、cf_col、random_col 和 p_col
@@ -10,7 +12,6 @@
 #' Plot Ggradar Pair utility
 #'
 #'
-#' 将成对比较数据整理为 ggradar 所需格式并绘制雷达图。
 #'
 #' @param data An input data frame or compatible object.
 #' @param cf_col Name of the `cf_col` input column.
@@ -133,7 +134,6 @@ plot_ggradar_pair <- function(data, cf_col, random_col, p_col,
 #' Plot Pair Radar utility
 #'
 #'
-#' 使用 ggplot2 绘制成对比较的极坐标雷达图。
 #'
 #' @param data An input data frame or compatible object.
 #' @param cf_col Name of the `cf_col` input column.

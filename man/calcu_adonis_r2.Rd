@@ -15,5 +15,5 @@ calcu_adonis_r2(dist, group_labels)
 A numeric PERMANOVA R-squared value.
 }
 \description{
-根据距离对象和分组标签计算 PERMANOVA R-squared。
+Calcu Adonis R2 utility
 }

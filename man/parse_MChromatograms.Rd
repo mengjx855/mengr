@@ -21,7 +21,3 @@ Extract retention time and intensity vectors from every chromatogram and
 report retention-time limits plus intensity quantiles and the retention time
 at maximum intensity.
 }
-\details{
-从 MChromatograms 对象的每条色谱中提取保留时间和强度，汇总保留时间
-范围、强度分位数和最高强度所在的保留时间。
-}

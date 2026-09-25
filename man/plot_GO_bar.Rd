@@ -64,5 +64,5 @@ plot_go_bar(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-绘制 GO enrichment 柱状图，并支持分组、排序和标签。
+Plot GO Bar utility
 }

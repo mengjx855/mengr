@@ -24,5 +24,5 @@ reactome_longest_path(
 A data frame describing the longest root-to-target Reactome path for each requested pathway.
 }
 \description{
-根据本地 Reactome 父子关系表提取目标通路的最长层级路径。
+Reactome Longest Path utility
 }

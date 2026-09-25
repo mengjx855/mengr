@@ -36,5 +36,5 @@ calcu_correlation(
 A list of correlation/P-value matrices, a long edge table, or both, according to \code{output}.
 }
 \description{
-计算 feature 间 Pearson、Spearman 或 Kendall 相关及校正 P 值。
+Calcu Correlation utility
 }

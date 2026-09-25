@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-scrna.R
 \name{scrna_seurat_subsample}
 \alias{scrna_seurat_subsample}
-\title{Subsample cells from a Seurat object}
+\title{Subsample cells from a Seurat objec}
 \usage{
 scrna_seurat_subsample(
   seurat,
@@ -39,7 +39,7 @@ Randomly retain a fraction of cells globally or independently within groups.
 The returned cells are restored to their order in the input object.
 }
 \details{
-With stratified sampling, groups smaller than \code{min_cells} are kept
+With stratified sampling, groups smaller than \code{min_cells} are kep
 in full and larger groups retain at least \code{min_cells} cells. Consequently,
 cell-type proportions may differ from the input object.
 }

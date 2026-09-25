@@ -15,5 +15,5 @@ plot_maaslin3_abundance(data, p_col = "qval_joint")
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-绘制 MaAsLin3 abundance model 的 effect 结果。
+Plot Maaslin3 Abundance utility
 }

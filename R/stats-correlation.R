@@ -1,7 +1,9 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220425, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220425, 20260923 ####
 
 # 20260720 v0.1.2: add functions: calcu_correlation(), tidy_correlation()
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 #### calcu_correlation ####
 # 计算相关性矩阵或 long-format 相关性结果
@@ -16,7 +18,6 @@
 #' Calcu Correlation utility
 #'
 #'
-#' 计算 feature 间 Pearson、Spearman 或 Kendall 相关及校正 P 值。
 #'
 #' @param x Primary vector or object supplied to the utility.
 #' @param y Secondary vector or object supplied to the utility.
@@ -238,7 +239,6 @@ calcu_correlation <- function(
 #' Tidy Correlation utility
 #'
 #'
-#' 将相关矩阵整理为 edge long table，并按相关性和显著性筛选。
 #'
 #' @param r_mat Matrix supplying r mat.
 #' @param p_mat Matrix supplying p mat.
@@ -297,7 +297,6 @@ tidy_correlation <- function(
 #' Get Nwk Attr utility
 #'
 #'
-#' 从相关 edge table 构建 igraph 网络，整理 edge/node 属性并可选导出。
 #'
 #' @param adjacency Adjacency matrix used to create or summarize a network.
 #' @param suffix Suffix removed from or appended to derived identifiers.
@@ -402,7 +401,6 @@ get_nwk_attr <- function(
 #' Get Nwk Stat utility
 #'
 #'
-#' 计算网络节点的 degree、strength、centrality 等拓扑统计量。
 #'
 #' @param graph An igraph object to summarize.
 #' @param prefix_pattern Regular expression used to extract prefixes from node identifiers.

@@ -21,5 +21,5 @@ pald(name = NULL, reverse = FALSE, n = NULL, paste = FALSE, ...)
 A character vector of discrete colors, or a copyable \code{c(...)} string when \code{paste = TRUE}.
 }
 \description{
-按名称取得离散配色，可指定数量、反转顺序或输出可复制文本。
+Pald utility
 }

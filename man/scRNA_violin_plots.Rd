@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-scrna.R
 \name{scrna_violin_plots}
 \alias{scrna_violin_plots}
-\title{Plot marker-gene violin plots from a Seurat object}
+\title{Plot marker-gene violin plots from a Seurat objec}
 \usage{
 scrna_violin_plots(
   seurat,
@@ -31,8 +31,4 @@ A ggplot object.
 Reshape selected marker expression and draw vertically faceted violin plots.
 Markers may be supplied as a vector or a named list; list names are included
 in facet labels.
-}
-\details{
-整理 Seurat 对象中的 marker 表达量，绘制纵向分面小提琴图。\code{markers} 可以
-是字符向量或命名列表；命名列表的组名会写入分面标签。
 }

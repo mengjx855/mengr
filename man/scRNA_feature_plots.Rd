@@ -20,7 +20,3 @@ A combined ggplot/cowplot object.
 Create one row of Seurat feature plots for each element of a named marker
 list. Missing genes are removed, and rows are padded to equal widths.
 }
-\details{
-对命名 marker 列表中的每一组基因绘制一行 Seurat FeaturePlot。函数会
-删除不存在的基因，并用空白图保持各行宽度一致。
-}

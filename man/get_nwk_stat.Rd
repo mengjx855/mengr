@@ -15,5 +15,5 @@ get_nwk_stat(graph, prefix_pattern = c(bacteria = "^b_", fungi = "^f_"))
 A node-level data frame of network topology statistics.
 }
 \description{
-计算网络节点的 degree、strength、centrality 等拓扑统计量。
+Get Nwk Stat utility
 }

@@ -6,7 +6,7 @@
 \usage{
 calcu_specaccum_by_group(
   profile,
-  group,
+  sample_meta,
   sample_col = "sample",
   group_col = "group",
   group_level = NULL,
@@ -17,7 +17,7 @@ calcu_specaccum_by_group(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{sample_col}{Name of the sample-identifier column.}
 
@@ -33,5 +33,5 @@ calcu_specaccum_by_group(
 A data frame of accumulation curves with a group column.
 }
 \description{
-分组计算 species/feature accumulation curve。
+Calculate species accumulation curves by group
 }

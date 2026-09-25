@@ -1,6 +1,8 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220529, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20220529, 20260923 ####
 
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 #### .align_gene_length ####
 
@@ -27,7 +29,6 @@
 
 #' Convert read counts to TPM
 #'
-#' 根据 feature 长度把 read counts 转换为 TPM。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param gene_length Feature-length table used for TPM or FPKM/RPKM normalization.
@@ -54,7 +55,6 @@ rc2tpm <- function(
 
 #' Convert fragment or read counts to FPKM/RPKM
 #'
-#' 根据 feature 长度和样本文库大小计算 FPKM/RPKM。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param gene_length Feature-length table used for TPM or FPKM/RPKM normalization.
@@ -85,26 +85,16 @@ rc2fpkm <- function(
 #' sample table, a delimited text-file path, or a named numeric vector can
 #' instead supply externally calculated library sizes.
 #'
-#' 将 feature × sample 的 count matrix 转换为 RPM。`library_size = NULL` 时使用
-#' `profile` 的列和；也可以传入两列样本表、分隔文本文件路径或带名称的数值
-#' 向量，使用外部计算的 library size。
 #'
 #' @param profile A numeric feature-by-sample data frame or matrix.
-#'   数值型 feature × sample 数据框或矩阵。
 #' @param library_size `NULL`, a two-column data frame, a path to a CSV/TSV
-#'   file, or a named numeric vector. `NULL` uses `colSums(profile)`。
-#'   `NULL`、两列表、CSV/TSV 文件路径或带名称数值向量；`NULL` 时使用
-#'   `colSums(profile)`。
+#'   file, or a named numeric vector. `NULL` uses `colSums(profile)`.
+#'   `colSums(profile)`.
 #' @param sample_col Sample identifier column in `library_size`.
-#'   `library_size` 中的样本列名。
 #' @param library_size_col Library-size column in `library_size`.
-#'   `library_size` 中的文库大小列名。
 #' @param library_size_sep Separator used when `library_size` is a file path.
-#'   `NULL` selects comma for `.csv` and tab otherwise. `library_size` 为文件
-#'   路径时使用的分隔符；`NULL` 时 `.csv` 使用逗号，其余文件使用制表符。
 #'
 #' @return A numeric matrix with the same dimensions and dimnames as `profile`.
-#'   与 `profile` 维度及 dimnames 相同的数值矩阵。
 #' @export
 rc2rpm <- function(
   profile, library_size = NULL, sample_col = "sample",

@@ -1,8 +1,10 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241029, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241029, 20260923 ####
 
 # 20241029: create functions.
 # 20250903: fix bug.
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 
 #### plot_msa ####
@@ -11,7 +13,6 @@
 #' Plot Msa utility
 #'
 #'
-#' 读取 multiple sequence alignment 并按氨基酸类别分块绘图。
 #'
 #' @param path Path to the required input file.
 #' @param width Bar width for composition plots; in `plot_msa()`, the number of alignment positions per block.

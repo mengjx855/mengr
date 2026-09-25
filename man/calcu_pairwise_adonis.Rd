@@ -6,7 +6,7 @@
 \usage{
 calcu_pairwise_adonis(
   profile,
-  group,
+  sample_meta,
   sample_col = "sample",
   group_col = "group",
   group_level = NULL,
@@ -19,7 +19,7 @@ calcu_pairwise_adonis(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{sample_col}{Name of the sample-identifier column.}
 
@@ -39,5 +39,5 @@ calcu_pairwise_adonis(
 A data frame containing pairwise PERMANOVA statistics, P values, adjusted P values, and optional labels.
 }
 \description{
-对各组组合执行 pairwise PERMANOVA，并校正 P 值。
+Calcu Pairwise Adonis utility
 }

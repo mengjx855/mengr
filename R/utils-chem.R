@@ -1,12 +1,13 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260101, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260101, 20260923 ####
 
 # 20260916: rename `calcu_DBE()` to `calcu_dbe()` and standardize documentation.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 #### calcu_dbe ####
 
 #' Calculate double-bond equivalents from molecular formulas
 #'
-#' 从分子式计算 double-bond equivalents，并正确处理卤素元素。
 #'
 #' @param formula Model formula defining the response and grouping variables.
 #' @return A numeric vector of double-bond equivalents, preserving missing values for unparseable formulas.

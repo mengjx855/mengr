@@ -54,5 +54,5 @@ plot_ggradar_pair(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-将成对比较数据整理为 ggradar 所需格式并绘制雷达图。
+Plot Ggradar Pair utility
 }

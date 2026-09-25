@@ -7,8 +7,8 @@
 rf_next_validate(
   profile_x,
   profile_y,
-  group_x,
-  group_y,
+  sample_meta_x,
+  sample_meta_y,
   seed = 2026,
   ntree = 1000,
   sample_col = "sample",
@@ -23,9 +23,9 @@ rf_next_validate(
 
 \item{profile_y}{Feature-by-sample profile used for validation or the second data space.}
 
-\item{group_x}{Sample metadata associated with \code{profile_x}.}
+\item{sample_meta_x}{Sample metadata associated with \code{profile_x}.}
 
-\item{group_y}{Sample metadata associated with \code{profile_y}.}
+\item{sample_meta_y}{Sample metadata associated with \code{profile_y}.}
 
 \item{seed}{Optional random seed for reproducibility.}
 
@@ -45,5 +45,5 @@ rf_next_validate(
 A validation prediction data frame with the fitted model stored in the \code{model} attribute.
 }
 \description{
-用训练数据拟合 random forest，并在独立数据中验证。
+Train a random forest in one dataset and validate it in another
 }

@@ -1,9 +1,11 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250417, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250417, 20260923 ####
 
 # 20250417: 创建函数 plot_dim, 嵌套所有降维分析的可视化，以统一画图格式；
 # 20250617: 升级函数，默认输入的文件第二列和第三列为坐标位置
 # 20260526: update some function.
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 
 #### plot_dim ####
@@ -22,7 +24,6 @@
 #' Plot Dim utility
 #'
 #'
-#' 统一绘制二维降维结果，支持 point/line、置信区域、标签和主题。
 #'
 #' @param data An input data frame or compatible object.
 #' @param group_level Optional order of group levels.

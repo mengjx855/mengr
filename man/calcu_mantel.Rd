@@ -6,7 +6,7 @@
 \usage{
 calcu_mantel(
   profile,
-  metadata,
+  feature_meta,
   envs,
   feature_col = "name",
   category_col = "category",
@@ -23,7 +23,8 @@ calcu_mantel(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{metadata}{A metadata or annotation data frame.}
+\item{feature_meta}{A feature metadata table mapping feature identifiers to
+the categories tested by Mantel analysis.}
 
 \item{envs}{Environmental or host-variable table used in Mantel analyses.}
 
@@ -51,5 +52,5 @@ calcu_mantel(
 A Mantel-test data frame with aligned inputs and feature selections stored as attributes.
 }
 \description{
-在多个 profile 或环境变量之间批量执行 Mantel test。
+Calcu Mantel utility
 }

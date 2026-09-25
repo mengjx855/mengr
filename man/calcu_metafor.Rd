@@ -45,5 +45,5 @@ calcu_metafor(
 A feature-level meta-analysis data frame containing pooled effects, uncertainty, heterogeneity, and significance statistics.
 }
 \description{
-按项目计算 feature 效应量，并使用 metafor 合并多队列结果。
+Calcu Metafor utility
 }

@@ -1,6 +1,8 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241023, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20241023, 20260923 ####
 
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 #### .lasso_outcome ####
 
@@ -32,10 +34,9 @@
 
 #' Cross-validated LASSO predictions
 #'
-#' 使用 glmnet 和分层 folds 执行 LASSO k-fold cross-validation。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param k Number of folds or clusters, according to the analysis performed.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
@@ -47,13 +48,14 @@
 #' @return A data frame with sample IDs, observed outcomes, predictions, and predicted classes for binomial models.
 #' @export
 lasso_kfold <- function(
-  profile, group, k = 5, sample_col = "sample", group_col = "group",
+  profile, sample_meta, k = 5, sample_col = "sample", group_col = "group",
   family = c("binomial", "gaussian", "poisson"),
   positive_class = NULL, seed = 2024, inner_folds = 5, ...
 ) {
+  group <- sample_meta
   family <- match.arg(family)
   aligned <- .align_profile_group(
-    profile = profile, group = group,
+    profile = profile, sample_meta = group,
     sample_col = sample_col, group_col = group_col
   )
   x_mat <- t(as.matrix(.as_profile_df(aligned$profile_df, numeric = TRUE)))
@@ -107,12 +109,11 @@ lasso_kfold <- function(
 
 #' Train a LASSO model in one dataset and validate it in another
 #'
-#' 在独立数据集上应用已训练的 LASSO 模型并评估预测。
 #'
 #' @param profile_x Feature-by-sample profile used for model training or the first data space.
 #' @param profile_y Feature-by-sample profile used for validation or the second data space.
-#' @param group_x Sample metadata associated with `profile_x`.
-#' @param group_y Sample metadata associated with `profile_y`.
+#' @param sample_meta_x Sample metadata associated with `profile_x`.
+#' @param sample_meta_y Sample metadata associated with `profile_y`.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param family Model family; supported values are shown in Usage.
@@ -123,11 +124,13 @@ lasso_kfold <- function(
 #' @return A list containing the fitted cross-validated model, shared features, validation predictions, and binary metrics when applicable.
 #' @export
 lasso_next_validate <- function(
-  profile_x, profile_y, group_x, group_y,
+  profile_x, profile_y, sample_meta_x, sample_meta_y,
   sample_col = "sample", group_col = "group",
   family = c("binomial", "gaussian", "poisson"),
   positive_class = NULL, seed = 2024, inner_folds = 5, ...
 ) {
+  group_x <- sample_meta_x
+  group_y <- sample_meta_y
   family <- match.arg(family)
   aligned_x <- .align_profile_group(
     profile_x, group_x,

@@ -35,7 +35,3 @@ For each selected gene and metadata group, calculate the number and
 percentage of expressing cells plus mean count and normalized expression in
 all cells and positive cells.
 }
-\details{
-针对每个基因和 metadata 分组，计算阳性细胞数及比例，以及全部细胞和
-阳性细胞中的平均 count 与标准化表达量。
-}

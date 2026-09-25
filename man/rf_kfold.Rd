@@ -6,7 +6,7 @@
 \usage{
 rf_kfold(
   profile,
-  group,
+  sample_meta,
   k = 5,
   seed = 2025,
   ntree = 1000,
@@ -22,7 +22,7 @@ rf_kfold(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{k}{Number of folds or clusters, according to the analysis performed.}
 
@@ -48,5 +48,5 @@ rf_kfold(
 A data frame of out-of-fold sample predictions, class probabilities, and fold identifiers.
 }
 \description{
-执行分层 random-forest k-fold cross-validation。
+Generate stratified K-fold random-forest predictions
 }

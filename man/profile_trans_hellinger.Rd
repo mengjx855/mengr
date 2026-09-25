@@ -15,5 +15,5 @@ profile_trans_hellinger(profile, digits = NULL)
 A feature-by-sample Hellinger-transformed data frame.
 }
 \description{
-对 profile 执行 Hellinger 转换，适合部分生态距离分析。
+Profile Trans Hellinger utility
 }

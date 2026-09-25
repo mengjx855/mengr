@@ -13,5 +13,5 @@ calcu_rankabund(profile)
 A data frame containing sample-wise abundance ranks, abundances, and log abundances.
 }
 \description{
-计算每个样本的 rank-abundance 数据及 log abundance。
+Calculate rank-abundance data for each sample
 }

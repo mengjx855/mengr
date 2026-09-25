@@ -2,7 +2,7 @@
 % Please edit documentation in R/config.R
 \name{mengr_config}
 \alias{mengr_config}
-\title{Configure paths used by mengR}
+\title{Configure paths used by mengr}
 \usage{
 mengr_config(database = NULL)
 }
@@ -10,8 +10,8 @@ mengr_config(database = NULL)
 \item{database}{Root directory containing shared reference databases.}
 }
 \value{
-The active mengR configuration, invisibly.
+A named list containing the active mengr configuration, invisibly.
 }
 \description{
-设置或读取 mengR 配置；目前主要管理公共数据库根目录。
+Configure paths used by mengr
 }

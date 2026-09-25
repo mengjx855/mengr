@@ -36,5 +36,5 @@ get_nwk_attr(
 A list containing the igraph object, edge and node attribute data frames, and paths of any exported files.
 }
 \description{
-从相关 edge table 构建 igraph 网络，整理 edge/node 属性并可选导出。
+Get Nwk Attr utility
 }

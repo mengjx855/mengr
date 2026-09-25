@@ -24,5 +24,5 @@ set_calcu(
 A vector containing the requested intersection, union, or sequential set difference.
 }
 \description{
-对多个向量或一个向量列表计算交集、并集或集合差。
+Set Calcu utility
 }

@@ -1,26 +1,26 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260820, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20260820, 20260925 ####
 
 # 20260916: rename the public configuration function to `mengr_config()` and standardize documentation.
+# 20260923: remove Chinese text from Roxygen documentation.
+# 20260925: update package and option names from mengR to mengr.
+
 
 #### mengr_config ####
 
-#' Configure paths used by mengR
-#'
-#'
-#' 设置或读取 mengR 配置；目前主要管理公共数据库根目录。
+#' Configure paths used by mengr
 #'
 #' @param database Root directory containing shared reference databases.
-#' @return The active mengR configuration, invisibly.
+#' @return A named list containing the active mengr configuration, invisibly.
 #' @export
 mengr_config <- function(database = NULL) {
   if (!is.null(database)) {
     database <- normalizePath(database, winslash = "/", mustWork = FALSE)
-    options(mengR.database = database)
+    options(mengr.database = database)
   }
 
   config <- list(
     database = getOption(
-      "mengR.database",
+      "mengr.database",
       Sys.getenv("MENGR_DATABASE", unset = "F:/database")
     )
   )

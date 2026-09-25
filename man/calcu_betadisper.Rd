@@ -6,7 +6,7 @@
 \usage{
 calcu_betadisper(
   profile = NULL,
-  group,
+  sample_meta,
   distance = NULL,
   sample_col = "sample",
   group_col = "group",
@@ -21,7 +21,7 @@ calcu_betadisper(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{group}{A sample metadata table containing sample and group columns.}
+\item{sample_meta}{A sample metadata table containing sample and group columns.}
 
 \item{distance}{A precomputed distance object; when supplied, it takes precedence over \code{profile}.}
 
@@ -45,5 +45,5 @@ calcu_betadisper(
 A list containing the betadisper object, group metadata, permutation/ANOVA/Tukey tests, and sample distances to group centers.
 }
 \description{
-检验各组到中心或中位数中心的 multivariate dispersion。
+Calcu Betadisper utility
 }

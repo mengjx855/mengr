@@ -6,7 +6,7 @@
 \usage{
 remove_batch_limma(
   profile,
-  metadata,
+  sample_meta,
   sample_col = "sample",
   batch_col = "batch",
   batch2_col = NULL,
@@ -17,7 +17,8 @@ remove_batch_limma(
 \arguments{
 \item{profile}{A feature-by-sample numeric matrix-like object.}
 
-\item{metadata}{A metadata or annotation data frame.}
+\item{sample_meta}{A sample metadata table containing sample identifiers,
+one or two batch columns, and optional covariates.}
 
 \item{sample_col}{Name of the sample-identifier column.}
 
@@ -33,5 +34,5 @@ remove_batch_limma(
 A feature-by-sample numeric data frame after limma batch-effect removal.
 }
 \description{
-使用 \code{limma::removeBatchEffect()} 校正批次并保留设计矩阵中的协变量。
+Remove batch effects with limma::removeBatchEffect
 }

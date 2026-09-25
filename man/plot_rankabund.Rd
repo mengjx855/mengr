@@ -24,5 +24,5 @@ plot_rankabund(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-绘制 rank-abundance 曲线。
+Plot rank-abundance curves
 }

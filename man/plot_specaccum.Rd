@@ -51,5 +51,5 @@ plot_specaccum(
 A ggplot-compatible plot object; computed data or fitted objects are retained as attributes when applicable.
 }
 \description{
-绘制总体累积曲线，可添加误差线或置信 ribbon。
+Plot a species accumulation curve
 }

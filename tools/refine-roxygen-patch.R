@@ -16,8 +16,8 @@ describe_param <- function(param) {
   exact <- c(
     profile_x = 'Feature-by-sample profile used for model training or the first data space.',
     profile_y = 'Feature-by-sample profile used for validation or the second data space.',
-    group_x = 'Sample metadata associated with `profile_x`.',
-    group_y = 'Sample metadata associated with `profile_y`.',
+    sample_meta_x = 'Sample metadata associated with `profile_x`.',
+    sample_meta_y = 'Sample metadata associated with `profile_y`.',
     distance = 'A precomputed distance object; when supplied, it takes precedence over `profile`.',
     dist = 'A distance object used by the analysis.',
     dist_x = 'Distance object for the first data space.',

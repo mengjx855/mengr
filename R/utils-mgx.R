@@ -1,4 +1,4 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250418, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250418, 20260923 ####
 
 # 20250423: update some function.
 # 20250502: rename the KEGG profile conversion function as `profile_kegg_trans()`.
@@ -6,6 +6,8 @@
 # 20260504: add new function plot_maaslin3_multi()
 # 20260619: add new function plot_maaslin3_abundance(), plot_maaslin3_both()
 # 20260916: rename KEGG, LEfSe, and CAZyme utilities to lowercase and standardize documentation.
+# 20260923: remove Chinese text from Roxygen documentation.
+
 
 
 #### plot_maaslin3_multi ####
@@ -39,7 +41,6 @@
 #'   coef < 0 means the taxon is enriched/positively associated with females.
 #'
 #'
-#' 绘制 MaAsLin3 多分类层级的正负效应及 taxonomy 色带。
 #'
 #' @param maaslin3_result
 #'   MaAsLin3 result table. Required columns usually include:
@@ -639,7 +640,6 @@ plot_maaslin3_multi <- function(
 #' Plot Maaslin3 Abundance utility
 #'
 #'
-#' 绘制 MaAsLin3 abundance model 的 effect 结果。
 #'
 #' @param data An input data frame or compatible object.
 #' @param p_col Name of the `p_col` input column.
@@ -803,7 +803,6 @@ plot_maaslin3_abundance <- function(
 #' Plot Maaslin3 both utility
 #'
 #'
-#' 联合展示 MaAsLin3 abundance 和 prevalence 模型结果。
 #'
 #' @param data An input data frame or compatible object.
 #' @param p_col Name of the `p_col` input column.
@@ -1026,7 +1025,6 @@ plot_maaslin3_both <- function(
 #' Load KEGG Info utility
 #'
 #'
-#' 读取并整理本地 KEGG 注释表。
 #'
 #' @param database Path to the local annotation database file.
 #' @param level KEGG hierarchy level or levels to retain.
@@ -1115,7 +1113,6 @@ load_kegg_info <- function(
 #' Profile KEGG Trans utility
 #'
 #'
-#' 将 KO profile 映射并聚合到 KEGG A/B/C 层级。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
 #' @param to Target taxonomy rank or identifier type produced by the conversion.
@@ -1268,7 +1265,6 @@ profile_kegg_trans <- function(
 #' Tidy LEfSe utility
 #'
 #'
-#' 统一 LEfSe 结果列和 taxonomy 字段，便于后续筛选绘图。
 #'
 #' @param data An input data frame or compatible object.
 #' @return A standardized LEfSe result data frame.
@@ -1300,7 +1296,6 @@ tidy_lefse <- function(data) {
 #' Tidy CAZyme Profile utility
 #'
 #'
-#' 整理 CAZyme profile 名称并按目标分类层级聚合。
 #'
 #' @param data An input data frame or compatible object.
 #' @return An aggregated CAZyme feature-by-sample profile.

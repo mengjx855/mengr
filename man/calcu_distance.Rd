@@ -36,5 +36,5 @@ calcu_distance(
 A \code{dist} object containing pairwise sample distances.
 }
 \description{
-计算 Bray、Jaccard、Euclidean、UniFrac 等样本距离，可先转换 profile。
+Calcu Distance utility
 }

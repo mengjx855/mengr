@@ -19,5 +19,5 @@ rc2fpkm(profile, gene_length, feature_col = "name", length_col = "length")
 A feature-by-sample numeric matrix of FPKM/RPKM values.
 }
 \description{
-根据 feature 长度和样本文库大小计算 FPKM/RPKM。
+Convert fragment or read counts to FPKM/RPKM
 }

@@ -1,4 +1,4 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20230610, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20230610, 20260923 ####
 
 # 20231101: update function: get_freq
 # 20250223: undate functions with new grammar.
@@ -10,8 +10,10 @@
 # 20260527: add function 'set_calcu()'.
 # 20260902: add function 'log_message()'.
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: remove Chinese Roxygen text, correct export tags, and fix variable references.
 
 ## 日志记录函数，支持不同类型的日志信息
+
 #### log_message ####
 
 log_message <- function(
@@ -39,12 +41,11 @@ log_message <- function(
 #' Floor n utility
 #'
 #'
-#' 按指定的十进制位数向下取整，例如按百位或千位取整。
 #'
 #' @param x Primary vector or object supplied to the utility.
 #' @param n Requested number of values, features, or results.
 #' @return A numeric vector rounded downward at the requested decimal position.
-#' @expor
+#' @export
 floor_n <- function(x, n = 2) {
   base <- 10^n
   floor(x / base) * base
@@ -53,12 +54,11 @@ floor_n <- function(x, n = 2) {
 #' Ceiling n utility
 #'
 #'
-#' 按指定的十进制位数向上取整。
 #'
 #' @param x Primary vector or object supplied to the utility.
 #' @param n Requested number of values, features, or results.
 #' @return A numeric vector rounded upward at the requested decimal position.
-#' @expor
+#' @export
 #### ceiling_n ####
 
 ceiling_n <- function(x, n = 2) {
@@ -79,14 +79,13 @@ ceiling_n <- function(x, n = 2) {
 #' Set Calcu utility
 #'
 #'
-#' 对多个向量或一个向量列表计算交集、并集或集合差。
 #'
 #' @param ... Vectors to combine; a single list of vectors is also accepted.
 #' @param method Analysis or summary method; supported values are shown in the usage.
 #' @param unique_out Whether duplicate values are removed from the set-operation result.
 #' @param sort_out Whether the returned set-operation result is sorted.
 #' @return A vector containing the requested intersection, union, or sequential set difference.
-#' @expor
+#' @export
 set_calcu <- function(..., method = c("intersect", "union", "setdiff"),
                       unique_out = TRUE, sort_out = FALSE) {
   method <- match.arg(method)
@@ -135,14 +134,13 @@ set_calcu <- function(..., method = c("intersect", "union", "setdiff"),
 #' Get Text Color utility
 #'
 #'
-#' 根据背景色亮度选择深色或浅色文字，提高文字对比度。
 #'
 #' @param color Color specification for `color`.
 #' @param threshold Luminance threshold separating dark and light text.
 #' @param dark Text color returned for a sufficiently light background.
 #' @param light Text color returned for a sufficiently dark background.
 #' @return A character vector choosing `dark` or `light` for each input color.
-#' @expor
+#' @export
 get_text_color <- function(color, threshold = 0.5, dark = "black", light = "white") {
   rgb_mat <- grDevices::col2rgb(color) # 将颜色转换为 RGB 值
   luminance <- (0.299 * rgb_mat[1, ] + 0.587 * rgb_mat[2, ] + 0.114 * rgb_mat[3, ]) / 255
@@ -155,7 +153,6 @@ get_text_color <- function(color, threshold = 0.5, dark = "black", light = "whit
 #' Write xlsx with Comment utility
 #'
 #'
-#' 将顶部说明和数据写入 Excel；支持追加、替换 worksheet。
 #'
 #' @param data An input data frame or compatible object.
 #' @param filename Path of the workbook or output file.
@@ -166,7 +163,7 @@ get_text_color <- function(color, threshold = 0.5, dark = "black", light = "whit
 #' @param append Whether to append a worksheet to an existing workbook.
 #' @param replace_sheet Whether an existing worksheet with the same name is replaced.
 #' @return The output workbook path, invisibly.
-#' @expor
+#' @export
 write_xlsx_with_comment <- function(data, filename, comment = "###", sheet = "Sheet1",
                                     comment_color = "red", overwrite = TRUE,
                                     append = TRUE, replace_sheet = FALSE) {
@@ -197,7 +194,7 @@ write_xlsx_with_comment <- function(data, filename, comment = "###", sheet = "Sh
     } else {
       stop(sprintf(
         "Sheet '%s' already exists. Use replace_sheet = TRUE if you want to overwrite it.",
-        shee
+        sheet
       ))
     }
   }
@@ -239,13 +236,12 @@ write_xlsx_with_comment <- function(data, filename, comment = "###", sheet = "Sh
 #' Read xlsx Multiple utility
 #'
 #'
-#' 一次读取 Excel 文件中的多个 worksheet，返回命名列表。
 #'
 #' @param file Path to an input file.
 #' @param sheets Worksheet names to read; `NULL` reads every worksheet.
 #' @param ... Additional arguments passed to `openxlsx::read.xlsx()`.
 #' @return A named list of data frames, one for each selected worksheet.
-#' @expor
+#' @export
 read_xlsx_multiple <- function(file, sheets = NULL, ...) {
   if (!requireNamespace("openxlsx", quietly = TRUE)) {
     stop("Package 'openxlsx' is required.")
@@ -308,7 +304,6 @@ read_xlsx_multiple <- function(file, sheets = NULL, ...) {
 #' Pairwise Cluster utility
 #'
 #'
-#' 将 feature1-feature2-value 长表转换为距离矩阵并进行层次聚类。
 #'
 #' @param data An input data frame or compatible object.
 #' @param feature1_col Name of the `feature1_col` input column.
@@ -322,7 +317,7 @@ read_xlsx_multiple <- function(file, sheets = NULL, ...) {
 #' @param duplicate_fun Function used to combine duplicated feature-pair values.
 #' @param simplify Whether to return the simplified tabular result instead of intermediate objects.
 #' @return A cluster-membership vector or data frame with `hclust` and distance-matrix attributes.
-#' @expor
+#' @export
 pairwise_cluster <- function(data, feature1_col = NULL, feature2_col = NULL,
                              value_col = NULL, cutoff = 0.05, one_minus = FALSE,
                              abs_value = FALSE, linkage_method = "average",
@@ -450,7 +445,7 @@ pairwise_cluster <- function(data, feature1_col = NULL, feature2_col = NULL,
   }
 
   attr(out, "hclust") <- hc
-  attr(out, "dist_matrix") <- dist_ma
+  attr(out, "dist_matrix") <- dist_mat
 
   return(out)
 }
@@ -460,11 +455,10 @@ pairwise_cluster <- function(data, feature1_col = NULL, feature2_col = NULL,
 #' Theme Bw Clean utility
 #'
 #'
-#' 返回简洁的黑白 ggplot2 theme，作为其他绘图的统一基础主题。
 #'
 #' @param base_size Base font size for the plot theme.
 #' @return A ggplot2 theme object.
-#' @expor
+#' @export
 theme_bw_clean <- function(base_size = 12) {
   ## 返回可继续用“+”叠加修改的 ggplot2 theme 对象
   ggplot2::theme(

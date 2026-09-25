@@ -1,9 +1,9 @@
-## mengR source-level smoke tests. This script does not build or install the package.
+## mengr source-level smoke tests. This script does not build or install the package.
 
 package_dir <- if (file.exists(file.path(getwd(), "DESCRIPTION"))) {
   normalizePath(getwd(), winslash = "/")
 } else {
-  normalizePath(file.path(getwd(), "mengR"), winslash = "/")
+  normalizePath(file.path(getwd(), "mengr"), winslash = "/")
 }
 source_files <- list.files(
   file.path(package_dir, "R"), pattern = "[.]R$", full.names = TRUE
@@ -148,15 +148,15 @@ with(test_env, {
   )
   stopifnot(inherits(expression_plot, "ggplot"))
 
-  if (!methods::isClass("mengR_mock_cellchat")) {
-    methods::setClass("mengR_mock_cellchat", slots = c(net = "list"))
+  if (!methods::isClass("mengr_mock_cellchat")) {
+    methods::setClass("mengr_mock_cellchat", slots = c(net = "list"))
   }
   network_mat <- matrix(
     c(1, 2, 3, 4), nrow = 2,
     dimnames = list(c("A", "B"), c("A", "B"))
   )
   mock_cellchat <- methods::new(
-    "mengR_mock_cellchat", net = list(count = network_mat, weight = network_mat)
+    "mengr_mock_cellchat", net = list(count = network_mat, weight = network_mat)
   )
   radar_plot <- cellchat_radar(mock_cellchat, cell = "A")
   stopifnot(inherits(radar_plot, "ggplot"))

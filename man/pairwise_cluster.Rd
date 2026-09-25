@@ -45,5 +45,5 @@ pairwise_cluster(
 A cluster-membership vector or data frame with \code{hclust} and distance-matrix attributes.
 }
 \description{
-将 feature1-feature2-value 长表转换为距离矩阵并进行层次聚类。
+Pairwise Cluster utility
 }

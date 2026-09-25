@@ -37,5 +37,5 @@ fields are all missing.}
 A data frame with one row per HMDB metabolite and the requested cross-reference columns.
 }
 \description{
-流式解析 HMDB XML，提取代谢物名称、标识符和外部数据库交叉引用。
+Extract HMDB Xrefs utility
 }

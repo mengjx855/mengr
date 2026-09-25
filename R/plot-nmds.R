@@ -1,10 +1,12 @@
-#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250307, 20260916 ####
+#### Jin-Xin Meng, jinxmeng@zju.edu.cn, 20250307, 20260923 ####
 
 # 20250417: plot function pass to plot_dim()
 # 20251129: 未来考虑 NMDS 中加入 vegan::anosim 分析
 # 20260419: 修改anosim输入矩阵为距离矩阵
 # 20260827: update function.
 # 20260916: standardize script metadata, function sections, documentation, and naming style.
+# 20260923: clarify metadata argument names and remove Chinese text from Roxygen documentation.
+
 
 
 #### plot_nmds ####
@@ -22,10 +24,9 @@
 #' Plot NMDS utility
 #'
 #'
-#' 从 profile 或距离对象执行 NMDS，可附加 ANOSIM 结果。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param distance A precomputed distance object; when supplied, it takes precedence over `profile`.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
@@ -60,7 +61,7 @@
 #' @importFrom rlang .data
 #' @export
 plot_nmds <- function(
-  profile = NULL, group, distance = NULL,
+  profile = NULL, sample_meta, distance = NULL,
   sample_col = "sample", group_col = "group",
   group_level = NULL, group_color = NULL,
   sub_sample = NULL, sub_group = NULL,
@@ -76,6 +77,7 @@ plot_nmds <- function(
   aspect_ratio = 3 / 4, theme = c("default", "pubr"),
   anosim = TRUE, permutations = 999, trymax = 100, ...
 ) {
+  group <- sample_meta
   dist_method <- .match_distance_method(dist_method)
   transform <- .match_transform_method(transform)
   display_type <- match.arg(display_type)
@@ -296,10 +298,9 @@ plot_nmds <- function(
 #' Calcu Pairwise Anosim utility
 #'
 #'
-#' 对各分组组合执行 pairwise ANOSIM。
 #'
 #' @param profile A feature-by-sample numeric matrix-like object.
-#' @param group A sample metadata table containing sample and group columns.
+#' @param sample_meta A sample metadata table containing sample and group columns.
 #' @param sample_col Name of the sample-identifier column.
 #' @param group_col Name of the grouping column.
 #' @param group_level Optional order of group levels.
@@ -312,12 +313,13 @@ plot_nmds <- function(
 #' #importFrom rlang .data
 #' @export
 calcu_pairwise_anosim <- function(
-  profile, group, sample_col = "sample", group_col = "group",
+  profile, sample_meta, sample_col = "sample", group_col = "group",
   group_level = NULL,
   dist_method = c("bray", "jaccard", "euclidean", "manhattan"),
   transform = c("total", "hellinger", "pa", "clr"),
   permutations = 999, add_plab = TRUE, ...
 ) {
+  group <- sample_meta
   dist_method <- .match_distance_method(dist_method)
   transform <- .match_transform_method(transform)
 
@@ -423,7 +425,6 @@ calcu_pairwise_anosim <- function(
 #' Plot Pairwise Anosim utility
 #'
 #'
-#' 将 pairwise ANOSIM 结果绘制为矩阵式结果图。
 #'
 #' @param data An input data frame or compatible object.
 #' @param group_level Optional order of group levels.
